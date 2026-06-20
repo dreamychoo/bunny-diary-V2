@@ -1,0 +1,143 @@
+mode: sprite-sheet
+items:
+  garden-ground:
+    x: 16
+    y: 84
+    w: 806
+    h: 500
+
+  seed-bag:
+    x: 88
+    y: 804
+    w: 182
+    h: 176
+    trim: true
+    padding: 6
+
+  warmth-seed:
+    x: 374
+    y: 846
+    w: 106
+    h: 108
+    trim: true
+    padding: 4
+
+  feeling-seed:
+    x: 607
+    y: 838
+    w: 102
+    h: 112
+    trim: true
+    padding: 4
+
+  warmth-planted:
+    x: 22
+    y: 1236
+    w: 152
+    h: 126
+    trim: true
+    padding: 4
+
+  warmth-sprout:
+    x: 184
+    y: 1200
+    w: 150
+    h: 162
+    trim: true
+    padding: 4
+
+  warmth-bud:
+    x: 320
+    y: 1182
+    w: 162
+    h: 184
+    trim: true
+    padding: 4
+
+  warmth-flower-daisy:
+    x: 484
+    y: 1198
+    w: 92
+    h: 170
+    trim: true
+    padding: 4
+
+  warmth-flower-blossom:
+    x: 560
+    y: 1196
+    w: 96
+    h: 172
+    trim: true
+    padding: 4
+
+  warmth-flower-bell:
+    x: 638
+    y: 1196
+    w: 92
+    h: 172
+    trim: true
+    padding: 4
+
+  warmth-flower-sunflower:
+    x: 714
+    y: 1194
+    w: 102
+    h: 174
+    trim: true
+    padding: 4
+
+  feeling-planted:
+    x: 16
+    y: 1594
+    w: 152
+    h: 162
+    trim: true
+    padding: 4
+
+  feeling-sprout:
+    x: 168
+    y: 1578
+    w: 160
+    h: 174
+    trim: true
+    padding: 4
+
+  feeling-sapling:
+    x: 300
+    y: 1538
+    w: 166
+    h: 206
+    trim: true
+    padding: 4
+
+  feeling-tree-round:
+    x: 438
+    y: 1532
+    w: 146
+    h: 212
+    trim: true
+    padding: 4
+
+  feeling-tree-droop:
+    x: 552
+    y: 1582
+    w: 122
+    h: 172
+    trim: true
+    padding: 4
+
+  feeling-bush:
+    x: 630
+    y: 1616
+    w: 114
+    h: 132
+    trim: true
+    padding: 4
+
+  feeling-tree-branch:
+    x: 724
+    y: 1538
+    w: 108
+    h: 212
+    trim: true
+    padding: 4
