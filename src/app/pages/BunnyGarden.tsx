@@ -40,7 +40,6 @@ const gardenPlotSizesSmall = [
   "w-[38px] h-[42px]", "w-[34px] h-[38px]", "w-[30px] h-[34px]",
 ] as const;
 
-// ponytail: 7 planting plots + 3 empty soil plots, indexed 0-6 = plant, 7-9 = empty
 const PLANT_SLOT_COUNT = 7;
 const EMPTY_SLOT_START = 7;
 
@@ -64,6 +63,8 @@ const matureAssets: Record<GardenSeed["plantVariant"], string> = {
   mushroom: "/assets/v2/plants/mushroom.png"
 };
 
+const plantLetterMarker = "/assets/v2/items/heart-envelope.png";
+
 function growingAsset(seed: GardenSeed) {
   if (!seed.plantedAt || !seed.maturesAt) return "/assets/v2/plants/germinating-seed.png";
   const started = new Date(seed.plantedAt).getTime();
@@ -85,7 +86,7 @@ function formatDate(timestamp: string, language: string) {
 function Sheet({ children, onClose, blockClose }: { children: React.ReactNode; onClose: () => void; blockClose?: boolean }) {
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/20 px-3 pt-14 backdrop-blur-[2px] sm:items-center sm:p-6" onMouseDown={blockClose ? undefined : onClose}>
-      <section className="max-h-[80dvh] w-full max-w-[620px] overflow-y-auto rounded-t-[28px] border border-[rgba(255,255,255,0.7)] bg-[rgba(255,253,249,0.96)] p-5 pb-[88px] shadow-[0_-12px_45px_rgba(75,58,52,0.12)] sm:rounded-[28px] sm:p-7 sm:pb-7" onMouseDown={(event) => event.stopPropagation()}>
+      <section className="max-h-[80dvh] w-full max-w-[620px] overflow-y-auto rounded-t-[24px] border border-[rgba(255,255,255,0.7)] bg-[rgba(255,253,249,0.96)] p-5 pb-[88px] shadow-[0_-12px_45px_rgba(75,58,52,0.12)] sm:rounded-[24px] sm:p-7 sm:pb-7" onMouseDown={(event) => event.stopPropagation()}>
         {children}
       </section>
     </div>
@@ -98,7 +99,6 @@ function Plot({ plot, index, onEmpty, onHarvest, onPlant }: { plot: GardenPlotVi
   const isUsed = seed?.status === "usedForLetter";
 
   if (!seed) {
-    // Empty plot — show clickable patch
     return (
       <button
         type="button"
@@ -118,7 +118,8 @@ function Plot({ plot, index, onEmpty, onHarvest, onPlant }: { plot: GardenPlotVi
       className={cn(
         "absolute z-5 -translate-x-1/2 -translate-y-1/2 transition duration-160 ease-out hover:scale-105",
         seed.status === "grown" || seed.status === "ready" ? gardenPlotSizes[index] : gardenPlotSizesSmall[index],
-        seed?.status === "planted" && "animate-pulse"
+        seed.status === "planted" && "garden-plant-sway",
+        seed.status === "ready" && "garden-plant-ready"
       )}
       style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
       onClick={() => {
@@ -129,12 +130,9 @@ function Plot({ plot, index, onEmpty, onHarvest, onPlant }: { plot: GardenPlotVi
       aria-label={seed.plantVariant}
     >
       <img src={plantAsset(seed)} alt="" className="h-full w-full object-contain drop-shadow-[0_8px_10px_rgba(58,82,45,0.14)]" />
-      {(seed.status === "ready" || isUsed) && (
-        <span className={cn(
-          "absolute -right-1 -top-1 grid h-6 w-6 place-items-center rounded-full border shadow",
-          isUsed ? "border-[var(--pink)] bg-white text-[var(--pink)]" : "border-[var(--green)] bg-white text-[var(--green)]"
-        )}>
-          <Sprout className="h-3.5 w-3.5" />
+      {isUsed && (
+        <span className="absolute -right-1.5 -top-1 grid h-5 w-5 place-items-center rounded-full bg-white shadow-[0_2px_8px_rgba(255,111,134,0.2)]">
+          <img src={plantLetterMarker} alt="" className="h-3 w-3 object-contain" />
         </span>
       )}
     </button>
@@ -218,70 +216,142 @@ export default function BunnyGarden() {
     }, 900);
   }
 
+  const hasPlants = garden.totalPlants > 0;
+  const hasSeeds = garden.seedInventory.length > 0;
+  const hasReady = garden.readyCount > 0;
+
   return (
     <AppShell>
       <div className="mx-auto w-full max-w-[390px]">
-        {/* Top: watering bunny + title */}
-        <section className="relative min-h-[128px] pt-1">
-          <img src="/assets/v2/rabbits/watering.png" alt="" className="absolute -left-2 -top-2 z-2 h-[100px] w-[100px] object-contain drop-shadow-[0_14px_18px_rgba(95,64,48,0.16)]" />
-          <div className="pl-[80px] pt-6">
-            <h1 className="text-[29px] font-black tracking-tight leading-none text-[var(--ink)]">{t("garden.title")}<span className="ml-1 text-[20px] text-[var(--pink)]">♥</span></h1>
-            <p className="mt-2 text-[12px] font-semibold leading-snug text-[var(--muted)] max-w-[210px]">{t("garden.shortSubtitle")}</p>
-          </div>
-        </section>
-
-        {/* Prompt bar */}
-        <section className="flex items-center gap-3 rounded-[22px] border border-[rgba(255,255,255,0.8)] bg-[rgba(255,254,250,0.86)] px-3 py-3 shadow-[0_10px_30px_rgba(126,91,72,0.10)] backdrop-blur-[18px]">
-          <img src="/assets/v2/plants/sprout.png" alt="" className="h-11 w-11 flex-shrink-0 object-contain drop-shadow-[0_6px_9px_rgba(95,64,48,0.12)]" />
-          <p className="flex-1 text-[13px] font-extrabold leading-snug text-[#4d3c33]">
-            {garden.waitingSeedCount > 0 ? t("garden.promptBar.plantReady") : t("garden.promptBar.writeForSeed")}
-          </p>
-          <button onClick={() => setSeedVaultOpen(true)} className="inline-flex h-11 items-center rounded-[999px] border-0 bg-gradient-to-b from-[#92d096] to-[#78bf83] px-3.5 text-[12px] font-extrabold text-white shadow-[0_8px_18px_rgba(120,191,131,0.28),inset_0_1px_rgba(255,255,255,0.35)]">
-            🌱 {t("garden.openSeedVault")}
-          </button>
-        </section>
-
-        {/* Stats */}
-        <section className="mt-3 grid grid-cols-3 overflow-hidden rounded-[22px] border border-[rgba(255,255,255,0.8)] bg-[rgba(255,254,250,0.86)] shadow-[0_10px_30px_rgba(126,91,72,0.10)]">
-          {[
-            { img: "/assets/v2/plants/pink-rose.png", label: t("garden.v3.warmPlants"), count: garden.warmPlantCount },
-            { img: "/assets/v2/plants/lavender.png", label: t("garden.v3.worryPlants"), count: garden.worryPlantCount },
-            { img: "/assets/v2/plants/sprout.png", label: t("garden.v3.waitingSeeds"), count: garden.waitingSeedCount },
-          ].map((stat, i) => (
-            <div key={i} className={`flex items-center justify-center gap-2 px-2 py-4 ${i > 0 ? "border-l border-[#f0e6dc]" : ""}`}>
-              <img src={stat.img} alt="" className="h-7 w-7 object-contain" />
-              <span className="text-[11px] font-bold text-[var(--muted)]">{stat.label}</span>
-              <b className="text-xl font-black leading-none text-[#342923]">{stat.count}</b>
+        {/* === Compact Header === */}
+        <div className="flex items-end gap-1.5 -ml-1.5 pb-1">
+          <img src="/assets/v2/rabbits/watering.png" alt="" className="h-[68px] w-[68px] object-contain drop-shadow-[0_10px_14px_rgba(95,64,48,0.14)]" />
+          <div className="flex flex-1 items-end justify-between pb-[7px] pr-1">
+            <h1 className="text-[22px] font-black tracking-tight leading-none text-[var(--ink)]">{t("garden.title")}<span className="ml-1 text-[16px] text-[var(--pink)]">♥</span></h1>
+            {/* Badges row */}
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/80 px-2.5 py-1 text-[10px] font-bold text-[#5a4a3f] shadow-[0_2px_8px_rgba(75,58,52,0.05)]">
+                <img src="/assets/v2/plants/pink-rose.png" alt="" className="h-3.5 w-3.5 object-contain" />
+                {garden.warmPlantCount}
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/80 px-2.5 py-1 text-[10px] font-bold text-[#5a4a3f] shadow-[0_2px_8px_rgba(75,58,52,0.05)]">
+                <img src="/assets/v2/plants/lavender.png" alt="" className="h-3.5 w-3.5 object-contain" />
+                {garden.worryPlantCount}
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/80 px-2.5 py-1 text-[10px] font-bold text-[#5a4a3f] shadow-[0_2px_8px_rgba(75,58,52,0.05)]">
+                <img src="/assets/v2/plants/sprout.png" alt="" className="h-3.5 w-3.5 object-contain" />
+                {garden.waitingSeedCount}
+              </span>
             </div>
-          ))}
-        </section>
-
-        {/* Garden */}
-        <section className="relative h-[250px] overflow-visible -mt-3 -mx-5">
-          <img src="/garden-assets/prepped/grass-board.png" alt="" className="absolute left-1/2 top-[58%] w-[440px] -translate-x-1/2 -translate-y-1/2 object-contain drop-shadow-[0_18px_28px_rgba(83,132,70,0.18)]" />
-          {garden.plots.slice(0, 10).map((plot, index) => (
-            <Plot key={plot.id} plot={plot} index={index} onEmpty={() => garden.seedInventory.length ? setSeedVaultOpen(true) : setToast(t("garden.v3.writeForSeed"))} onHarvest={setHarvestTarget} onPlant={setPlantInfo} />
-          ))}
-        </section>
-
-        {/* Letter card */}
-        <section className="mt-9 flex items-center gap-3 rounded-[22px] border border-[rgba(255,255,255,0.8)] bg-[rgba(255,254,250,0.88)] px-3 py-4 shadow-[0_10px_30px_rgba(126,91,72,0.10)]">
-          <img src="/assets/v2/items/heart-envelope.png" alt="" className="h-12 w-12 flex-shrink-0 object-contain" />
-          <div className="flex-1">
-            <h3 className="text-[16px] font-extrabold">{t("garden.v3.letterTitle")}</h3>
-            <p className="mt-1 text-[11px] font-semibold leading-snug text-[var(--muted)]">
-              {garden.availableLetterPlants.length >= 3 ? t("garden.v3.letterReady") : t("garden.v3.letterLocked", { count: Math.max(0, 3 - garden.availableLetterPlants.length) })}
-            </p>
           </div>
-          {garden.availableLetterPlants.length >= 3 && (
-            <button onClick={() => { setSelectedSeedIds([]); setLetterPickerOpen(true); }} className="inline-flex h-11 items-center rounded-[999px] border-0 bg-gradient-to-b from-[var(--pink-2)] to-[var(--pink)] px-5 text-[13px] font-extrabold text-white shadow-[0_8px_20px_rgba(255,111,134,0.30),inset_0_1px_rgba(255,255,255,0.35)] shrink-0">
-              {t("garden.v3.writeLetter")}
-            </button>
+        </div>
+
+        {/* === Garden Stage === */}
+        <div className="relative -mx-5">
+          {/* Task bar — translucent overlay on garden top */}
+          <div className="absolute left-1/2 z-10 flex w-[85%] max-w-[340px] -translate-x-1/2 items-center gap-2 rounded-[18px] border border-white/70 bg-white/82 px-3 py-2.5 shadow-[0_4px_16px_rgba(75,58,52,0.06)] backdrop-blur-[12px]" style={{ top: "6%" }}>
+            <p className="flex-1 text-[11px] font-bold leading-snug text-[#4d3c33]">
+              {hasReady
+                ? (language === "zh" ? "有植物长大了 🌱 轻点收获" : "Some plants have grown 🌱 Tap to harvest")
+                : hasSeeds
+                  ? (language === "zh" ? "选一颗种子，点空地种下" : "Pick a seed, tap an empty patch")
+                  : (language === "zh" ? "写下今天的心情，长出第一颗种子" : "Write down your day to grow a seed")}
+            </p>
+            {hasSeeds && (
+              <button onClick={() => setSeedVaultOpen(true)} className="shrink-0 rounded-full bg-gradient-to-b from-[#92d096] to-[#78bf83] px-3 py-1.5 text-[10px] font-extrabold text-white shadow-[0_4px_10px_rgba(120,191,131,0.3)]">
+                🌱 {t("garden.openSeedVault")}
+              </button>
+            )}
+          </div>
+
+          {/* Garden scene */}
+          <div className="relative w-full overflow-visible" style={{ aspectRatio: "815/480" }}>
+            <img
+              src="/garden-assets/prepped/grass-board.png"
+              alt=""
+              className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_18px_28px_rgba(83,132,70,0.18)]"
+            />
+
+            {/* Empty garden zero-state — glowing seed CTA */}
+            {!hasPlants && !hasSeeds && (
+              <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 text-center">
+                <button
+                  onClick={() => navigate(routes.dailyWarmth)}
+                  className="mx-auto mb-2 grid h-16 w-16 place-items-center rounded-full bg-white/80 shadow-[0_0_30px_rgba(255,111,134,0.15)] garden-glow-pulse"
+                >
+                  <img src="/assets/v2/plants/sprout.png" alt="" className="h-9 w-9 object-contain" />
+                </button>
+                <p className="text-[12px] font-extrabold text-[#4d3c33]">
+                  {language === "zh" ? "写第一篇日记" : "Write your first entry"}
+                </p>
+              </div>
+            )}
+
+            {/* Plots */}
+            {garden.plots.slice(0, 10).map((plot, index) => (
+              <Plot
+                key={plot.id}
+                plot={plot}
+                index={index}
+                onEmpty={() => garden.seedInventory.length ? setSeedVaultOpen(true) : setToast(t("garden.v3.writeForSeed"))}
+                onHarvest={setHarvestTarget}
+                onPlant={setPlantInfo}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* === Floating Letter Tray === */}
+        <div
+          className={cn(
+            "relative -mt-6 mx-2 rounded-[20px] border border-white/70 px-4 py-3.5 shadow-[0_8px_24px_rgba(75,58,52,0.08)] backdrop-blur-[12px] transition-all duration-300",
+            garden.availableLetterPlants.length >= 3
+              ? "bg-gradient-to-b from-[#fff0f2]/90 to-white/86 shadow-[0_8px_24px_rgba(255,111,134,0.12)]"
+              : "bg-white/80"
           )}
-        </section>
+        >
+          <div className="flex items-center gap-3">
+            <div className={cn(
+              "grid h-11 w-11 shrink-0 place-items-center rounded-full transition-all duration-300",
+              garden.availableLetterPlants.length >= 3
+                ? "bg-gradient-to-br from-[var(--pink-soft)] to-[var(--pink)] shadow-[0_4px_12px_rgba(255,111,134,0.2)]"
+                : "bg-[#f5f0ec]"
+            )}>
+              <img
+                src="/assets/v2/items/heart-envelope.png"
+                alt=""
+                className={cn(
+                  "h-6 w-6 object-contain transition-all",
+                  garden.availableLetterPlants.length >= 3 ? "brightness-0 invert" : "opacity-60"
+                )}
+              />
+            </div>
+            <div className="flex-1">
+              <h3 className={cn(
+                "text-[13px] font-extrabold",
+                garden.availableLetterPlants.length >= 3 ? "text-[var(--pink)]" : "text-[#6b5c53]"
+              )}>
+                {t("garden.v3.letterTitle")}
+              </h3>
+              <p className="mt-0.5 text-[11px] font-semibold text-[var(--muted)]">
+                {garden.availableLetterPlants.length >= 3
+                  ? t("garden.v3.letterReady")
+                  : t("garden.v3.letterLocked", { count: Math.max(0, 3 - garden.availableLetterPlants.length) })}
+              </p>
+            </div>
+            {garden.availableLetterPlants.length >= 3 && (
+              <button
+                onClick={() => { setSelectedSeedIds([]); setLetterPickerOpen(true); }}
+                className="inline-flex h-10 items-center rounded-full bg-gradient-to-b from-[var(--pink-2)] to-[var(--pink)] px-4 text-[12px] font-extrabold text-white shadow-[0_6px_16px_rgba(255,111,134,0.3),inset_0_1px_rgba(255,255,255,0.35)] shrink-0"
+              >
+                {t("garden.v3.writeLetter")}
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* Sheets (seed vault, harvest, plant info, letter picker) remain same structure */}
+      {/* Sheets */}
       {seedVaultOpen && <Sheet onClose={() => setSeedVaultOpen(false)}>
         <div className="flex items-start justify-between gap-4">
           <div><h2 className="font-display text-2xl font-bold text-[var(--ink)]">{t("garden.seedVaultTitle")}</h2><p className="mt-1 text-sm text-[var(--muted)]">{t("garden.v3.vaultSubtitle")}</p></div>
