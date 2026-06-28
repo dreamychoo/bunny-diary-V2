@@ -11,6 +11,7 @@ import { cn } from "../components/ui/utils";
 import { useI18n } from "../i18n";
 import {
   appendEmotionEntry,
+  canWriteToday,
   createEntryId,
   EmotionEntry,
   EmotionKey,
@@ -194,6 +195,11 @@ export default function EmotionRescue() {
       return;
     }
     setEmptyNoteError(false);
+
+    if (!canWriteToday()) {
+      setSaveError(language === "zh" ? "每天最多写 2 篇笔记，明天再来吧" : "Max 2 entries per day. See you tomorrow.");
+      return;
+    }
     setIsSaving(true);
 
     const entry: EmotionEntry = {

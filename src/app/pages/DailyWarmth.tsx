@@ -8,7 +8,7 @@ import { Card } from "../components/ui/card";
 import { Textarea } from "../components/ui/textarea";
 import { cn } from "../components/ui/utils";
 import { useI18n } from "../i18n";
-import { appendWarmthEntry, createEntryId, weatherKeys, WeatherKey, WarmthEntry } from "../lib/storage";
+import { appendWarmthEntry, canWriteToday, createEntryId, WeatherKey, WarmthEntry } from "../lib/storage";
 import { routes } from "../routes";
 
 type InnerWeather = {
@@ -101,6 +101,12 @@ export default function DailyWarmth() {
     event.preventDefault();
     if (isSaving) return;
     setSaveError(null);
+
+    if (!canWriteToday()) {
+      setSaveError(language === "zh" ? "每天最多写 2 篇笔记，明天再来吧" : "Max 2 entries per day. See you tomorrow.");
+      return;
+    }
+
     setIsSaving(true);
 
     const entry: WarmthEntry = {
