@@ -77,7 +77,7 @@ export default function CollectionRoom() {
 
         {/* Plant collection — secondary, right column */}
         <section className="collection-panel">
-          <header className="collection-section-heading"><Archive /><h2>{t("collection.plants")}</h2></header>
+          <header className="collection-section-heading"><img src="/assets/v2/items/white-flower.png" alt="" className="h-5 w-5 object-contain" /><h2>{t("collection.plants")}</h2></header>
           {groups.length ? (
             <div className="collection-plant-grid">
               {groups.map(([variant, seeds]) => {
