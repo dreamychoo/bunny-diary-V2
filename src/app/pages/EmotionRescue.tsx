@@ -219,6 +219,7 @@ export default function EmotionRescue() {
       return;
     }
     setEmptyNoteError(false);
+    setIsSaving(true);
 
     const entry: EmotionEntry = {
       id: createEntryId("emotion"),
@@ -234,7 +235,6 @@ export default function EmotionRescue() {
 
     try {
       appendEmotionEntry(entry);
-      setIsSaving(true);
       setShowPlanting(true);
     } catch {
       setIsSaving(false);

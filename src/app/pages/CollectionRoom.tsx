@@ -80,7 +80,7 @@ export default function CollectionRoom() {
               <ChevronRight className="h-4 w-4 shrink-0 text-[#aaa09a] transition-transform group-hover:translate-x-0.5" />
             </Link>
           ))}</div> : <div className="collection-empty"><div className="text-3xl opacity-40">✉️</div><p>{t("collection.emptyLetters")}</p></div>}
-          {garden.letters.length === 0 && garden.collectedSeeds.length >= 3 && (
+          {garden.letters.length === 0 && garden.availableLetterPlants.length >= 3 && (
             <div className="collection-garden-link"><span>{t("collection.gardenHint")}</span><Link to={routes.bunnyGarden}>{t("collection.goGarden")} <ChevronRight /></Link></div>
           )}
         </section>

@@ -53,6 +53,8 @@ export default function DiaryLayout() {
 
   const handleSave = async () => {
     if (!cardRef.current) return;
+    const btn = document.activeElement as HTMLButtonElement | null;
+    if (btn) { btn.disabled = true; btn.textContent = language === "zh" ? "生成中…" : "Saving…"; }
     try {
       const dataUrl = await toPng(cardRef.current, { backgroundColor: "#faf9f7", pixelRatio: 2 });
       const link = document.createElement("a");
@@ -61,6 +63,8 @@ export default function DiaryLayout() {
       link.click();
     } catch {
       // silently fail
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = language === "zh" ? "保存图片" : "Save Image"; }
     }
   };
 

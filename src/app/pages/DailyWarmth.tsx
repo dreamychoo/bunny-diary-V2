@@ -57,7 +57,6 @@ export default function DailyWarmth() {
   const [note, setNote] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const [showComfort, setShowComfort] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showPlanting, setShowPlanting] = useState(false);
   const [promptIndex, setPromptIndex] = useState(0);
@@ -97,6 +96,7 @@ export default function DailyWarmth() {
     event.preventDefault();
     if (isSaving) return;
     setSaveError(null);
+    setIsSaving(true);
 
     const entry: WarmthEntry = {
       id: createEntryId("warmth"),
@@ -110,13 +110,7 @@ export default function DailyWarmth() {
 
     try {
       appendWarmthEntry(entry);
-
-      if (!weather || negativeWeatherKeys.has(weather as WeatherKey)) {
-        setShowComfort(true);
-      } else {
-        setIsSaving(true);
-        setShowPlanting(true);
-      }
+      setShowPlanting(true);
     } catch {
       setIsSaving(false);
       setShowPlanting(false);
@@ -130,26 +124,8 @@ export default function DailyWarmth() {
 
   return (
     <AppShell title={t("daily.title")} subtitle={t("daily.subtitle")} headerMascotVariant="warmth">
-      {showComfort ? (
-        <div className="mx-auto max-w-[34rem] pt-6">
-          <Card className="border-[#e6c779]/60 bg-[#ffffff] p-6 text-center">
-            <div className="text-4xl">🐰</div>
-            <h2 className="font-display mt-4 text-xl font-bold text-[#4a3b34]">{t("daily.comfort.title")}</h2>
-            <p className="mt-3 whitespace-pre-line text-sm leading-7 text-[#7f746e]">{t("daily.comfort.body")}</p>
-            <div className="mt-6 flex justify-center gap-3">
-              <Button variant="garden" onClick={() => navigate(routes.emotionRescue, { state: { prefill: note } })}>
-                {t("daily.comfort.talkToBunny")}
-              </Button>
-              <Button variant="ghost" onClick={() => navigate(routes.home)}>
-                {t("daily.comfort.home")}
-              </Button>
-            </div>
-          </Card>
-        </div>
-      ) : (
-        <form onSubmit={handleSaveAndCheck} className="mx-auto grid w-full max-w-[34rem] gap-4">
-          {saveError && <p className="rounded-[16px] border border-[#e7c7c2] bg-[#fff5f3] px-4 py-3 text-sm leading-6 text-[#8a615a]">{saveError}</p>}
-
+      {showPlanting ? (
+        <>
           <PlantingAnimationOverlay
             open={showPlanting}
             variant="save-success"
@@ -157,6 +133,25 @@ export default function DailyWarmth() {
             onPrimary={() => navigate(routes.bunnyGarden, { state: { openSeedVault: true } })}
             onSecondary={() => navigate(routes.home)}
           />
+          {weather && negativeWeatherKeys.has(weather as WeatherKey) && (
+            <Card className="border-[#e6c779]/60 bg-[#ffffff] p-6 text-center">
+              <div className="text-4xl">🐰</div>
+              <h2 className="font-display mt-4 text-xl font-bold text-[#4a3b34]">{t("daily.comfort.title")}</h2>
+              <p className="mt-3 whitespace-pre-line text-sm leading-7 text-[#7f746e]">{t("daily.comfort.body")}</p>
+              <div className="mt-6 flex justify-center gap-3">
+                <Button variant="garden" onClick={() => navigate(routes.emotionRescue, { state: { prefill: note } })}>
+                  {t("daily.comfort.talkToBunny")}
+                </Button>
+                <Button variant="ghost" onClick={() => navigate(routes.home)}>
+                  {t("daily.comfort.home")}
+                </Button>
+              </div>
+            </Card>
+          )}
+        </>
+      ) : (
+        <form onSubmit={handleSaveAndCheck} className="mx-auto grid w-full max-w-[34rem] gap-4">
+          {saveError && <p className="rounded-[16px] border border-[#e7c7c2] bg-[#fff5f3] px-4 py-3 text-sm leading-6 text-[#8a615a]">{saveError}</p>}
 
           <Card className="border-[#e6c779]/60 bg-[#ffffff] p-5">
             <div className="flex items-center gap-2 text-sm font-medium text-[#9a8f88]">
@@ -181,7 +176,7 @@ export default function DailyWarmth() {
 
           <Card className="border-[#e6c779]/60 bg-[#ffffff] p-5">
             <div className="flex items-center justify-between">
-              <h2 className="font-display text-lg font-bold text-[#4a3b34]">今天心里的天气</h2>
+              <h2 className="font-display text-lg font-bold text-[#4a3b34]">{t("daily.mood")}</h2>
               <button
                 type="button"
                 onClick={() => setShowHelp((v) => !v)}

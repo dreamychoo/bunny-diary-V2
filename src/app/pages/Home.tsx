@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { BookOpen, ChevronRight, NotebookPen, Sparkles, Sprout } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
@@ -51,9 +52,13 @@ function getEntryPreview(entry: DiaryEntry, t: (key: string) => string) {
 
 export default function Home() {
   const { language, t } = useI18n();
-  const entries = getAllEntries();
+  const [entries, setEntries] = useState(() => getAllEntries());
   const latestEntry = entries[0] ?? null;
   const recentEntries = entries.slice(0, 3);
+
+  useEffect(() => {
+    setEntries(getAllEntries());
+  }, []);
 
   return (
     <AppShell>

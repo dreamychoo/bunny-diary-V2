@@ -108,7 +108,6 @@ export default function JournalEntryDetail() {
     setEmotionEntries(updated.filter((e): e is import("../lib/storage").EmotionEntry => e.type === "emotion"));
     setWarmthEntries(updated.filter((e): e is import("../lib/storage").WarmthEntry => e.type === "warmth"));
     setIsEditing(false);
-    navigate(0);
   }
 
   return (

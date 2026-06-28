@@ -92,7 +92,7 @@ export const extraSymptomKeys = [
 
 export const symptomKeys = [...primarySymptomKeys, ...extraSymptomKeys] as const;
 export const moodKeys = ["gentle", "tired", "hopeful", "quiet", "tender", "unsettled"] as const;
-export const weatherKeys = ["sunny", "cloudy", "rainy", "foggy", "thunder", "starry"] as const;
+export const weatherKeys = ["sunny", "cloudy", "rainy", "foggy", "windy", "moonlit", "thunder", "starry"] as const;
 
 export type EmotionKey = (typeof emotionKeys)[number];
 export type SymptomKey = (typeof symptomKeys)[number];
