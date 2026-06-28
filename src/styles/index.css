@@ -221,10 +221,11 @@ a { color: inherit; text-decoration: none; }
 .app-bunny-says p {
   margin-top: 8px;
   padding-right: 88px;
-  font-size: 15px;
-  font-weight: 800;
-  line-height: 1.35;
-  letter-spacing: -0.02em;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  font-family: "Lora", "Cormorant Garamond", Georgia, "Times New Roman", serif;
 }
 
 .app-bunny-says .zzz {
