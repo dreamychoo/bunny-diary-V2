@@ -175,7 +175,7 @@ export default function EmotionRescue() {
     if ((location.state as { prefill?: string } | null)?.prefill) {
       setWhatHappened((location.state as { prefill: string }).prefill);
     }
-  }, [location.state]);
+  }, []);
 
   useEffect(() => {
     const textarea = whatHappenedRef.current;
