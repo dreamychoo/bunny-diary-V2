@@ -1,4 +1,4 @@
-import { Archive, ChevronRight, Mail, Sprout } from "lucide-react";
+import { Archive, ChevronRight, Mail } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
@@ -33,7 +33,7 @@ function groupPlants(seeds: GardenSeed[]) {
 }
 
 function formatDate(timestamp: string, language: string) {
-  return new Intl.DateTimeFormat(language === "zh" ? "zh-CN" : "en", { month: "short", day: "numeric" }).format(new Date(timestamp));
+  return new Intl.DateTimeFormat(language === "zh" ? "zh-CN" : "en", { month: "short", day: "numeric", year: "numeric" }).format(new Date(timestamp));
 }
 
 export default function CollectionRoom() {
@@ -48,39 +48,56 @@ export default function CollectionRoom() {
   return (
     <AppShell title={t("collection.title")} subtitle={t("collection.subtitle")} headerMascotVariant="reading" wide>
       <div className="collection-layout">
+        {/* Mailbox — primary, left column */}
         <section className="collection-panel">
-          <header className="collection-section-heading"><Archive /><h2>{t("collection.plants")}</h2></header>
-          {groups.length ? <div className="collection-plant-list">{groups.map(([variant, seeds]) => {
-            const seedType = seeds[0].seedType;
-            const targetEntryId = seeds[0].entryId;
-            return seeds.length > 1 ? (
-              <Link key={variant} to={routes.journalEntry(targetEntryId)} state={{ groupIds: seeds.map((s) => s.entryId) }} className="collection-plant-row group">
-                <img src={assets[variant]} alt="" />
-                <div className="min-w-0 flex-1"><h3>{t(`garden.variant.${variant}`)}</h3><span className={seedType === "warmth" ? "plant-kind plant-kind--warm" : "plant-kind plant-kind--worry"}>{t(seedType === "warmth" ? "garden.v3.warmPlant" : "garden.v3.worryPlant")}</span></div>
-                <strong>× {seeds.length}</strong>
-                <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[#aaa09a] transition-transform group-hover:translate-x-0.5" />
-              </Link>
-            ) : (
-              <Link key={variant} to={routes.journalEntry(targetEntryId)} className="collection-plant-row group">
-                <img src={assets[variant]} alt="" />
-                <div className="min-w-0 flex-1"><h3>{t(`garden.variant.${variant}`)}</h3><span className={seedType === "warmth" ? "plant-kind plant-kind--warm" : "plant-kind plant-kind--worry"}>{t(seedType === "warmth" ? "garden.v3.warmPlant" : "garden.v3.worryPlant")}</span></div>
-                <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[#aaa09a] transition-transform group-hover:translate-x-0.5" />
-              </Link>
-            );
-          })}</div> : <div className="collection-empty"><div className="text-3xl opacity-40">🌱</div><p>{t("collection.emptyPlants")}</p></div>}
-        </section>
-
-        <section className="collection-panel">
-          <header className="collection-section-heading collection-section-heading--mail"><Mail /><h2>{t("collection.mailbox")}</h2></header>
-          {garden.letters.length ? <div className="mail-list">{garden.letters.map((letter) => (
-            <Link key={letter.id} to={routes.letter(letter.id)} className="mail-row group">
-              <span className="mail-icon"><Mail /></span>
-              <div className="min-w-0 flex-1"><h3>{formatDate(letter.createdAt, language)} · {t(`letter.type.${letter.letterType}`)}</h3><p>{t(`letter.subject.${letter.letterType}`)}</p></div>
-              <ChevronRight className="h-4 w-4 shrink-0 text-[#aaa09a] transition-transform group-hover:translate-x-0.5" />
-            </Link>
-          ))}</div> : <div className="collection-empty"><div className="text-3xl opacity-40">✉️</div><p>{t("collection.emptyLetters")}</p></div>}
+          <header className="collection-section-heading"><Mail /><h2>{t("collection.mailbox")}</h2></header>
+          {garden.letters.length ? (
+            <div className="collection-mail-cards">
+              {garden.letters.map((letter) => (
+                <Link key={letter.id} to={routes.letter(letter.id)} className="collection-mail-card group">
+                  <span className="mail-icon"><Mail /></span>
+                  <div className="min-w-0 flex-1">
+                    <h3>{t(`letter.subject.${letter.letterType}`)}</h3>
+                    <time>{formatDate(letter.createdAt, language)} · {t(`letter.type.${letter.letterType}`)}</time>
+                  </div>
+                  <ChevronRight className="h-4 w-4 shrink-0 text-[#aaa09a] transition-transform group-hover:translate-x-0.5" />
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="collection-empty">
+              <div className="text-3xl opacity-40">✉️</div>
+              <p>{t("collection.emptyLetters")}</p>
+            </div>
+          )}
           {garden.letters.length === 0 && garden.availableLetterPlants.length >= 3 && (
             <div className="collection-garden-link"><span>{t("collection.gardenHint")}</span><Link to={routes.bunnyGarden}>{t("collection.goGarden")} <ChevronRight /></Link></div>
+          )}
+        </section>
+
+        {/* Plant collection — secondary, right column */}
+        <section className="collection-panel">
+          <header className="collection-section-heading"><Archive /><h2>{t("collection.plants")}</h2></header>
+          {groups.length ? (
+            <div className="collection-plant-grid">
+              {groups.map(([variant, seeds]) => {
+                const seedType = seeds[0].seedType;
+                const targetEntryId = seeds[0].entryId;
+                return (
+                  <Link key={variant} to={routes.journalEntry(targetEntryId)} state={{ groupIds: seeds.map((s) => s.entryId) }}>
+                    <img src={assets[variant]} alt="" />
+                    <h3>{t(`garden.variant.${variant}`)}</h3>
+                    {seeds.length > 1 && <span className="plant-count">× {seeds.length}</span>}
+                    <span className="plant-kind">{t(seedType === "warmth" ? "garden.v3.warmPlant" : "garden.v3.worryPlant")}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="collection-empty">
+              <div className="text-3xl opacity-40">🌱</div>
+              <p>{t("collection.emptyPlants")}</p>
+            </div>
           )}
         </section>
       </div>

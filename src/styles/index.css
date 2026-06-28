@@ -423,25 +423,31 @@ a { color: inherit; text-decoration: none; }
 .garden-toast { position:fixed; left:50%; bottom:5.75rem; z-index:70; transform:translateX(-50%); padding:.75rem 1rem; border:1px solid rgba(217,205,197,0.5); border-radius:999px; background:#fffdf9; color:var(--ink); box-shadow:0 10px 30px rgba(75,58,52,.12); font-size:.86rem; font-weight:650; }
 
 .collection-layout { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; align-items:start; }
+@media (max-width:720px) { .collection-layout { grid-template-columns:1fr; } }
+
 .collection-panel { overflow:hidden; border:1px solid rgba(217,205,197,0.35); border-radius:24px; background:rgba(255,253,249,.9); }
 .collection-section-heading { display:flex; align-items:center; gap:.65rem; padding:1rem 1.25rem; border-bottom:1px solid rgba(217,205,197,0.35); background:var(--pink-soft); color:var(--pink); }
-.collection-section-heading--mail { background:#fff0f2; color:var(--pink); }
 .collection-section-heading svg { width:20px; height:20px; }
 .collection-section-heading h2 { font-family:"Lora", Georgia, serif; font-size:1.12rem; font-weight:700; }
-.collection-plant-list, .mail-list { padding:0 1.1rem; }
-.collection-plant-row { display:flex; min-height:78px; align-items:center; gap:1rem; padding:.7rem .2rem; border-bottom:1px solid rgba(217,205,197,0.3); }
-.collection-plant-row:last-child { border-bottom:0; }
-.collection-plant-row img { width:52px; height:58px; object-fit:contain; }
-.collection-plant-row h3, .mail-row h3 { font-weight:700; }
-.collection-plant-row > strong { font-size:1.05rem; }
-.plant-kind { display:inline-block; margin-top:.22rem; font-size:.72rem; color:var(--pink); }
-.plant-kind--worry { color:var(--muted); }
-.mail-row { display:flex; min-height:78px; align-items:center; gap:.85rem; border-bottom:1px solid rgba(217,205,197,0.3); }
-.mail-row:last-child { border-bottom:0; }
-.mail-row > svg { width:17px; color:var(--muted); }
-.mail-row p { margin-top:.18rem; overflow:hidden; color:var(--muted); font-size:.8rem; text-overflow:ellipsis; white-space:nowrap; }
-.mail-icon { display:grid; width:38px; height:38px; flex:0 0 auto; place-items:center; border-radius:12px; background:var(--pink-soft); color:var(--pink); }
-.mail-icon svg { width:18px; height:18px; }
+
+/* Plant grid — specimen wall */
+.collection-plant-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0; padding:.75rem; }
+.collection-plant-grid a { display:grid; gap:.35rem; justify-items:center; padding:.85rem .4rem; border-radius:18px; text-align:center; transition:100ms ease; }
+.collection-plant-grid a:active { background:var(--pink-soft); transform:scale(.97); }
+.collection-plant-grid img { width:52px; height:62px; object-fit:contain; }
+.collection-plant-grid h3 { font-size:.8rem; font-weight:700; line-height:1.2; }
+.collection-plant-grid .plant-kind { font-size:.68rem; color:var(--muted); }
+.collection-plant-grid .plant-count { display:inline-flex; align-items:center; gap:2px; font-size:.72rem; font-weight:800; color:var(--pink); }
+
+/* Mailbox — card gallery */
+.collection-mail-cards { display:grid; gap:.5rem; padding:.75rem; }
+.collection-mail-card { display:flex; align-items:center; gap:.75rem; padding:.85rem 1rem; border:1px solid rgba(217,205,197,0.3); border-radius:20px; background:rgba(255,255,255,0.7); transition:120ms ease; }
+.collection-mail-card:active { background:var(--pink-soft); border-color:var(--pink); transform:scale(.98); }
+.collection-mail-card .mail-icon { display:grid; width:40px; height:40px; flex:0 0 auto; place-items:center; border-radius:14px; background:var(--pink-soft); color:var(--pink); }
+.collection-mail-card .mail-icon svg { width:18px; height:18px; }
+.collection-mail-card h3 { font-size:.82rem; font-weight:700; }
+.collection-mail-card p { margin-top:.12rem; overflow:hidden; color:var(--muted); font-size:.75rem; text-overflow:ellipsis; white-space:nowrap; }
+.collection-mail-card time { display:block; font-size:.68rem; color:var(--muted); }
 .collection-empty { display:grid; min-height:180px; place-items:center; align-content:center; gap:.6rem; padding:2rem; color:var(--muted); text-align:center; }
 .collection-empty svg { width:30px; height:30px; opacity:.55; }
 .collection-garden-link { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.9rem 1.2rem; border-top:1px solid rgba(217,205,197,0.35); background:rgba(255,253,249,0.9); color:var(--muted); font-size:.78rem; }
