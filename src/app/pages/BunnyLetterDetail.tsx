@@ -7,7 +7,7 @@ import { routes } from "../routes";
 
 const assets: Record<GardenPlantVariant, string> = {
   daisy: "/assets/v2/plants/daisy.png", tulip: "/assets/v2/plants/tulip.png", sunflower: "/assets/v2/plants/sunflower.png", cherry_blossom: "/assets/v2/plants/cherry-tree.png", rose: "/assets/v2/plants/red-rose.png", lavender: "/assets/v2/plants/lavender.png", hibiscus: "/assets/v2/plants/pink-rose.png",
-  sprout: "/assets/v2/plants/clover.png", leaf: "/assets/v2/plants/lotus-leaves.png", clover: "/assets/v2/plants/clover.png", small_tree: "/assets/v2/plants/green-tree.png", pine: "/assets/v2/plants/green-tree.png", four_leaf: "/assets/v2/plants/clover.png", cactus: "/assets/v2/plants/cactus.png", palm: "/assets/v2/plants/green-tree.png", bamboo: "/assets/v2/plants/wheat.png", mushroom: "/assets/v2/plants/mushroom.png"
+  sprout: "/assets/v2/plants/clover.png", leaf: "/assets/v2/plants/lotus-leaves.png", clover: "/assets/v2/plants/clover.png", small_tree: "/assets/v2/plants/green-tree.png", pine: "/assets/v2/plants/green-tree.png", four_leaf: "/assets/v2/plants/clover.png", cactus: "/assets/v2/plants/cactus.png", palm: "/assets/v2/plants/green-tree.png", bamboo: "/assets/v2/plants/grass.png", mushroom: "/assets/v2/plants/mushroom.png"
 };
 
 export default function BunnyLetterDetail() {

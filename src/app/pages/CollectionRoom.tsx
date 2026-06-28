@@ -22,7 +22,7 @@ const assets: Record<GardenPlantVariant, string> = {
   four_leaf: "/assets/v2/plants/clover.png",
   cactus: "/assets/v2/plants/cactus.png",
   palm: "/assets/v2/plants/green-tree.png",
-  bamboo: "/assets/v2/plants/wheat.png",
+  bamboo: "/assets/v2/plants/grass.png",
   mushroom: "/assets/v2/plants/mushroom.png"
 };
 
