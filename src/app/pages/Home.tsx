@@ -1,6 +1,7 @@
-import { BookOpen, ChevronRight, Heart, NotebookPen, Sparkles, Sprout } from "lucide-react";
+import { BookOpen, ChevronRight, NotebookPen, Sparkles, Sprout } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
+import { Mascot } from "../components/Mascot";
 import { cn } from "../components/ui/utils";
 import { useI18n } from "../i18n";
 import { getAllEntries, type DiaryEntry } from "../lib/storage";
@@ -36,7 +37,7 @@ const toneStyles: Record<Tone, { border: string; tab: string; icon: string }> = 
   }
 };
 
-function formatEntryDate(timestamp: string, language: "en" | "zh") {
+function formatDate(timestamp: string, language: "en" | "zh") {
   return new Intl.DateTimeFormat(language === "zh" ? "zh-CN" : "en", {
     month: "short",
     day: "numeric"
@@ -54,91 +55,53 @@ export default function Home() {
   const latestEntry = entries[0] ?? null;
   const recentEntries = entries.slice(0, 3);
 
-  const emotionAction = (
-    <Link
-      to={routes.emotionRescue}
-      className="paper-card group relative flex min-h-[72px] w-full max-w-[420px] items-center gap-3 rounded-[16px] border border-[#e5c8c4]/42 bg-white px-4 py-3 text-left shadow-[0_2px_12px_rgba(90,70,64,0.04)] transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_6px_18px_rgba(90,70,64,0.06)] active:translate-y-0"
-    >
-      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] border border-[#e5c8c4]/50 bg-[#f8efee] text-[#ad7f7b]">
-        <Sparkles className="h-5 w-5" />
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="font-ui block text-sm font-extrabold leading-tight text-[#4a3b34]">{t("home.v4.emotionTitle")}</span>
-        <span className="mt-1 block text-[11px] leading-[1.3] text-[#7f746e]">{t("home.v4.emotionSubtitle")}</span>
-      </span>
-      <ChevronRight className="h-4 w-4 shrink-0 text-[#9b8f88] transition-transform group-hover:translate-x-0.5" />
-    </Link>
-  );
-
-  const gridCards = [
-    {
-      to: routes.dailyWarmth,
-      title: t("home.v4.warmTitle"),
-      subtitle: t("home.v4.warmSubtitle"),
-      label: language === "zh" ? "写写" : "Write",
-      icon: NotebookPen,
-      tone: "warm" as const
-    },
-    {
-      to: routes.pastJournals,
-      title: t("home.memoryTitle"),
-      subtitle: t("home.memorySubtitle"),
-      label: language === "zh" ? "记忆" : "Memory",
-      icon: BookOpen,
-      tone: "memory" as const
-    },
-    {
-      to: routes.bunnyGarden,
-      title: t("home.gardenTitle"),
-      subtitle: t("home.gardenSubtitle"),
-      label: language === "zh" ? "花园" : "Garden",
-      icon: Sprout,
-      tone: "garden" as const
-    },
-    {
-      to: latestEntry ? routes.journalEntry(latestEntry.id) : routes.emotionRescue,
-      title: t("home.todayNoteTitle"),
-      subtitle: latestEntry ? t("home.todayNoteSubtitle") : t("home.todayNoteEmpty"),
-      label: language === "zh" ? "今天" : "Today",
-      icon: NotebookPen,
-      tone: "companion" as const
-    }
-  ];
-
   return (
-    <AppShell showBrand brandAction={emotionAction}>
-      <div className="mx-auto w-full max-w-[420px] pb-8 pt-5 sm:pt-6">
-        <section className="grid grid-cols-2 gap-3" aria-label={t("nav.home")}>
-          {gridCards.map((card) => {
-            const tone = toneStyles[card.tone];
+    <AppShell>
+      <div className="mx-auto w-full max-w-[420px] pt-6">
+        {/* 品牌区：缩小兔兔 + 一行小标题 */}
+        <div className="mb-5 flex items-center gap-3">
+          <button
+            type="button"
+            className="relative grid h-14 w-14 shrink-0 place-items-center outline-none"
+            aria-label={t("app.title")}
+          >
+            <Mascot variant="reading" className="h-14 w-14 object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.035)]" />
+          </button>
+          <div className="min-w-0 flex-1">
+            <p className="font-display text-xl font-bold leading-tight text-[#4a3b34]">{t("app.title")}</p>
+            <p className="mt-0.5 text-xs font-medium text-[#8d817a]">{t("app.tagline")}</p>
+          </div>
+        </div>
+        {/* 四格导航 */}
+        <section className="grid grid-cols-2 gap-2.5">
+          {([
+            { to: routes.dailyWarmth, title: t("home.v4.warmTitle"), subtitle: t("home.v4.warmSubtitle"), label: "写写", icon: NotebookPen, tone: "warm" as Tone },
+            { to: routes.emotionRescue, title: t("home.v4.emotionTitle"), subtitle: t("home.v4.emotionSubtitle"), label: "心事", icon: Sparkles, tone: "emotion" as Tone },
+            { to: routes.bunnyGarden, title: t("home.gardenTitle"), subtitle: t("home.gardenSubtitle"), label: "花园", icon: Sprout, tone: "garden" as Tone },
+            { to: routes.pastJournals, title: t("home.memoryTitle"), subtitle: t("home.memorySubtitle"), label: "记忆", icon: BookOpen, tone: "memory" as Tone }
+          ] as const).map((card) => {
             const Icon = card.icon;
-
+            const tone = toneStyles[card.tone];
             return (
               <Link
                 key={card.title}
                 to={card.to}
-                className={cn(
-                  "paper-card group relative flex min-h-[126px] flex-col items-start rounded-[16px] border bg-white px-3.5 pb-3 pt-5 text-left shadow-[0_2px_12px_rgba(90,70,64,0.04)] transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_6px_18px_rgba(90,70,64,0.06)] active:translate-y-0",
-                  tone.border
-                )}
+                className={cn("paper-card group relative flex min-h-[105px] flex-col items-start rounded-[14px] border bg-white px-3 pb-2.5 pt-4 text-left shadow-[0_2px_12px_rgba(90,70,64,0.04)] transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_6px_18px_rgba(90,70,64,0.06)] active:translate-y-0", tone.border)}
               >
-                <span className={cn("absolute -top-2 left-3 inline-flex h-[22px] items-center rounded-full border px-2.5 text-[9px] font-bold", tone.tab)}>
-                  {card.label}
-                </span>
-                <span className={cn("grid h-8 w-8 place-items-center rounded-[10px] border", tone.icon)}>
-                  <Icon className={cn("h-4 w-4", card.tone === "warm" && "fill-current")} />
-                </span>
-                <span className="font-ui mt-2 block text-[13px] font-extrabold leading-tight text-[#4a3b34]">{card.title}</span>
-                <span className="mt-1 line-clamp-2 text-[10px] leading-[1.35] text-[#7f746e]">{card.subtitle}</span>
-                <ChevronRight className="absolute bottom-3 right-3 h-3.5 w-3.5 text-[#a0958f] transition-transform group-hover:translate-x-0.5" />
+                <span className={cn("absolute -top-2 left-3 inline-flex h-[20px] items-center rounded-full border px-2 text-[9px] font-bold", tone.tab)}>{card.label}</span>
+                <span className={cn("grid h-7 w-7 place-items-center rounded-[9px] border", tone.icon)}><Icon className="h-3.5 w-3.5" /></span>
+                <span className="mt-1.5 block text-[12px] font-extrabold leading-tight text-[#4a3b34]">{card.title}</span>
+                <span className="mt-0.5 line-clamp-2 text-[10px] leading-[1.3] text-[#7f746e]">{card.subtitle}</span>
+                <ChevronRight className="absolute bottom-2 right-2.5 h-3 w-3 text-[#a0958f]" />
               </Link>
             );
           })}
         </section>
 
-        <section className="mt-7" aria-labelledby="recent-entries-title">
-          <div className="mb-3 flex items-center justify-between px-1">
-            <h2 id="recent-entries-title" className="font-ui text-xs font-extrabold text-[#4a3b34]">
+        {/* 最近写下的 */}
+        <section className="mt-5" aria-labelledby="recent-entries-title">
+          <div className="mb-2.5 flex items-center justify-between px-1">
+            <h2 id="recent-entries-title" className="text-[11px] font-extrabold text-[#4a3b34]">
               {t("home.recentEntries")}
             </h2>
             {entries.length > 0 && (
@@ -148,32 +111,32 @@ export default function Home() {
             )}
           </div>
 
-          {recentEntries.length > 0 ? (
-            <div className="overflow-hidden rounded-[16px] border border-[#afc3d8]/30 bg-white shadow-[0_2px_12px_rgba(90,70,64,0.035)]">
-              {recentEntries.map((entry) => (
+          {entries.length > 0 ? (
+            <div className="overflow-hidden rounded-[14px] border border-[#afc3d8]/30 bg-white shadow-[0_2px_12px_rgba(90,70,64,0.035)]">
+              {entries.slice(0, 3).map((entry) => (
                 <Link
                   key={entry.id}
                   to={routes.journalEntry(entry.id)}
-                  className="group flex min-h-[58px] items-center gap-3 border-b border-[#d8d3cc]/35 px-3.5 py-2.5 last:border-b-0 hover:bg-[#faf9f7]"
+                  className="group flex min-h-[50px] items-center gap-2.5 border-b border-[#d8d3cc]/35 px-3 py-2 last:border-b-0 hover:bg-[#faf9f7]"
                 >
                   <span className={cn("h-2 w-2 shrink-0 rounded-full", entry.type === "emotion" ? "bg-[#e5c8c4]" : "bg-[#e6c779]")} />
                   <span className="min-w-0 flex-1 truncate text-[11px] font-medium text-[#5f5149]">{getEntryPreview(entry, t)}</span>
-                  <time className="shrink-0 text-[9px] text-[#9a908a]">{formatEntryDate(entry.timestamp, language)}</time>
-                  <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[#aaa09a] transition-transform group-hover:translate-x-0.5" />
+                  <time className="shrink-0 text-[9px] text-[#9a908a]">{formatDate(entry.timestamp, language)}</time>
+                  <ChevronRight className="h-3 w-3 shrink-0 text-[#aaa09a]" />
                 </Link>
               ))}
             </div>
           ) : (
             <Link
               to={routes.emotionRescue}
-              className="flex min-h-[64px] items-center justify-center rounded-[16px] border border-dashed border-[#cfc7e8]/60 bg-[#f3f0fb]/45 px-4 text-center text-[11px] leading-5 text-[#8177a4]"
+              className="flex min-h-[56px] items-center justify-center rounded-[14px] border border-dashed border-[#cfc7e8]/60 bg-[#f3f0fb]/45 px-4 text-center text-[11px] leading-5 text-[#8177a4]"
             >
               {t("home.empty")}
             </Link>
           )}
         </section>
 
-        <p className="mt-6 text-center font-hand text-[11px] font-bold leading-4 text-[#8f9f7d]">
+        <p className="mt-4 text-center font-hand text-[11px] font-bold leading-4 text-[#8f9f7d]">
           {t("home.takeYourTime")} {t("home.notGoingAnywhere")}
         </p>
       </div>
