@@ -53,13 +53,21 @@ export default function CollectionRoom() {
           <header className="collection-section-heading"><Archive /><h2>{t("collection.plants")}</h2></header>
           {groups.length ? <div className="collection-plant-list">{groups.map(([variant, seeds]) => {
             const seedType = seeds[0].seedType;
-            const firstEntryId = seeds[0].entryId;
-            return <Link key={variant} to={routes.journalEntry(firstEntryId)} className="collection-plant-row group">
-              <img src={assets[variant]} alt="" />
-              <div className="min-w-0 flex-1"><h3>{t(`garden.variant.${variant}`)}</h3><span className={seedType === "warmth" ? "plant-kind plant-kind--warm" : "plant-kind plant-kind--worry"}>{t(seedType === "warmth" ? "garden.v3.warmPlant" : "garden.v3.worryPlant")}</span></div>
-              <strong>× {seeds.length}</strong>
-              <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[#aaa09a] transition-transform group-hover:translate-x-0.5" />
-            </Link>;
+            const targetEntryId = seeds[0].entryId;
+            return seeds.length > 1 ? (
+              <Link key={variant} to={routes.journalEntry(targetEntryId)} state={{ groupIds: seeds.map((s) => s.entryId) }} className="collection-plant-row group">
+                <img src={assets[variant]} alt="" />
+                <div className="min-w-0 flex-1"><h3>{t(`garden.variant.${variant}`)}</h3><span className={seedType === "warmth" ? "plant-kind plant-kind--warm" : "plant-kind plant-kind--worry"}>{t(seedType === "warmth" ? "garden.v3.warmPlant" : "garden.v3.worryPlant")}</span></div>
+                <strong>× {seeds.length}</strong>
+                <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[#aaa09a] transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            ) : (
+              <Link key={variant} to={routes.journalEntry(targetEntryId)} className="collection-plant-row group">
+                <img src={assets[variant]} alt="" />
+                <div className="min-w-0 flex-1"><h3>{t(`garden.variant.${variant}`)}</h3><span className={seedType === "warmth" ? "plant-kind plant-kind--warm" : "plant-kind plant-kind--worry"}>{t(seedType === "warmth" ? "garden.v3.warmPlant" : "garden.v3.worryPlant")}</span></div>
+                <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[#aaa09a] transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            );
           })}</div> : <div className="collection-empty"><div className="text-3xl opacity-40">🌱</div><p>{t("collection.emptyPlants")}</p></div>}
         </section>
 
