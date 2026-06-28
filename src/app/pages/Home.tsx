@@ -20,7 +20,7 @@ export default function Home() {
 
   return (
     <AppShell>
-      <div className="mx-auto w-full max-w-[390px]">
+      <div className="mx-auto w-full max-w-[390px] pt-8">
         <div className="flex items-center gap-2 px-[2px] pb-1">
           <span className="text-base font-bold tracking-tight text-[var(--ink)]/80">{t(greetingKey)}</span>
           <span className="text-pink"><img src="/assets/v2/items/pink-heart.png" alt="" className="h-4 w-4 object-contain" /></span>
