@@ -71,7 +71,7 @@ export default function DiaryLayout() {
     }
   };
 
-  const isEmotion = entry.type === "emotion";
+  const isEmotion = notebookQuote ? false : entry.type === "emotion";
 
   return (
     <AppShell title={t("detail.diaryCard")}>
