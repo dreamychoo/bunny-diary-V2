@@ -200,6 +200,7 @@ a { color: inherit; text-decoration: none; }
   padding: 18px 18px 16px;
   border-top: 1px solid #e8ddd4;
   border-bottom: 1px solid #e8ddd4;
+  background: #fffdf9;
 }
 
 .app-bunny-says > div > span {
