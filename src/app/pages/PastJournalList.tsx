@@ -93,7 +93,7 @@ export default function PastJournalList() {
               className="pl-11"
             />
           </div>
-          <div className="flex gap-1 border-b border-[#e8ded2] px-3 py-2">
+          <div className="flex gap-1 border-b border-[rgba(217,205,197,0.35)] px-3 py-2">
             {filterLabels.map(({ key, label }) => (
               <button
                 key={key}
@@ -101,8 +101,8 @@ export default function PastJournalList() {
                 onClick={() => setFilterType(key)}
                 className={`rounded-full px-3 py-1 text-[12px] font-semibold transition ${
                   filterType === key
-                    ? "bg-[#4a3b34] text-white"
-                    : "bg-[#f0ece7] text-[#7f746e] hover:bg-[#e8e2db]"
+                    ? "bg-[var(--pink)] text-white"
+                    : "bg-[rgba(255,255,255,0.6)] text-[var(--muted)] hover:bg-[rgba(255,255,255,0.9)]"
                 }`}
               >
                 {label}
@@ -120,14 +120,14 @@ export default function PastJournalList() {
                     <div className="flex min-w-0 flex-1 items-center gap-2">
                       <Link to={routes.journalEntry(entry.id)} className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <time className="text-xs font-semibold text-[#7f746e]">{formatDate(entry.timestamp, language)}</time>
+                          <time className="text-xs font-semibold text-[var(--muted)]">{formatDate(entry.timestamp, language)}</time>
                           <span className="text-[13px]">{entry.type === "emotion" ? (entry.emotions.length ? (emotionIcons[entry.emotions[0]] || "💧") : "💧") : (weatherKeys.includes(entry.weather as WeatherKey) ? getWeatherEmoji(entry.weather as WeatherKey) : "☀️")}</span>
                         </div>
                         <h2 className="mt-0.5 text-sm font-bold leading-tight line-clamp-1">{body ? (body.length > 40 ? body.slice(0, 40) + "…" : body) : entryTitle(entry, t)}</h2>
                       </Link>
                       <Link
                         to={routes.diaryLayout(entry.id)}
-                        className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#d8d3cc]/50 bg-[#ffffff]/88 text-[#8d817a] transition hover:bg-[#ffffff] active:scale-[0.98]"
+                        className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[var(--muted)]/50 bg-[rgba(255,255,255,0.88)] text-[var(--muted)] transition hover:bg-white active:scale-[0.98]"
                         aria-label="share card"
                       >
                         <ImageIcon className="h-4 w-4" />
@@ -140,7 +140,7 @@ export default function PastJournalList() {
               <div className="collection-empty py-12">
                 <div className="text-4xl opacity-40">{entries.length ? "🔍" : "📝"}</div>
                 <p className="mt-3 text-lg font-bold">{t("past.noEntries")}</p>
-                <p className="mt-1 text-sm text-[#7f746e]">
+                <p className="mt-1 text-sm text-[var(--muted)]">
                   {entries.length ? t("past.tryDifferentSearch") : t("past.createFirst")}
                 </p>
               </div>

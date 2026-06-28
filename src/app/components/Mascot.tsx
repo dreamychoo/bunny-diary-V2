@@ -13,7 +13,7 @@ type MascotProps = {
 const defaultMascotAssets: Record<MascotVariant, string> = {
   reading: "/assets/v2/rabbits/reading.png",
   writing: "/assets/v2/rabbits/writing.png",
-  listening: "/assets/v2/rabbits/reading.png",
+  listening: "/assets/v2/rabbits/worried.png",
   comfort: "/assets/v2/rabbits/holding-lantern.png",
   happy: "/assets/v2/rabbits/cheering.png",
   warmth: "/assets/v2/rabbits/holding-mug.png",
@@ -45,7 +45,7 @@ export function Mascot({ variant = "reading", className, assetSrc, title, usePla
       xmlns="http://www.w3.org/2000/svg"
       role={title ? "img" : "presentation"}
       aria-hidden={!title}
-      className={cn("block h-auto w-full text-[#4a3b34]", className)}
+      className={cn("block h-auto w-full text-[var(--ink)]", className)}
     >
       {title && <title>{title}</title>}
       <g stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">

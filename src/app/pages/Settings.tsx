@@ -43,7 +43,7 @@ export default function Settings() {
   return (
     <AppShell title={t("settings.title")} subtitle={t("settings.subtitle")} headerMascotVariant="waiting">
       <div className="grid gap-5">
-        <Card className="border-[#d8d3cc]/50 bg-[#ffffff] p-6">
+        <Card className="p-6">
           <form onSubmit={handleSave} className="grid gap-4">
             <div>
               <Label htmlFor="bunnyName">{t("settings.bunnyName")}</Label>
@@ -58,7 +58,7 @@ export default function Settings() {
                   setLanguage(event.target.value as Language);
                   setMessage("");
                 }}
-                className="mt-2 h-11 w-full rounded-[16px] border border-[#d8d3cc]/60 bg-[#ffffff] px-4 text-sm font-bold text-[#4a3b34] shadow-[inset_0_2px_0_rgba(78,59,49,0.03)] outline-none transition focus:border-[#e5c8c4] focus:ring-4 focus:ring-[#f8efee] sm:max-w-xs"
+                className="mt-2 h-11 w-full rounded-[16px] border border-[rgba(217,205,197,0.5)] bg-[rgba(255,255,255,0.8)] px-4 text-sm font-bold text-[var(--ink)] shadow-[inset_0_2px_0_rgba(78,59,49,0.03)] outline-none transition focus:border-[var(--pink)] focus:ring-4 focus:ring-[var(--pink-soft)] sm:max-w-xs"
               >
                 <option value="en">{languageNames.en}</option>
                 <option value="zh">{languageNames.zh}</option>
@@ -74,19 +74,19 @@ export default function Settings() {
           </form>
         </Card>
 
-        <Card className="grid gap-4 border-[#d8d3cc]/50 bg-[#ffffff] p-6 sm:grid-cols-2">
-          <div className="hand-line rounded-[20px] bg-[#eef5fb] p-4">
-            <h2 className="text-xl font-bold">{t("settings.exportTitle")}</h2>
-            <p className="mt-2 text-sm leading-6 text-[#667b8e]">{t("settings.exportBody")}</p>
+        <Card className="grid gap-4 p-6 sm:grid-cols-2">
+          <div className="rounded-[20px] bg-[var(--pink-soft)] p-4">
+            <h2 className="text-xl font-bold text-[var(--ink)]">{t("settings.exportTitle")}</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{t("settings.exportBody")}</p>
             <Button className="mt-4" variant="secondary" onClick={handleExport}>
               <Download className="h-4 w-4" />
               {t("settings.exportButton")}
             </Button>
           </div>
 
-          <div className="hand-line rounded-[20px] bg-[#f8efee] p-4">
-            <h2 className="text-xl font-bold">{t("settings.clearTitle")}</h2>
-            <p className="mt-2 text-sm leading-6 text-[#7f746e]">{t("settings.clearBody")}</p>
+          <div className="rounded-[20px] bg-[#fff0f2]/70 p-4">
+            <h2 className="text-xl font-bold text-[var(--ink)]">{t("settings.clearTitle")}</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{t("settings.clearBody")}</p>
             {confirmingClear ? (
               <div className="mt-4 flex flex-wrap gap-2 rounded-3xl bg-[#fff3f1] p-2">
                 <Button variant="danger" onClick={handleClear}>

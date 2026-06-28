@@ -7,23 +7,23 @@ import { GardenPlantVariant, GardenSeed, getGardenState } from "../lib/storage";
 import { routes } from "../routes";
 
 const assets: Record<GardenPlantVariant, string> = {
-  daisy: "/garden-assets/prepped/warmth-flower-daisy.png",
-  tulip: "/garden-assets/prepped/warmth-flower-blossom.png",
-  sunflower: "/garden-assets/prepped/warmth-flower-sunflower.png",
-  cherry_blossom: "/garden-assets/prepped/warmth-flower-blossom.png",
-  rose: "/garden-assets/prepped/warmth-flower-blossom.png",
-  lavender: "/garden-assets/prepped/warmth-flower-bell.png",
-  hibiscus: "/garden-assets/prepped/warmth-flower-daisy.png",
-  sprout: "/garden-assets/prepped/feeling-sapling.png",
-  leaf: "/garden-assets/prepped/feeling-tree-branch.png",
-  clover: "/garden-assets/prepped/feeling-bush.png",
-  small_tree: "/garden-assets/prepped/feeling-tree-round.png",
-  pine: "/garden-assets/prepped/feeling-tree-round.png",
-  four_leaf: "/garden-assets/prepped/feeling-bush.png",
-  cactus: "/garden-assets/prepped/feeling-bush.png",
-  palm: "/garden-assets/prepped/feeling-tree-branch.png",
-  bamboo: "/garden-assets/prepped/feeling-tree-branch.png",
-  mushroom: "/garden-assets/prepped/feeling-tree-droop.png"
+  daisy: "/assets/v2/plants/daisy.png",
+  tulip: "/assets/v2/plants/tulip.png",
+  sunflower: "/assets/v2/plants/sunflower.png",
+  cherry_blossom: "/assets/v2/plants/cherry-tree.png",
+  rose: "/assets/v2/plants/red-rose.png",
+  lavender: "/assets/v2/plants/lavender.png",
+  hibiscus: "/assets/v2/plants/pink-rose.png",
+  sprout: "/assets/v2/plants/clover.png",
+  leaf: "/assets/v2/plants/lotus-leaves.png",
+  clover: "/assets/v2/plants/clover.png",
+  small_tree: "/assets/v2/plants/green-tree.png",
+  pine: "/assets/v2/plants/green-tree.png",
+  four_leaf: "/assets/v2/plants/clover.png",
+  cactus: "/assets/v2/plants/cactus.png",
+  palm: "/assets/v2/plants/green-tree.png",
+  bamboo: "/assets/v2/plants/wheat.png",
+  mushroom: "/assets/v2/plants/mushroom.png"
 };
 
 function groupPlants(seeds: GardenSeed[]) {

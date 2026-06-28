@@ -27,17 +27,17 @@ function Field({ label, value }: { label: string; value?: string | number }) {
   if (!content) return null;
 
   return (
-    <div className="hand-line rounded-[18px] bg-[#ffffff] p-5">
-      <p className="text-sm font-bold text-[#4a3b34]">{label}</p>
-      <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-[#7f6b62]">{content}</p>
+    <div className="rounded-[18px] bg-[rgba(255,255,255,0.6)] p-5">
+      <p className="text-sm font-bold text-[var(--ink)]">{label}</p>
+      <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-[var(--muted)]">{content}</p>
     </div>
   );
 }
 
 function detailTone(type: "emotion" | "warmth") {
   return type === "emotion"
-    ? "border-[#e5c8c4]/60 bg-[#f8efee]"
-    : "border-[#e6c779]/60 bg-[#fbf3dc]";
+    ? "border-[var(--pink-soft)] bg-[var(--pink-soft)]"
+    : "border-[var(--pink-soft)] bg-[var(--pink-soft)]";
 }
 
 export default function JournalEntryDetail() {
@@ -55,9 +55,9 @@ export default function JournalEntryDetail() {
   if (!entry) {
     return (
       <AppShell title={t("detail.notFoundTitle")} subtitle={t("detail.notFoundSubtitle")} headerMascotVariant="waiting">
-        <Card className="border-[#afc3d8]/60 bg-[#eef5fb] p-6 text-center">
+        <Card className="p-6 text-center">
           <Mascot variant="empty" className="mx-auto mb-4 w-24 opacity-80" />
-          <p className="text-sm leading-7 text-[#7f746e]">{t("detail.notFoundBody")}</p>
+          <p className="text-sm leading-7 text-[var(--muted)]">{t("detail.notFoundBody")}</p>
           <Link className="mt-5 inline-block" to={routes.pastJournals}>
             <Button variant="secondary">
               <ArrowLeft className="h-4 w-4" />
@@ -118,7 +118,7 @@ export default function JournalEntryDetail() {
       <Card className={`p-6 ${detailTone(entry.type)}`}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="inline-flex items-center gap-2 rounded-full border border-[#d8d3cc]/45 bg-[#ffffff] px-4 py-2 text-sm font-bold">
+            <p className="inline-flex items-center gap-2 rounded-full border border-[var(--muted)]/40 bg-[rgba(255,255,255,0.6)] px-4 py-2 text-sm font-bold">
               <CalendarDays className="h-4 w-4" />
               {formatDate(entry.timestamp, language)}
             </p>

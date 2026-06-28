@@ -123,44 +123,42 @@ export default function DailyWarmth() {
     : innerWeatherOptions.map((w) => `${w.emoji}${t(`weatherKey.${w.key}`)} = ${w.helpEn}`).join(" · ");
 
   return (
-    <AppShell title={t("daily.title")} subtitle={t("daily.subtitle")} headerMascotVariant="warmth">
-      {showPlanting ? (
-        <>
-          <PlantingAnimationOverlay
-            open={showPlanting}
-            variant="save-success"
-            tone="warmth"
-            onPrimary={() => navigate(routes.bunnyGarden, { state: { openSeedVault: true } })}
-            onSecondary={() => navigate(routes.home)}
-          />
-          {weather && negativeWeatherKeys.has(weather as WeatherKey) && (
-            <Card className="border-[#e6c779]/60 bg-[#ffffff] p-6 text-center">
-              <div className="text-4xl">🐰</div>
-              <h2 className="font-display mt-4 text-xl font-bold text-[#4a3b34]">{t("daily.comfort.title")}</h2>
-              <p className="mt-3 whitespace-pre-line text-sm leading-7 text-[#7f746e]">{t("daily.comfort.body")}</p>
-              <div className="mt-6 flex justify-center gap-3">
-                <Button variant="garden" onClick={() => navigate(routes.emotionRescue, { state: { prefill: note } })}>
-                  {t("daily.comfort.talkToBunny")}
-                </Button>
-                <Button variant="ghost" onClick={() => navigate(routes.home)}>
-                  {t("daily.comfort.home")}
-                </Button>
-              </div>
-            </Card>
-          )}
-        </>
-      ) : (
-        <form onSubmit={handleSaveAndCheck} className="mx-auto grid w-full max-w-[34rem] gap-4">
+    <AppShell title={t("daily.title")} subtitle={t("daily.subtitle")} headerMascotVariant="writing">
+      {showPlanting && !(weather && negativeWeatherKeys.has(weather as WeatherKey)) && (
+        <PlantingAnimationOverlay
+          open={showPlanting}
+          variant="save-success"
+          tone="warmth"
+          onPrimary={() => navigate(routes.bunnyGarden, { state: { openSeedVault: true } })}
+          onSecondary={() => navigate(routes.home)}
+        />
+      )}
+      {showPlanting && weather && negativeWeatherKeys.has(weather as WeatherKey) ? (
+        <Card className="p-6 text-center">
+          <img src="/assets/v2/rabbits/cheering.png" alt="" className="mx-auto h-40 w-40 object-contain" />
+          <h2 className="font-display mt-4 text-xl font-bold text-[var(--ink)]">{t("daily.comfort.title")}</h2>
+          <p className="mt-3 whitespace-pre-line text-sm leading-7 text-[var(--muted)]">{t("daily.comfort.body")}</p>
+          <div className="mt-6 flex justify-center gap-3">
+            <Button variant="primary" onClick={() => navigate(routes.emotionRescue, { state: { prefill: note } })}>
+              {t("daily.comfort.talkToBunny")}
+            </Button>
+            <Button variant="ghost" onClick={() => navigate(routes.home)}>
+              {t("daily.comfort.home")}
+            </Button>
+          </div>
+        </Card>
+      ) : showPlanting ? null : (
+        <form onSubmit={handleSaveAndCheck} className="mx-auto grid w-full max-w-[34rem] gap-3">
           {saveError && <p className="rounded-[16px] border border-[#e7c7c2] bg-[#fff5f3] px-4 py-3 text-sm leading-6 text-[#8a615a]">{saveError}</p>}
 
-          <Card className="border-[#e6c779]/60 bg-[#ffffff] p-5">
-            <div className="flex items-center gap-2 text-sm font-medium text-[#9a8f88]">
-              <span className="text-[#e6c779]">✨</span>
-              <span className="animate-fade-in text-[14px]">{currentPrompts[promptIndex]}</span>
-              <button type="button" onClick={handleRefreshPrompt} className="ml-auto grid h-7 w-7 place-items-center rounded-full text-[#b3a79f] hover:bg-[#f8f4ee]" aria-label="refresh prompt">
+          <Card className="p-5">
+            <div className="flex items-center gap-2 text-sm font-medium text-[var(--muted)]">
+              <span className="text-[var(--pink)]">✨</span>
+              <span className="animate-fade-in text-[14px] text-[var(--ink)]">{currentPrompts[promptIndex]}</span>
+              <button type="button" onClick={handleRefreshPrompt} className="ml-auto grid h-7 w-7 place-items-center rounded-full text-[var(--muted)] hover:bg-[rgba(255,255,255,0.5)]" aria-label="refresh prompt">
                 <RefreshCw className="h-3.5 w-3.5" />
               </button>
-              <button type="button" onClick={handleWritePrompt} className="grid h-7 w-7 place-items-center rounded-full text-[#b3a79f] hover:bg-[#f8f4ee]" aria-label="write prompt">
+              <button type="button" onClick={handleWritePrompt} className="grid h-7 w-7 place-items-center rounded-full text-[var(--muted)] hover:bg-[rgba(255,255,255,0.5)]" aria-label="write prompt">
                 <ChevronDown className="h-3.5 w-3.5 -rotate-45" />
               </button>
             </div>
@@ -170,17 +168,17 @@ export default function DailyWarmth() {
               value={note}
               onChange={(event) => setNote(event.target.value)}
               placeholder={t("daily.notePlaceholder")}
-              className="mt-3 min-h-[8.75rem] overflow-hidden border-[#e7ddd3] bg-transparent text-[16px] leading-8 shadow-none focus:border-[#e6c779]/55 focus:ring-0"
+              className="mt-3 min-h-[8.75rem] overflow-hidden border-[rgba(217,205,197,0.3)] bg-transparent text-[16px] leading-8 shadow-none focus:border-[var(--pink)]/55 focus:ring-0"
             />
           </Card>
 
-          <Card className="border-[#e6c779]/60 bg-[#ffffff] p-5">
+          <Card className="p-5">
             <div className="flex items-center justify-between">
-              <h2 className="font-display text-lg font-bold text-[#4a3b34]">{t("daily.mood")}</h2>
+              <h2 className="font-display text-lg font-bold text-[var(--ink)]">{t("daily.mood")}</h2>
               <button
                 type="button"
                 onClick={() => setShowHelp((v) => !v)}
-                className="grid h-7 w-7 place-items-center rounded-full border border-[#d8d3cc] text-[11px] text-[#8d817a] hover:bg-[#f8f4ee]"
+                className="grid h-7 w-7 place-items-center rounded-full border border-[var(--muted)] text-[11px] text-[var(--muted)] hover:bg-[rgba(255,255,255,0.5)]"
                 aria-label="help"
               >
                 ?
@@ -188,7 +186,7 @@ export default function DailyWarmth() {
             </div>
 
             {showHelp && (
-              <p className="mt-3 rounded-[12px] bg-[#f8f4ee] px-3 py-2 text-[11px] leading-[1.6] text-[#7c6f67]">
+              <p className="mt-3 rounded-[12px] bg-[rgba(255,255,255,0.6)] px-3 py-2 text-[11px] leading-[1.6] text-[var(--muted)]">
                 {helpText}
               </p>
             )}
@@ -202,8 +200,8 @@ export default function DailyWarmth() {
                   className={cn(
                     "inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-[14px] font-semibold transition active:scale-[0.98]",
                     weather === opt.key
-                      ? "border-[#c5a647] bg-[#e6c779] text-[#4a3b34]"
-                      : "border-[#e6c779]/45 bg-[#ffffff] text-[#7f6b62] hover:bg-[#fbf3dc]"
+                      ? "border-[var(--pink)] bg-[var(--pink-soft)] text-[var(--pink)]"
+                      : "border-[rgba(255,111,134,0.3)] bg-[rgba(255,255,255,0.6)] text-[var(--muted)] hover:bg-[var(--pink-soft)]"
                   )}
                 >
                   <span className="text-[16px]">{opt.emoji}</span>

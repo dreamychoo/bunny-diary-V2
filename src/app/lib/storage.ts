@@ -278,7 +278,8 @@ const defaultSettings: BunnyDiarySettings = {
 };
 
 const GARDEN_PLOT_COUNT = 10;
-const MATURITY_MIN_HOURS = 8;
+const MATURITY_SPROUT_MINUTES = 2;
+const MATURITY_BLOOM_MINUTES = 5;
 const plantStages: PlantStage[] = ["seed", "sprout", "young", "flower", "bloom"];
 const warmPlantKinds: WarmPlantKind[] = ["daisy", "tulip", "sunflower", "cherry_blossom"];
 const emotionPlantKinds: EmotionPlantKind[] = ["clover", "moon_grass", "lavender", "wildflower"];
@@ -514,29 +515,13 @@ function summarizeEntry(entry: DiaryEntry, maxLength = 20) {
   return text.length > maxLength ? `${text.slice(0, maxLength)}…` : text;
 }
 
-function hasPassedLocalDay(plantedAt: Date, now: Date) {
-  return (
-    now.getFullYear() > plantedAt.getFullYear() ||
-    now.getMonth() > plantedAt.getMonth() ||
-    now.getDate() > plantedAt.getDate()
-  );
-}
-
-function getNextLocalMidnight(date: Date) {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 0, 0, 0, 0);
-}
-
 function computeMaturesAt(plantedAtIso: string) {
-  const plantedAt = new Date(plantedAtIso);
-  const minByHours = plantedAt.getTime() + MATURITY_MIN_HOURS * 60 * 60 * 1000;
-  const nextMidnight = getNextLocalMidnight(plantedAt).getTime();
-  return new Date(Math.max(minByHours, nextMidnight)).toISOString();
+  return new Date(new Date(plantedAtIso).getTime() + MATURITY_BLOOM_MINUTES * 60 * 1000).toISOString();
 }
 
 function isSeedMature(seed: GardenSeed, now = new Date()) {
   if (!seed.plantedAt || !seed.maturesAt) return false;
-  const plantedAt = new Date(seed.plantedAt);
-  return hasPassedLocalDay(plantedAt, now) && now.getTime() >= new Date(seed.maturesAt).getTime();
+  return now.getTime() >= new Date(seed.maturesAt).getTime();
 }
 
 function createSeedForEntry(entry: DiaryEntry): GardenSeed {
@@ -663,13 +648,7 @@ export function setEmotionEntries(entries: EmotionEntry[]) {
 export function appendEmotionEntry(entry: EmotionEntry) {
   const entries = getEmotionEntries();
   setEmotionEntries([...entries, entry]);
-  // ponytail: lightweight seed append instead of full garden rebuild
-  const seeds = readSeeds();
-  const seedId = createSeedId(entry.id);
-  if (!seeds.some((s) => s.id === seedId)) {
-    seeds.push(createSeedForEntry(entry));
-  }
-  writeSeeds(seeds);
+  syncGardenStorage();
 }
 
 export function getWarmthEntries() {
@@ -683,13 +662,7 @@ export function setWarmthEntries(entries: WarmthEntry[]) {
 export function appendWarmthEntry(entry: WarmthEntry) {
   const entries = getWarmthEntries();
   setWarmthEntries([...entries, entry]);
-  // ponytail: lightweight seed append instead of full garden rebuild
-  const seeds = readSeeds();
-  const seedId = createSeedId(entry.id);
-  if (!seeds.some((s) => s.id === seedId)) {
-    seeds.push(createSeedForEntry(entry));
-  }
-  writeSeeds(seeds);
+  syncGardenStorage();
 }
 
 export function getAllEntries() {

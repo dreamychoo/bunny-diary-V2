@@ -224,7 +224,7 @@ export default function EmotionRescue() {
       <form
         onSubmit={handleSubmit}
         className={cn(
-          "mx-auto grid w-full max-w-[34rem] gap-4 transition-opacity duration-300 sm:gap-5",
+          "mx-auto grid w-full max-w-[34rem] gap-3 pb-24 transition-opacity duration-300 sm:gap-4",
           showPlanting && "pointer-events-none opacity-0"
         )}
       >
@@ -233,15 +233,15 @@ export default function EmotionRescue() {
           {emptyNoteError && <p className="mx-auto max-w-xs rounded-[16px] border border-[#e7c7c2] bg-[#fff5f3] px-4 py-3 text-sm leading-6 text-[#8a615a]">{t("common.saveRequired")}</p>}
         </section>
 
-        <Card className="overflow-hidden border-[#ead6d1]/68 bg-[#fffdf9] p-0">
-          <div className="border-b border-[#efe5dc] bg-[#fbf6ef] px-5 py-3 sm:px-6">
-            <div className="flex items-center gap-2 text-[13px] font-medium text-[#9a8f88]">
-              <span className="text-[#e5c8c4]">✨</span>
-              <span className="animate-fade-in text-[14px]">{currentPrompts[promptIndex]}</span>
-              <button type="button" onClick={handleRefreshPrompt} className="ml-auto grid h-7 w-7 place-items-center rounded-full text-[#b3a79f] hover:bg-[#f8f4ee]" aria-label="refresh prompt">
+        <Card className="overflow-hidden p-0">
+          <div className="border-b border-[rgba(217,205,197,0.35)] bg-[rgba(255,253,249,0.6)] px-5 py-3 sm:px-6">
+            <div className="flex items-center gap-2 text-[13px] font-medium text-[var(--muted)]">
+              <span className="text-[var(--pink)]">✨</span>
+              <span className="animate-fade-in text-[14px] text-[var(--ink)]">{currentPrompts[promptIndex]}</span>
+              <button type="button" onClick={handleRefreshPrompt} className="ml-auto grid h-7 w-7 place-items-center rounded-full text-[var(--muted)] hover:bg-[rgba(255,255,255,0.5)]" aria-label="refresh prompt">
                 <RefreshCw className="h-3.5 w-3.5" />
               </button>
-              <button type="button" onClick={handleWritePrompt} className="grid h-7 w-7 place-items-center rounded-full text-[#b3a79f] hover:bg-[#f8f4ee]" aria-label="write prompt">
+              <button type="button" onClick={handleWritePrompt} className="grid h-7 w-7 place-items-center rounded-full text-[var(--muted)] hover:bg-[rgba(255,255,255,0.5)]" aria-label="write prompt">
                 <ChevronDown className="h-3.5 w-3.5 -rotate-45" />
               </button>
             </div>
@@ -255,18 +255,18 @@ export default function EmotionRescue() {
                 setEmptyNoteError(false);
               }}
               placeholder={t("emotion.whatHappenedPlaceholder")}
-              className="mt-2 min-h-[8.75rem] overflow-hidden border-[#e7ddd3] bg-transparent text-[16px] leading-8 shadow-none focus:border-[#e5c8c4] focus:ring-0"
+              className="mt-2 min-h-[6.5rem] overflow-hidden border-[rgba(217,205,197,0.3)] bg-transparent text-[16px] leading-8 shadow-none focus:border-[var(--pink)] focus:ring-0"
             />
           </div>
         </Card>
 
-        <Card className="border-[#ead6d1]/65 bg-[#ffffff] p-5 sm:p-6">
+        <Card className="p-5 sm:p-6">
           <Label className="text-[1rem]">{t("emotion.childhood")}</Label>
           <Textarea
             value={childhood}
             onChange={(event) => setChildhood(event.target.value)}
             placeholder={t("emotion.childhoodPlaceholder")}
-            className="mt-3 min-h-[8.5rem] border-[#e7ddd3] bg-[#fffdfb]"
+            className="mt-3 min-h-[8.5rem]"
           />
         </Card>
 
@@ -274,7 +274,7 @@ export default function EmotionRescue() {
           <button
             type="button"
             onClick={() => setShowDetails((value) => !value)}
-            className="inline-flex items-center gap-2 rounded-full border border-[#e6ddd4] bg-[#ffffff]/88 px-4 py-2 text-[13px] font-semibold text-[#7f746e] transition hover:bg-[#ffffff]"
+            className="inline-flex items-center gap-2 rounded-full border border-[var(--muted)] bg-[rgba(255,255,255,0.88)] px-4 py-2 text-[13px] font-semibold text-[var(--muted)] transition hover:bg-white"
           >
             {showDetails ? t("emotion.hideDetails") : t("emotion.expandDetails")}
             <ChevronDown className={cn("h-4 w-4 transition", showDetails && "rotate-180")} />
@@ -352,7 +352,7 @@ export default function EmotionRescue() {
           </>
         )}
 
-        <div className="sticky bottom-3 z-10 flex justify-center">
+        <div className="flex justify-center pb-4">
           <Button
             type="submit"
             className={cn(

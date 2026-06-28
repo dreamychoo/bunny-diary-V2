@@ -56,7 +56,7 @@ export default function DiaryLayout() {
     const btn = document.activeElement as HTMLButtonElement | null;
     if (btn) { btn.disabled = true; btn.textContent = language === "zh" ? "生成中…" : "Saving…"; }
     try {
-      const dataUrl = await toPng(cardRef.current, { backgroundColor: "#faf9f7", pixelRatio: 2 });
+      const dataUrl = await toPng(cardRef.current, { backgroundColor: "#fdf8f2", pixelRatio: 2 });
       const link = document.createElement("a");
       link.download = `diary-${entry.id.slice(0, 8)}.png`;
       link.href = dataUrl;
@@ -75,23 +75,23 @@ export default function DiaryLayout() {
       <div className="mx-auto max-w-[420px]">
         <div
           ref={cardRef}
-          className="overflow-hidden rounded-[28px] bg-[#faf9f7] p-6 shadow-[0_8px_40px_rgba(75,58,52,0.08)]"
+          className="overflow-hidden rounded-[28px] bg-[var(--bg)] p-6 shadow-[0_8px_40px_rgba(75,58,52,0.08)]"
           style={{ fontFamily: "Inter, Nunito, system-ui, sans-serif" }}
         >
           {/* Decorative top */}
           <div className="flex justify-center">
-            <div className={`grid h-20 w-20 place-items-center rounded-full ${isEmotion ? "bg-[#f8efee]" : "bg-[#fbf3dc]"}`}>
+            <div className={`grid h-20 w-20 place-items-center rounded-full ${isEmotion ? "bg-[var(--pink-soft)]" : "bg-[var(--pink-soft)]"}`}>
               <span className="text-4xl">🐰</span>
             </div>
           </div>
 
           {/* Date */}
-          <p className="mt-4 text-center text-[13px] font-semibold tracking-wide text-[#8d817a]">
+          <p className="mt-4 text-center text-[13px] font-semibold tracking-wide text-[var(--muted)]">
             {formatDate(entry.timestamp, language)}
           </p>
 
           {/* Divider */}
-          <div className="mx-auto my-4 h-px w-12 bg-[#d8d3cc]/60" />
+          <div className="mx-auto my-4 h-px w-12 bg-[var(--muted)]/40" />
 
           {isEmotion ? (
             <>
@@ -101,7 +101,7 @@ export default function DiaryLayout() {
                   <span className="text-4xl">{emotionIcons[entry.emotions[0]] || "💧"}</span>
                   <div className="mt-2 flex flex-wrap justify-center gap-1.5">
                     {entry.emotions.map((em) => (
-                      <span key={em} className="rounded-full bg-[#f8efee] px-3 py-1 text-[13px] font-semibold text-[#855d58]">
+                      <span key={em} className="rounded-full bg-[var(--pink-soft)] px-3 py-1 text-[13px] font-semibold text-[var(--pink)]">
                         {optionLabel(em, "emotionKey", emotionKeys, t)}
                       </span>
                     ))}
@@ -115,7 +115,7 @@ export default function DiaryLayout() {
                   {Array.from({ length: 10 }, (_, i) => (
                     <span
                       key={i}
-                      className={`block h-2 w-2 rounded-full ${i < entry.intensity ? "bg-[#e5c8c4]" : "bg-[#e8e2db]"}`}
+                      className={`block h-2 w-2 rounded-full ${i < entry.intensity ? "bg-[var(--pink)]" : "bg-[var(--muted)]/30"}`}
                     />
                   ))}
                 </div>
@@ -172,8 +172,8 @@ export default function DiaryLayout() {
           )}
 
           {/* Brand footer */}
-          <div className="mx-auto my-4 h-px w-12 bg-[#d8d3cc]/60" />
-          <p className="text-center font-hand text-[12px] text-[#8d817a]">
+          <div className="mx-auto my-4 h-px w-12 bg-[var(--muted)]/40" />
+          <p className="text-center font-hand text-[12px] text-[var(--muted)]">
             {t("app.title")} · {t("app.tagline")}
           </p>
         </div>
@@ -184,7 +184,7 @@ export default function DiaryLayout() {
             <ArrowLeft className="h-4 w-4" />
             {t("common.backToPastJournals")}
           </Button>
-          <Button variant="garden" onClick={handleSave}>
+          <Button variant="primary" onClick={handleSave}>
             <Download className="h-4 w-4" />
             {language === "zh" ? "保存图片" : "Save Image"}
           </Button>

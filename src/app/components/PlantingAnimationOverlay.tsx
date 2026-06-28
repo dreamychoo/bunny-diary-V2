@@ -4,14 +4,14 @@ import { cn } from "./ui/utils";
 import { useI18n } from "../i18n";
 
 const frameSources = [
-  "/animations/planting/bunny-planting-01.png",
-  "/animations/planting/bunny-planting-02.png",
-  "/animations/planting/bunny-planting-03.png",
-  "/animations/planting/bunny-planting-04.png"
+  "/animations/planting/01-seed-drop.png",
+  "/animations/planting/03-pat-soil.png",
+  "/animations/planting/02-seed-plant.png",
+  "/animations/planting/04-sprout-glow.png"
 ] as const;
 
-const frameChangeTimeline = [288, 624, 1032] as const;
-const contentRevealDelay = 1584;
+const frameChangeTimeline = [320, 680, 1100] as const;
+const contentRevealDelay = 1600;
 
 type PlantingAnimationOverlayProps = {
   open: boolean;
@@ -95,9 +95,9 @@ export function PlantingAnimationOverlay({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#faf9f7]/94 px-5 py-6 backdrop-blur-[2px]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#fdf8f2]/94 px-5 py-6 backdrop-blur-[2px]">
       <div className="w-full max-w-[22rem] text-center">
-        <div className="relative mx-auto h-[280px] w-[280px] overflow-hidden">
+        <div className="relative mx-auto h-[220px] w-[260px] overflow-hidden">
           {frameSources.map((src, index) => (
             <img
               key={src}
@@ -105,7 +105,7 @@ export function PlantingAnimationOverlay({
               alt={index === frameIndex ? imageAlt : ""}
               aria-hidden={index !== frameIndex}
               className={cn(
-                "absolute inset-0 h-full w-full -translate-x-5 translate-y-8 object-contain transition-opacity duration-150 ease-out",
+                "absolute inset-0 h-full w-full object-contain transition-opacity duration-150 ease-out",
                 index === frameIndex ? "opacity-100" : "opacity-0"
               )}
             />
@@ -114,12 +114,12 @@ export function PlantingAnimationOverlay({
 
         <div
           className={cn(
-            "-mt-8 transition-all duration-300 ease-out",
+            "transition-all duration-300 ease-out",
             showContent ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
           )}
         >
-          <p className="font-display text-[26px] font-bold leading-[34px] text-[#4a3b34]">{t(titleKey)}</p>
-          <p className="mt-2 text-[15px] leading-[24px] text-[#7f746e]">{t(subtitleKey)}</p>
+          <p className="font-display text-[26px] font-bold leading-[34px] text-[var(--ink)]">{t(titleKey)}</p>
+          <p className="mt-2 text-[15px] leading-[24px] text-[var(--muted)]">{t(subtitleKey)}</p>
 
           <div className="mt-6 flex flex-col items-center">
             <Button type="button" className="h-[52px] w-full max-w-[312px]" onClick={onPrimary}>
