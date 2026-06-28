@@ -10,3 +10,8 @@ output/
 node_modules/
 public/assets/
 tools/new-style-assets/
+
+# big files
+*.node
+*.map
+*.png
