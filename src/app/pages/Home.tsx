@@ -20,16 +20,16 @@ export default function Home() {
 
   return (
     <AppShell>
-      <div className="mx-auto w-full max-w-[390px] pt-4">
-        <div className="flex items-center gap-2 px-[2px] pb-2">
-          <span className="text-lg font-bold tracking-tight text-[var(--ink)]/80">{t(greetingKey)}</span>
-          <span className="text-pink"><img src="/assets/v2/items/pink-heart.png" alt="" className="h-5 w-5 object-contain" /></span>
+      <div className="mx-auto w-full max-w-[390px]">
+        <div className="flex items-center gap-2 px-[2px] pb-1">
+          <span className="text-base font-bold tracking-tight text-[var(--ink)]/80">{t(greetingKey)}</span>
+          <span className="text-pink"><img src="/assets/v2/items/pink-heart.png" alt="" className="h-4 w-4 object-contain" /></span>
         </div>
 
         <section className="app-hero-card">
-          <div className="relative z-10 pr-[130px] pt-4">
-            <h2 className="text-[22px] font-extrabold leading-tight tracking-tight text-[var(--ink)]">{t("home.v4.prompt")}</h2>
-            <Link to={routes.dailyWarmth} className="app-primary-pill mt-[18px]">
+          <div className="relative z-10 pr-[130px] pt-3">
+            <h2 className="text-[20px] font-extrabold leading-tight tracking-tight text-[var(--ink)]">{t("home.v4.prompt")}</h2>
+            <Link to={routes.dailyWarmth} className="app-primary-pill mt-[14px] text-[13px] px-5 py-2.5">
               {language === "zh" ? "开始记录" : "Start Writing"}
             </Link>
           </div>
@@ -37,7 +37,7 @@ export default function Home() {
           <img className="hero-bunny" src="/assets/v2/rabbits/reading.png" alt="" />
         </section>
 
-        <section className="mt-4 grid grid-cols-2 gap-3.5">
+        <section className="mt-3 grid grid-cols-2 gap-2.5">
           {[
             {
               to: routes.emotionRescue,
@@ -73,7 +73,7 @@ export default function Home() {
           ))}
         </section>
 
-        <section className="app-bunny-says mt-8">
+        <section className="app-bunny-says mt-3">
           <div>
             <span>{language === "zh" ? "小兔说" : "Bunny Says"}</span>
             <p>{notebookLine}</p>
