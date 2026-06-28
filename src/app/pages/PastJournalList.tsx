@@ -6,7 +6,7 @@ import { GardenNav } from "../components/GardenNav";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { useI18n } from "../i18n";
-import { deleteEntry, DiaryEntry, emotionKeys, getAllEntries, weatherKeys, WeatherKey } from "../lib/storage";
+import { deleteEntry, DiaryEntry, emotionKeys, getAllEntries, weatherKeys, WeatherKey, EmotionKey } from "../lib/storage";
 import { routes } from "../routes";
 
 function formatDate(timestamp: string, language: string) {
@@ -32,11 +32,19 @@ function entryTitle(entry: DiaryEntry, t: (key: string) => string) {
     if (emotions.length) return emotions.join(", ");
     return t("common.emotionRescue");
   }
-  const text = entry.gratitude?.trim();
-  const weatherKey = weatherKeys.includes(entry.weather as WeatherKey) ? entry.weather as WeatherKey : null;
-  const weatherIcon = weatherKey ? getWeatherEmoji(weatherKey) : "";
-  return weatherIcon ? `${weatherIcon} ${t("common.dailyWarmth")}` : t("common.dailyWarmth");
+  return t("common.dailyWarmth");
 }
+
+const emotionIcons: Record<string, string> = {
+  sadness: "💧", anger: "🌶️", anxiety: "⚡", disappointed: "🌧️",
+  drained: "🌙", frustrated: "🐝", numbness: "◌", loneliness: "🍂",
+  hurt: "🫧", overwhelm: "🪨", shame: "🌫️", confused: "❔",
+  rejected: "🚪", stressed: "📦", jealous: "🌵", hopeless: "🌑",
+  guilty: "🧵", fear: "🐾", empty: "☁️", sensitive: "🌼",
+  on_edge: "🌊", avoidant: "🍃", unseen: "📭", ignored: "👁️",
+  lost: "🧭", tenderness: "🫶", moved: "✨", calm: "🕊️",
+  grateful: "☀️", hopeful: "🌱"
+};
 
 function getWeatherEmoji(key: WeatherKey): string {
   const map: Record<WeatherKey, string> = { sunny: "☀️", cloudy: "⛅", rainy: "🌧️", foggy: "🌫️", windy: "💨", moonlit: "🌙", thunder: "⛈️", starry: "✨" };
@@ -131,11 +139,11 @@ export default function PastJournalList() {
                       <Link to={routes.journalEntry(entry.id)} className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <time className="text-xs font-semibold text-[#7f746e]">{formatDate(entry.timestamp, language)}</time>
-                          <span className="text-[13px]">{entry.type === "emotion" ? "💧" : (weatherKeys.includes(entry.weather as WeatherKey) ? getWeatherEmoji(entry.weather as WeatherKey) : "☀️")}</span>
+                          <span className="text-[13px]">{entry.type === "emotion" ? (entry.emotions.length ? (emotionIcons[entry.emotions[0]] || "💧") : "💧") : (weatherKeys.includes(entry.weather as WeatherKey) ? getWeatherEmoji(entry.weather as WeatherKey) : "☀️")}</span>
                         </div>
                         <h2 className="mt-1 text-base font-bold leading-tight">{entryTitle(entry, t)}</h2>
-                        {body && <p className="mt-1 line-clamp-2 text-sm leading-6 text-[#7f6b62]">{body}</p>}
-                        {!body && <p className="mt-1 text-sm italic text-[#a89e97]">{t("common.noNoteText")}</p>}
+                        {body && body.length > 5 && <p className="mt-1 line-clamp-2 text-sm leading-6 text-[#7f6b62]">{body}</p>}
+                        {(!body || body.length <= 5) && <p className="mt-1 text-sm italic text-[#a89e97]">{t("common.noNoteText")}</p>}
                       </Link>
                       {pendingDeleteId === entry.id ? (
                         <div className="flex flex-wrap gap-2 rounded-3xl bg-[#fff3f1] p-2 sm:justify-end">
