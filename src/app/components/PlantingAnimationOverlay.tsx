@@ -31,6 +31,7 @@ export function PlantingAnimationOverlay({
   const { t } = useI18n();
   const [frameIndex, setFrameIndex] = useState(0);
   const [showContent, setShowContent] = useState(false);
+  const [sparkles, setSparkles] = useState<{ id: number; dx: number; dy: number; color: string }[]>([]);
   const dialogRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
@@ -59,13 +60,25 @@ export function PlantingAnimationOverlay({
     if (!open) {
       setFrameIndex(0);
       setShowContent(false);
+      setSparkles([]);
       return;
     }
 
     const frameOneTimer = window.setTimeout(() => setFrameIndex(1), frameChangeTimeline[0]);
     const frameTwoTimer = window.setTimeout(() => setFrameIndex(2), frameChangeTimeline[1]);
     const frameThreeTimer = window.setTimeout(() => setFrameIndex(3), frameChangeTimeline[2]);
-    const contentTimer = window.setTimeout(() => setShowContent(true), contentRevealDelay);
+    const contentTimer = window.setTimeout(() => {
+      setShowContent(true);
+      // Burst of sparkles
+      const colors = ["#ffc2a8", "#ffd7c4", "#ffe5d9", "#ff9aaa"];
+      const burst = Array.from({ length: 6 }, (_, i) => ({
+        id: i,
+        dx: (Math.random() - 0.5) * 80,
+        dy: (Math.random() - 0.5) * 80 - 10,
+        color: colors[i % colors.length]
+      }));
+      setSparkles(burst);
+    }, contentRevealDelay);
 
     return () => {
       window.clearTimeout(frameOneTimer);
@@ -125,6 +138,14 @@ export function PlantingAnimationOverlay({
                 "absolute inset-0 h-full w-full object-contain transition-opacity duration-150 ease-out",
                 index === frameIndex ? "opacity-100" : "opacity-0"
               )}
+            />
+          ))}
+          {/* Sparkle burst */}
+          {sparkles.map((s) => (
+            <span
+              key={s.id}
+              className="sparkle-dot"
+              style={{ left: "50%", top: "50%", background: s.color, "--dx": `${s.dx}px`, "--dy": `${s.dy}px` } as React.CSSProperties}
             />
           ))}
         </div>
