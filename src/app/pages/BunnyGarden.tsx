@@ -78,6 +78,21 @@ function plantAsset(seed: GardenSeed) {
   return seed.status === "planted" ? growingAsset(seed) : matureAssets[seed.plantVariant];
 }
 
+function nextGardenRefreshAt(plots: GardenPlotView[]) {
+  let nextRefreshAt: number | null = null;
+
+  for (const plot of plots) {
+    const maturesAt = plot.seed?.status === "planted" ? plot.seed.maturesAt : null;
+    if (!maturesAt) continue;
+
+    const timestamp = new Date(maturesAt).getTime();
+    if (Number.isNaN(timestamp)) continue;
+    nextRefreshAt = nextRefreshAt === null ? timestamp : Math.min(nextRefreshAt, timestamp);
+  }
+
+  return nextRefreshAt;
+}
+
 function formatDate(timestamp: string, language: string) {
   return new Intl.DateTimeFormat(language === "zh" ? "zh-CN" : "en", { month: "short", day: "numeric" }).format(new Date(timestamp));
 }
@@ -92,7 +107,7 @@ function Sheet({ children, onClose, blockClose }: { children: React.ReactNode; o
   );
 }
 
-function Plot({ plot, index, onEmpty, onHarvest, onPlant }: { plot: GardenPlotView; index: number; onEmpty: () => void; onHarvest: (seed: GardenSeed) => void; onPlant: (seed: GardenSeed) => void }) {
+function Plot({ plot, index, emptyLabel, onEmpty, onHarvest, onPlant }: { plot: GardenPlotView; index: number; emptyLabel: string; onEmpty: () => void; onHarvest: (seed: GardenSeed) => void; onPlant: (seed: GardenSeed) => void }) {
   const slot = gardenSlots[index];
   const seed = plot.seed;
   const isUsed = seed?.status === "usedForLetter";
@@ -102,10 +117,10 @@ function Plot({ plot, index, onEmpty, onHarvest, onPlant }: { plot: GardenPlotVi
     return (
       <button
         type="button"
-        className="absolute z-5 -translate-x-1/2 -translate-y-1/2 garden-plot--empty"
+        className="garden-plot absolute z-5 -translate-x-1/2 -translate-y-1/2 garden-plot--empty"
         style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
         onClick={onEmpty}
-        aria-label="Plant seed"
+        aria-label={emptyLabel}
       >
         <span className="garden-empty-patch" />
       </button>
@@ -155,6 +170,7 @@ export default function BunnyGarden() {
   const [toast, setToast] = useState<string | null>(null);
   const writingTimerRef = useRef<number | null>(null);
   const refreshTimerRef = useRef<number | null>(null);
+  const nextRefreshAt = useMemo(() => nextGardenRefreshAt(garden.plots), [garden.plots]);
 
   useEffect(() => {
     if ((location.state as { openSeedVault?: boolean } | null)?.openSeedVault) {
@@ -164,8 +180,30 @@ export default function BunnyGarden() {
   }, [location.pathname, location.state, navigate]);
 
   useEffect(() => {
-    refreshTimerRef.current = window.setInterval(() => { setGarden(getGardenState()); }, 5000);
-    return () => { if (refreshTimerRef.current !== null) window.clearInterval(refreshTimerRef.current); };
+    if (refreshTimerRef.current !== null) window.clearTimeout(refreshTimerRef.current);
+    if (nextRefreshAt === null) return;
+
+    const delay = Math.max(250, nextRefreshAt - Date.now() + 250);
+    refreshTimerRef.current = window.setTimeout(() => {
+      refresh();
+      refreshTimerRef.current = null;
+    }, delay);
+
+    return () => {
+      if (refreshTimerRef.current !== null) {
+        window.clearTimeout(refreshTimerRef.current);
+        refreshTimerRef.current = null;
+      }
+    };
+  }, [nextRefreshAt]);
+
+  useEffect(() => {
+    function handleVisibilityChange() {
+      if (document.visibilityState === "visible") refresh();
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, []);
 
   useEffect(() => {
@@ -260,7 +298,15 @@ export default function BunnyGarden() {
         <section className="relative h-[250px] overflow-visible -mt-3 -mx-5">
           <img src="/garden-assets/prepped/grass-board.png" alt="" className="absolute left-1/2 top-[58%] w-[440px] -translate-x-1/2 -translate-y-1/2 object-contain drop-shadow-[0_18px_28px_rgba(83,132,70,0.18)]" />
           {garden.plots.slice(0, 10).map((plot, index) => (
-            <Plot key={plot.id} plot={plot} index={index} onEmpty={() => garden.seedInventory.length ? setSeedVaultOpen(true) : setToast(t("garden.v3.writeForSeed"))} onHarvest={setHarvestTarget} onPlant={setPlantInfo} />
+            <Plot
+              key={plot.id}
+              plot={plot}
+              index={index}
+              emptyLabel={garden.seedInventory.length ? t("garden.v3.plant") : t("garden.v3.writeForSeed")}
+              onEmpty={() => garden.seedInventory.length ? setSeedVaultOpen(true) : setToast(t("garden.v3.writeForSeed"))}
+              onHarvest={setHarvestTarget}
+              onPlant={setPlantInfo}
+            />
           ))}
         </section>
 
