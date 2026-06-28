@@ -83,7 +83,6 @@ export default function Home() {
             <span>{language === "zh" ? "小兔说" : "Bunny Says"}</span>
             <p>{notebookLine}</p>
           </div>
-          <span className="zzz">Zzz</span>
           <img src="/assets/v2/rabbits/sleeping.png" alt="" />
         </section>
       </div>
