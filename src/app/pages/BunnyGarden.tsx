@@ -263,7 +263,7 @@ export default function BunnyGarden() {
         <section className="relative min-h-[128px] pt-1">
           <img src="/assets/v2/rabbits/watering.png" alt="" className="absolute -left-2 -top-2 z-2 h-[100px] w-[100px] object-contain drop-shadow-[0_14px_18px_rgba(95,64,48,0.16)]" />
           <div className="pl-[80px] pt-6">
-            <h1 className="text-[29px] font-black tracking-tight leading-none text-[var(--ink)]">{t("garden.title")}<span className="ml-1 text-[20px] text-[var(--pink)]">♥</span></h1>
+            <h1 className="text-[22px] font-extrabold tracking-tight leading-none text-[var(--ink)]">{t("garden.title")}<span className="ml-1 text-[15px] text-[var(--pink)]">♥</span></h1>
             <p className="mt-2 text-[12px] font-semibold leading-snug text-[var(--muted)] max-w-[210px]">{t("garden.shortSubtitle")}</p>
           </div>
         </section>
