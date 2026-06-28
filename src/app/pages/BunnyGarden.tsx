@@ -274,7 +274,9 @@ export default function BunnyGarden() {
             </p>
           </div>
           {garden.availableLetterPlants.length >= 3 && (
-            <button onClick={() => { setSelectedSeedIds([]); setLetterPickerOpen(true); }} className="text-2xl font-black text-[#8b786d]">›</button>
+            <button onClick={() => { setSelectedSeedIds([]); setLetterPickerOpen(true); }} className="inline-flex h-11 items-center rounded-[999px] border-0 bg-gradient-to-b from-[var(--pink-2)] to-[var(--pink)] px-5 text-[13px] font-extrabold text-white shadow-[0_8px_20px_rgba(255,111,134,0.30),inset_0_1px_rgba(255,255,255,0.35)] shrink-0">
+              {t("garden.v3.writeLetter")}
+            </button>
           )}
         </section>
       </div>
