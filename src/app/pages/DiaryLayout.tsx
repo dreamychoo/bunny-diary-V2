@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { toPng } from "html-to-image";
 import { ArrowLeft, Download } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { Button } from "../components/ui/button";
 import { useI18n } from "../i18n";
@@ -38,11 +38,13 @@ export default function DiaryLayout() {
   const { t, language } = useI18n();
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const cardRef = useRef<HTMLDivElement>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const entry = id ? getEntryById(id) : null;
+  const notebookQuote = (location.state as { notebookLine?: string } | null)?.notebookLine;
 
-  if (!entry) {
+  if (!entry && !notebookQuote) {
     return (
       <AppShell>
         <div className="flex min-h-[60vh] items-center justify-center">
@@ -85,20 +87,28 @@ export default function DiaryLayout() {
             <img src="/assets/v2/rabbits/holding-heart.png" alt="" className="h-20 w-20 object-contain" />
           </div>
 
-          {/* Date + Weather */}
-          <div className="mt-4 flex items-center justify-center gap-2">
-            <p className="text-[13px] font-semibold tracking-wide text-[var(--muted)]">
-              {formatDate(entry.timestamp, language)}
-            </p>
-            {!isEmotion && entry.weather && (
-              <span className="text-xl">{weatherEmojis[entry.weather] || "☀️"}</span>
-            )}
-          </div>
+          {/* Date + Weather or Notebook Line */}
+          {notebookQuote ? (
+            <p className="mt-4 text-center text-[13px] font-semibold tracking-wide text-[var(--muted)]">{new Date().toLocaleDateString(language === "zh" ? "zh-CN" : "en", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
+          ) : (
+            <div className="mt-4 flex items-center justify-center gap-2">
+              <p className="text-[13px] font-semibold tracking-wide text-[var(--muted)]">
+                {formatDate(entry.timestamp, language)}
+              </p>
+              {!isEmotion && entry.weather && (
+                <span className="text-xl">{weatherEmojis[entry.weather] || "☀️"}</span>
+              )}
+            </div>
+          )}
 
           {/* Divider */}
           <div className="mx-auto my-4 h-px w-12 bg-[var(--muted)]/40" />
 
-          {isEmotion ? (
+          {notebookQuote ? (
+            <div className="mt-6 rounded-[18px] bg-white p-5 text-center">
+              <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>{notebookQuote}</p>
+            </div>
+          ) : isEmotion ? (
             <>
               {/* Emotions */}
               {entry.emotions.length > 0 && (

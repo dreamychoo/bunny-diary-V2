@@ -3,7 +3,7 @@ import { ChevronRight, RefreshCw } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { useI18n } from "../i18n";
-import { getBunnyNotebookLine } from "../lib/storage";
+import { createEntryId, getBunnyNotebookLine } from "../lib/storage";
 import { routes } from "../routes";
 
 export default function Home() {
@@ -75,7 +75,10 @@ export default function Home() {
           ))}
         </section>
 
-        <section className="app-bunny-says cursor-pointer mt-3" onClick={() => navigate(routes.emotionRescue, { state: { prefill: notebookLine } })}>
+        <section className="app-bunny-says cursor-pointer mt-3" onClick={() => {
+            const tempId = createEntryId("warmth");
+            navigate(routes.diaryLayout(tempId), { state: { notebookLine } });
+          }}>
           <div>
             <span>{language === "zh" ? "小兔说" : "Bunny Says"}</span>
             <p>{notebookLine}</p>
