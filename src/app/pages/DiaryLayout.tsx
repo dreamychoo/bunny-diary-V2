@@ -188,9 +188,9 @@ export default function DiaryLayout() {
 
         {/* Action buttons */}
         <div className="mt-6 flex justify-between gap-3">
-          <Button variant="ghost" onClick={() => navigate(-1)}>
+          <Button variant="ghost" onClick={() => navigate(routes.home)}>
             <ArrowLeft className="h-4 w-4" />
-            {t("common.backToPastJournals")}
+            {t("common.home")}
           </Button>
           <Button variant="primary" onClick={handleSave}>
             <Download className="h-4 w-4" />
