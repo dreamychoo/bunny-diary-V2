@@ -50,7 +50,7 @@ export default function CollectionRoom() {
       <div className="collection-layout">
         {/* Mailbox — primary, left column */}
         <section className="collection-panel">
-          <header className="collection-section-heading"><Mail /><h2>{t("collection.mailbox")}</h2></header>
+          <header className="collection-section-heading"><img src="/assets/v2/items/mailbox.png" alt="" className="h-5 w-5 object-contain" /><h2>{t("collection.mailbox")}</h2></header>
           {garden.letters.length ? (
             <div className="collection-mail-cards">
               {garden.letters.map((letter) => (
