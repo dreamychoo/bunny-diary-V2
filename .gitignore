@@ -1,0 +1,7 @@
+
+# claude
+.claude/
+dist/
+output/
+.DS_Store
+*.yaml
