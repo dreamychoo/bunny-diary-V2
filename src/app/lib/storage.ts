@@ -983,10 +983,11 @@ const notebookLines: Record<"en" | "zh", string[]> = {
   ]
 };
 
-export function getBunnyNotebookLine(): string {
+export function getBunnyNotebookLine(seed?: number): string {
   const lang = getSettings().language;
   const lines = notebookLines[lang];
-  return lines[Math.floor(Math.random() * lines.length)];
+  const index = seed !== undefined ? seed % lines.length : Math.floor(Math.random() * lines.length);
+  return lines[index];
 }
 
 export function exportDiaryData() {

@@ -1,6 +1,6 @@
-import { useMemo } from "react";
-import { ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { ChevronRight, RefreshCw } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { useI18n } from "../i18n";
 import { getBunnyNotebookLine } from "../lib/storage";
@@ -8,6 +8,7 @@ import { routes } from "../routes";
 
 export default function Home() {
   const { language, t } = useI18n();
+  const navigate = useNavigate();
 
   const hour = new Date().getHours();
   const greetingKey =
@@ -16,7 +17,8 @@ export default function Home() {
     hour >= 18 && hour < 23 ? "home.greeting.evening" :
     "home.greeting.night";
 
-  const notebookLine = useMemo(() => getBunnyNotebookLine(), []);
+  const [notebookIndex, setNotebookIndex] = useState(() => Math.floor(Math.random() * 1000));
+  const notebookLine = getBunnyNotebookLine(notebookIndex);
 
   return (
     <AppShell>
@@ -73,7 +75,7 @@ export default function Home() {
           ))}
         </section>
 
-        <section className="app-bunny-says mt-3">
+        <section className="app-bunny-says cursor-pointer mt-3" onClick={() => navigate(routes.emotionRescue, { state: { prefill: notebookLine } })}>
           <div>
             <span>{language === "zh" ? "小兔说" : "Bunny Says"}</span>
             <p>{notebookLine}</p>
