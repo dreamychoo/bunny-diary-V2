@@ -860,12 +860,21 @@ export function createBunnyLetter(seedIds: string[]) {
 
   const warmCount = selectedSeeds.filter((seed) => seed.seedType === "warmth").length;
   const letterType: BunnyLetterType = warmCount === 3 ? "warm-light" : warmCount === 0 ? "slow-growth" : "after-rain";
+
+  // Use seed IDs to pick a stable body index per plant combination
+  const seedHash = seedIds.reduce((acc, id) => {
+    for (let i = 0; i < id.length; i++) acc = ((acc << 5) - acc + id.charCodeAt(i)) | 0;
+    return acc;
+  }, 0);
+  const bodyCount = 15; // each type has 15 body variants
+  const templateIndex = Math.abs(seedHash) % bodyCount;
+
   const letter: BunnyLetter = {
     id: createLetterId(),
     letterType,
     seedIds,
     createdAt: new Date().toISOString(),
-    templateIndex: state.letters.filter((item) => item.letterType === letterType).length % 3
+    templateIndex
   };
 
   const nextSeeds = state.seeds.map((seed) =>
