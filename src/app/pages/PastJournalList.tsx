@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, Trash2 } from "lucide-react";
 import { AppShell } from "../components/AppShell";
@@ -6,16 +6,14 @@ import { GardenNav } from "../components/GardenNav";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { useI18n } from "../i18n";
-import { deleteEntry, DiaryEntry, emotionKeys, getAllEntries, moodKeys, symptomKeys, weatherKeys } from "../lib/storage";
+import { deleteEntry, DiaryEntry, emotionKeys, getAllEntries, moodKeys, symptomKeys, weatherKeys, WeatherKey } from "../lib/storage";
 import { routes } from "../routes";
 
 function formatDate(timestamp: string, language: string) {
   return new Intl.DateTimeFormat(language === "zh" ? "zh-CN" : "en", {
     month: "short",
     day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit"
+    year: "numeric"
   }).format(new Date(timestamp));
 }
 
@@ -34,20 +32,24 @@ function entryText(entry: DiaryEntry, t: (key: string) => string) {
     ].join(" ");
   }
 
-  return [
-    optionLabel(entry.mood, "moodKey", moodKeys, t),
-    optionLabel(entry.weather, "weatherKey", weatherKeys, t),
-    entry.gratitude,
-    entry.success
-  ].join(" ");
+  return entry.gratitude || "";
 }
 
 function entryTitle(entry: DiaryEntry, t: (key: string) => string) {
   if (entry.type === "emotion") {
-    return entry.emotions.length ? entry.emotions.map((emotion) => optionLabel(emotion, "emotionKey", emotionKeys, t)).join(", ") : t("common.emotionRescue");
+    const emotions = entry.emotions.map((emotion) => optionLabel(emotion, "emotionKey", emotionKeys, t));
+    const text = entry.whatHappened?.trim();
+    return emotions.length ? emotions.join(", ") : (text ? text.slice(0, 30) : t("common.emotionRescue"));
   }
+  const text = entry.gratitude?.trim();
+  const weatherKey = weatherKeys.includes(entry.weather as WeatherKey) ? entry.weather as WeatherKey : null;
+  const weatherIcon = weatherKey ? getWeatherEmoji(weatherKey) : "";
+  return weatherIcon ? `${weatherIcon} ${text ? text.slice(0, 40) : t("common.dailyWarmth")}` : (text ? text.slice(0, 40) : t("common.dailyWarmth"));
+}
 
-  return entry.mood ? optionLabel(entry.mood, "moodKey", moodKeys, t) : t("common.dailyWarmth");
+function getWeatherEmoji(key: WeatherKey): string {
+  const map: Record<WeatherKey, string> = { sunny: "☀️", cloudy: "⛅", rainy: "🌧️", foggy: "🌫️", windy: "💨", moonlit: "🌙", thunder: "⛈️", starry: "✨" };
+  return map[key] ?? "";
 }
 
 function entryTone(entry: DiaryEntry) {
@@ -70,11 +72,15 @@ export default function PastJournalList() {
   const [entries, setEntries] = useState(() => getAllEntries());
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
+  useEffect(() => {
+    setEntries(getAllEntries());
+  }, []);
+
   const filteredEntries = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     if (!normalizedQuery) return entries;
 
-    return entries.filter((entry) => `${entry.type} ${entryTitle(entry, t)} ${entryText(entry, t)}`.toLowerCase().includes(normalizedQuery));
+    return entries.filter((entry) => `${entry.type} ${entryText(entry, t)}`.toLowerCase().includes(normalizedQuery));
   }, [entries, query, t]);
 
   function handleDelete(id: string) {
@@ -106,8 +112,11 @@ export default function PastJournalList() {
                 <span className={entry.type === "emotion" ? "memory-dot memory-dot--emotion" : "memory-dot memory-dot--warm"} />
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <Link to={routes.journalEntry(entry.id)} className="min-w-0 flex-1">
-                    <time className={`text-sm font-semibold ${tone.date}`}>{formatDate(entry.timestamp, language)}</time>
-                    <h2 className="mt-1 text-lg font-bold">{entryTitle(entry, t)}</h2>
+                    <div className="flex items-center gap-2">
+                      <time className={`text-xs font-semibold ${tone.date}`}>{formatDate(entry.timestamp, language)}</time>
+                      <span className="text-[13px]">{entry.type === "emotion" ? "💧" : (entry.type === "warmth" && weatherKeys.includes(entry.weather as WeatherKey) ? getWeatherEmoji(entry.weather as WeatherKey) : "☀️")}</span>
+                    </div>
+                    <h2 className="mt-1 text-base font-bold leading-tight">{entryTitle(entry, t)}</h2>
                     <p className="mt-1 line-clamp-2 text-sm leading-6 text-[#7f6b62]">{entryText(entry, t).trim() || t("common.noNoteText")}</p>
                   </Link>
                   {pendingDeleteId === entry.id ? (
@@ -132,8 +141,9 @@ export default function PastJournalList() {
           })
         ) : (
           <div className="collection-empty py-12">
-            <p className="text-lg font-bold">{t("past.noEntries")}</p>
-            <p className="mt-2 text-sm text-[#7f746e]">
+            <div className="text-4xl opacity-40">{entries.length ? "🔍" : "📝"}</div>
+            <p className="mt-3 text-lg font-bold">{t("past.noEntries")}</p>
+            <p className="mt-1 text-sm text-[#7f746e]">
               {entries.length ? t("past.tryDifferentSearch") : t("past.createFirst")}
             </p>
           </div>

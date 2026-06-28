@@ -123,9 +123,6 @@ export default function JournalEntryDetail() {
               <CalendarDays className="h-4 w-4" />
               {formatDate(entry.timestamp, language)}
             </p>
-            <p className="mt-3 break-all text-sm text-[#7f746e]">
-              {t("common.entryId")}: {entry.id}
-            </p>
             {isWithin48h && !isEditing && (
               <p className="mt-2 text-[11px] font-medium text-[#8a9f78]">{t("detail.editableHint")}</p>
             )}

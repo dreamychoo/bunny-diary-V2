@@ -166,8 +166,8 @@ a {
 .garden-status-band {
   display: flex;
   align-items: center;
-  gap: 2rem;
-  padding: 1.5rem 1.75rem;
+  gap: 1rem;
+  padding: 0.85rem 1.25rem;
   border: 1px solid rgba(232, 222, 210, 0.95);
   border-radius: 24px;
   background: rgba(255, 253, 249, 0.88);
@@ -176,7 +176,7 @@ a {
 .garden-counts {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin: 1rem 0;
+  margin: 0.5rem 0;
   border-block: 1px solid rgba(232, 222, 210, 0.8);
 }
 
@@ -228,8 +228,8 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  margin-top: .5rem;
-  padding: 1.25rem 1.5rem;
+  margin-top: .25rem;
+  padding: 1rem 1.25rem;
   border: 1px solid #e8ded2;
   border-radius: 22px;
   background: rgba(255,253,249,.9);
@@ -239,9 +239,9 @@ a {
   position: relative;
   z-index: 30;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: .35rem;
-  margin-top: 1.5rem;
+  margin-top: 0.75rem;
   padding: .45rem;
   border: 1px solid rgba(232,222,210,.95);
   border-radius: 22px;
@@ -323,7 +323,7 @@ a {
 .memory-quiet-panel p { max-width:220px; margin-top:1rem; font-size:1.12rem; line-height:1.7; }
 
 @media (max-width: 720px) {
-  .garden-status-band { align-items:center; flex-direction:row; gap:0.75rem; padding:1.15rem; }
+  .garden-status-band { align-items:center; flex-direction:row; gap:0.5rem; padding:0.75rem 1rem; }
   .garden-status-band button { width:auto; }
   .garden-counts > div { grid-template-columns:1fr; justify-items:center; gap:.15rem; padding:.7rem .3rem; text-align:center; font-size:.72rem; }
   .garden-counts svg { width:17px; height:17px; }

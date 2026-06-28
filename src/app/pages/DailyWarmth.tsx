@@ -34,7 +34,7 @@ const prompts = [
   "今天好像也没什么大事……但有个小事让我心情好了点",
   "有一句话今天一直在我脑子里转",
   "今天有人给了我一点小小的善意",
-  "想记一件今天发生的事",
+  "今天突然有个小感悟",
   "今天有一个瞬间我觉得挺好的",
   "好像没什么特别的……但随便写点吧"
 ];
@@ -159,9 +159,9 @@ export default function DailyWarmth() {
           />
 
           <Card className="border-[#e6c779]/60 bg-[#ffffff] p-5">
-            <div className="flex items-center gap-2 text-[11px] font-medium text-[#9a8f88]">
+            <div className="flex items-center gap-2 text-sm font-medium text-[#9a8f88]">
               <span className="text-[#e6c779]">✨</span>
-              <span className="animate-fade-in">{currentPrompts[promptIndex]}</span>
+              <span className="animate-fade-in text-[14px]">{currentPrompts[promptIndex]}</span>
               <button type="button" onClick={handleRefreshPrompt} className="ml-auto grid h-6 w-6 place-items-center rounded-full text-[#b3a79f] hover:bg-[#f8f4ee]" aria-label="refresh prompt">
                 <RefreshCw className="h-3 w-3" />
               </button>

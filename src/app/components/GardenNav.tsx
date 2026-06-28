@@ -1,10 +1,11 @@
-import { Archive, BookOpen, Sprout } from "lucide-react";
+import { Archive, BookOpen, Home, Sprout } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useI18n } from "../i18n";
 import { routes } from "../routes";
 import { cn } from "./ui/utils";
 
 const items = [
+  { to: routes.home, labelKey: "nav.home", icon: Home },
   { to: routes.bunnyGarden, labelKey: "garden.nav.garden", icon: Sprout },
   { to: routes.collection, labelKey: "garden.nav.collection", icon: Archive },
   { to: routes.pastJournals, labelKey: "garden.nav.memories", icon: BookOpen }

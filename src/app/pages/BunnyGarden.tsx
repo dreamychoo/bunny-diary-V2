@@ -69,9 +69,9 @@ function formatDate(timestamp: string, language: string) {
   return new Intl.DateTimeFormat(language === "zh" ? "zh-CN" : "en", { month: "short", day: "numeric" }).format(new Date(timestamp));
 }
 
-function Sheet({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+function Sheet({ children, onClose, blockClose }: { children: React.ReactNode; onClose: () => void; blockClose?: boolean }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#4b3a34]/20 px-3 pt-14 backdrop-blur-[2px] sm:items-center sm:p-6" onMouseDown={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#4b3a34]/20 px-3 pt-14 backdrop-blur-[2px] sm:items-center sm:p-6" onMouseDown={blockClose ? undefined : onClose}>
       <section className="max-h-[88dvh] w-full max-w-[620px] overflow-y-auto rounded-t-[28px] border border-[#e8ded2] bg-[#fffdf9] p-5 shadow-[0_-12px_45px_rgba(75,58,52,0.12)] sm:rounded-[28px] sm:p-7" onMouseDown={(event) => event.stopPropagation()}>
         {children}
       </section>
@@ -115,6 +115,7 @@ export default function BunnyGarden() {
   const [writing, setWriting] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const writingTimerRef = useRef<number | null>(null);
+  const refreshTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     if ((location.state as { openSeedVault?: boolean } | null)?.openSeedVault) {
@@ -122,6 +123,15 @@ export default function BunnyGarden() {
       navigate(location.pathname, { replace: true, state: null });
     }
   }, [location.pathname, location.state, navigate]);
+
+  useEffect(() => {
+    refreshTimerRef.current = window.setInterval(() => {
+      setGarden(getGardenState());
+    }, 30000);
+    return () => {
+      if (refreshTimerRef.current !== null) window.clearInterval(refreshTimerRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (!toast) return;
@@ -193,10 +203,10 @@ export default function BunnyGarden() {
     <AppShell title={t("garden.title")} subtitle={t("garden.subtitle")} headerMascotVariant="garden" wide>
       <section className="garden-status-band">
         <div className="min-w-0 flex-1">
-          <p className="font-display text-xl font-semibold leading-8 text-[#4b3a34] sm:text-[26px]">{statusLine}</p>
-          <p className="mt-1 text-sm leading-6 text-[#8d817a] sm:text-base">{t("garden.v3.status.support")}</p>
+          <p className="font-display text-lg font-semibold leading-7 text-[#4b3a34] sm:text-xl">{statusLine}</p>
+          <p className="text-sm leading-5 text-[#8d817a] sm:text-base">{t("garden.v3.status.support")}</p>
         </div>
-        <Button type="button" variant="garden" className="shrink-0" onClick={() => setSeedVaultOpen(true)} disabled={!garden.seedInventory.length}>{t("garden.openSeedVault")}</Button>
+        <Button type="button" variant="garden" className="shrink-0" onClick={() => setSeedVaultOpen(true)}>{t("garden.openSeedVault")}</Button>
       </section>
 
       <div className="garden-counts" aria-label={t("garden.v3.summary")}> 
@@ -220,7 +230,7 @@ export default function BunnyGarden() {
             <p className="mt-1 text-sm leading-6 text-[#7f746e]">
               {garden.availableLetterPlants.length >= 3 ? t("garden.v3.letterReady") : t("garden.v3.letterLocked", { count: Math.max(0, 3 - garden.availableLetterPlants.length) })}
             </p>
-            <p className="mt-1 text-sm font-semibold text-[#78936f]">{t("garden.v3.available", { count: garden.availableLetterPlants.length })}</p>
+            {garden.availableLetterPlants.length >= 3 && <p className="mt-1 text-sm font-semibold text-[#78936f]">{t("garden.v3.available", { count: garden.availableLetterPlants.length })}</p>}
           </div>
         </div>
         {garden.availableLetterPlants.length >= 3 && <Button type="button" variant="garden" onClick={() => { setSelectedSeedIds([]); setLetterPickerOpen(true); }}>{t("garden.v3.chooseThree")}</Button>}
@@ -245,14 +255,14 @@ export default function BunnyGarden() {
       </Sheet>}
 
       {harvestTarget && <Sheet onClose={() => setHarvestTarget(null)}>
-        <div className="text-center"><img src={matureAssets[harvestTarget.plantVariant]} alt="" className="mx-auto h-40 w-32 object-contain" /><h2 className="font-display text-2xl font-bold">{t(`garden.variant.${harvestTarget.plantVariant}`)}</h2><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[#7f746e]">{t("garden.v3.harvestHint")}</p><div className="mt-5 flex justify-center gap-3"><Button variant="ghost" onClick={() => setHarvestTarget(null)}>{t("garden.v3.later")}</Button><Button variant="garden" onClick={harvest}>{t("garden.v3.harvest")}</Button></div></div>
+        <div className="text-center"><img src={matureAssets[harvestTarget.plantVariant]} alt="" className="mx-auto h-40 w-32 object-contain" /><h2 className="font-display text-2xl font-bold">{t(`garden.variant.${harvestTarget.plantVariant}`)}</h2><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[#7f746e]">{t("garden.v3.harvestHint")}</p><div className="mt-5 flex justify-center gap-3"><Button variant="ghost" onClick={() => { navigate(routes.journalEntry(harvestTarget.entryId)); }}>{t("garden.reviewDay")}</Button><Button variant="garden" onClick={harvest}>{t("garden.v3.harvest")}</Button></div></div>
       </Sheet>}
 
       {plantInfo && <Sheet onClose={() => setPlantInfo(null)}>
-        <div className="text-center"><img src={plantAsset(plantInfo)} alt="" className="mx-auto h-40 w-32 object-contain" /><h2 className="font-display text-2xl font-bold">{plantInfo.status === "planted" ? t("garden.growingNow") : t(`garden.variant.${plantInfo.plantVariant}`)}</h2><p className="mt-2 text-sm text-[#7f746e]">{plantInfo.status === "usedForLetter" ? t("garden.v3.usedForLetter") : plantInfo.status === "planted" ? t("garden.v3.growingHint") : t("garden.v3.collectedHint")}</p><Button className="mt-5" variant="ghost" onClick={() => setPlantInfo(null)}>{t("garden.keepWalking")}</Button></div>
+        <div className="text-center"><img src={plantAsset(plantInfo)} alt="" className="mx-auto h-40 w-32 object-contain" /><h2 className="font-display text-2xl font-bold">{plantInfo.status === "planted" ? t("garden.growingNow") : t(`garden.variant.${plantInfo.plantVariant}`)}</h2><p className="mt-2 text-sm text-[#7f746e]">{plantInfo.status === "usedForLetter" ? t("garden.v3.usedForLetter") : plantInfo.status === "planted" ? t("garden.v3.growingHint") : t("garden.v3.collectedHint")}</p><div className="mt-5 flex justify-center gap-3"><Button variant="ghost" onClick={() => { navigate(routes.journalEntry(plantInfo.entryId)); }}>{t("garden.reviewDay")}</Button><Button variant="ghost" onClick={() => setPlantInfo(null)}>{t("garden.keepWalking")}</Button></div></div>
       </Sheet>}
 
-      {letterPickerOpen && <Sheet onClose={() => !writing && setLetterPickerOpen(false)}>
+      {letterPickerOpen && <Sheet onClose={() => !writing && setLetterPickerOpen(false)} blockClose={!writing && selectedSeedIds.length > 0}>
         <div className="flex items-start justify-between gap-4"><div><h2 className="font-display text-2xl font-bold">{t("garden.v3.pickerTitle")}</h2><p className="mt-1 text-sm text-[#8d817a]">{t("garden.v3.pickerSubtitle")}</p></div>{!writing && <button type="button" className="sheet-close" onClick={() => setLetterPickerOpen(false)} aria-label={t("garden.v3.later")}><X /></button>}</div>
         {writing ? <div className="grid min-h-64 place-items-center text-center"><div><img src="/mascot/poses/writing.png" alt="" className="mx-auto h-32 w-32 object-contain animate-pulse" /><p className="font-display text-xl font-bold">{t("garden.v3.writing")}</p></div></div> : <>
           <div className="mt-5 grid gap-2 sm:grid-cols-2">{garden.availableLetterPlants.map((seed) => { const selected = selectedSeedIds.includes(seed.id); return <button type="button" key={seed.id} className={cn("letter-plant-row", selected && "letter-plant-row--selected")} onClick={() => toggleSelected(seed.id)}><img src={matureAssets[seed.plantVariant]} alt="" /><span className="min-w-0 flex-1 text-left"><strong className="block truncate">{t(`garden.variant.${seed.plantVariant}`)}</strong><small>{t(seed.seedType === "warmth" ? "garden.v3.warmPlant" : "garden.v3.worryPlant")}</small></span><span className="selection-check">{selected && <Check />}</span></button>; })}</div>
