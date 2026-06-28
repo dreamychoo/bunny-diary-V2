@@ -144,14 +144,14 @@ export function PlantingAnimationOverlay({
               />
             ))}
           </div>
-          {/* Sparkle burst — outside overflow so they float above the bunny */}
+          {/* Sparkle burst — start from lower-left of the image */}
           {sparkles.map((s) => (
             <span
               key={s.id}
               className="sparkle-dot"
               style={{
-                left: "50%",
-                top: "50%",
+                left: "38%",
+                top: "62%",
                 background: s.color,
                 "--dx": `${s.dx}px`, "--dy": `${s.dy}px`,
                 "--size": `${s.size}px`,
