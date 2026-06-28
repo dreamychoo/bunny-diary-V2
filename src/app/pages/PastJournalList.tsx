@@ -141,9 +141,8 @@ export default function PastJournalList() {
                           <time className="text-xs font-semibold text-[#7f746e]">{formatDate(entry.timestamp, language)}</time>
                           <span className="text-[13px]">{entry.type === "emotion" ? (entry.emotions.length ? (emotionIcons[entry.emotions[0]] || "💧") : "💧") : (weatherKeys.includes(entry.weather as WeatherKey) ? getWeatherEmoji(entry.weather as WeatherKey) : "☀️")}</span>
                         </div>
-                        <h2 className="mt-1 text-base font-bold leading-tight">{entryTitle(entry, t)}</h2>
-                        {body && body.length > 5 && <p className="mt-1 line-clamp-2 text-sm leading-6 text-[#7f6b62]">{body}</p>}
-                        {(!body || body.length <= 5) && <p className="mt-1 text-sm italic text-[#a89e97]">{t("common.noNoteText")}</p>}
+                        <h2 className="mt-1 text-base font-bold leading-tight line-clamp-1">{body ? (body.length > 40 ? body.slice(0, 40) + "…" : body) : entryTitle(entry, t)}</h2>
+                        {body && <p className="mt-1 line-clamp-2 text-sm leading-6 text-[#7f6b62]">{body}</p>}
                       </Link>
                       {pendingDeleteId === entry.id ? (
                         <div className="flex flex-wrap gap-2 rounded-3xl bg-[#fff3f1] p-2 sm:justify-end">
