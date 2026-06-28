@@ -7,5 +7,6 @@ export const routes = {
   letter: (id: string) => `/bunny-letter/${id}`,
   pastJournals: "/past-journals",
   journalEntry: (id: string) => `/journal-entry/${id}`,
+  diaryLayout: (id: string) => `/diary-layout/${id}`,
   settings: "/settings"
 };

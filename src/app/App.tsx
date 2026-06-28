@@ -11,6 +11,7 @@ import EmotionRescue from "./pages/EmotionRescue";
 import DailyWarmth from "./pages/DailyWarmth";
 import JournalEntryDetail from "./pages/JournalEntryDetail";
 import PastJournalList from "./pages/PastJournalList";
+import DiaryLayout from "./pages/DiaryLayout";
 import Settings from "./pages/Settings";
 
 export default function App() {
@@ -28,6 +29,7 @@ export default function App() {
         <Route path={routes.emotionRescue} element={<EmotionRescue />} />
         <Route path={routes.dailyWarmth} element={<DailyWarmth />} />
         <Route path={routes.pastJournals} element={<PastJournalList />} />
+        <Route path={routes.diaryLayout(":id")} element={<DiaryLayout />} />
         <Route path="/journal-entry/:id" element={<JournalEntryDetail />} />
         <Route path="/journal-entry" element={<Navigate to={routes.pastJournals} replace />} />
         <Route path={routes.settings} element={<Settings />} />

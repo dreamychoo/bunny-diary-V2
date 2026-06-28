@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, CalendarDays, Leaf, Pencil, Save, Trash2, X } from "lucide-react";
+import { ArrowLeft, CalendarDays, ImageIcon, Leaf, Pencil, Save, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { AppShell } from "../components/AppShell";
 import { Mascot } from "../components/Mascot";
@@ -217,6 +217,10 @@ export default function JournalEntryDetail() {
           <Button variant="secondary" onClick={() => navigate(routes.bunnyGarden)}>
             <Leaf className="h-4 w-4" />
             {t("common.viewGarden")}
+          </Button>
+          <Button variant="garden" onClick={() => navigate(routes.diaryLayout(entry.id))}>
+            <ImageIcon className="h-4 w-4" />
+            {language === "zh" ? "分享卡片" : "Share Card"}
           </Button>
         </div>
       </Card>

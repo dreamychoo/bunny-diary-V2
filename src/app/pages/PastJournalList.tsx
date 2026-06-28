@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { ImageIcon, Search } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Search, Trash2 } from "lucide-react";
 import { AppShell } from "../components/AppShell";
 import { GardenNav } from "../components/GardenNav";
 import { Button } from "../components/ui/button";
@@ -59,7 +59,6 @@ export default function PastJournalList() {
   const { language, t } = useI18n();
   const [query, setQuery] = useState("");
   const [entries, setEntries] = useState(() => getAllEntries());
-  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [filterType, setFilterType] = useState<"all" | "emotion" | "warmth">("all");
 
   useEffect(() => {
@@ -83,12 +82,6 @@ export default function PastJournalList() {
       return searchText.includes(normalizedQuery);
     });
   }, [entries, query, t, filterType]);
-
-  function handleDelete(id: string) {
-    deleteEntry(id);
-    setPendingDeleteId(null);
-    setEntries(getAllEntries());
-  }
 
   const emotionCount = entries.filter((e) => e.type === "emotion").length;
   const warmthCount = entries.filter((e) => e.type === "warmth").length;
@@ -135,32 +128,22 @@ export default function PastJournalList() {
                 return (
                   <article key={entry.id} className="memory-row">
                     <span className={entryDot(entry)} />
-                    <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="flex min-w-0 flex-1 items-center gap-2">
                       <Link to={routes.journalEntry(entry.id)} className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <time className="text-xs font-semibold text-[#7f746e]">{formatDate(entry.timestamp, language)}</time>
                           <span className="text-[13px]">{entry.type === "emotion" ? (entry.emotions.length ? (emotionIcons[entry.emotions[0]] || "💧") : "💧") : (weatherKeys.includes(entry.weather as WeatherKey) ? getWeatherEmoji(entry.weather as WeatherKey) : "☀️")}</span>
                         </div>
-                        <h2 className="mt-1 text-base font-bold leading-tight line-clamp-1">{body ? (body.length > 40 ? body.slice(0, 40) + "…" : body) : entryTitle(entry, t)}</h2>
-                        {body && <p className="mt-1 line-clamp-2 text-sm leading-6 text-[#7f6b62]">{body}</p>}
+                        <h2 className="mt-0.5 text-sm font-bold leading-tight line-clamp-1">{body ? (body.length > 40 ? body.slice(0, 40) + "…" : body) : entryTitle(entry, t)}</h2>
                       </Link>
-                      {pendingDeleteId === entry.id ? (
-                        <div className="flex flex-wrap gap-2 rounded-3xl bg-[#fff3f1] p-2 sm:justify-end">
-                          <Button type="button" variant="danger" onClick={() => handleDelete(entry.id)}>
-                            <Trash2 className="h-4 w-4" />
-                            {t("common.deleteForever")}
-                          </Button>
-                          <Button type="button" variant="ghost" onClick={() => setPendingDeleteId(null)}>
-                            {t("common.cancel")}
-                          </Button>
-                        </div>
-                      ) : (
-                        <Button type="button" variant="ghost" onClick={() => setPendingDeleteId(entry.id)} aria-label={t("past.deleteEntry")}>
-                          <Trash2 className="h-4 w-4" />
-                          {t("common.delete")}
-                        </Button>
-                      )}
-                    </div>
+                      <Link
+                        to={routes.diaryLayout(entry.id)}
+                        className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#d8d3cc]/50 bg-[#ffffff]/88 text-[#8d817a] transition hover:bg-[#ffffff] active:scale-[0.98]"
+                        aria-label="share card"
+                      >
+                        <ImageIcon className="h-4 w-4" />
+                      </Link>
+                      </div>
                   </article>
                 );
               })
