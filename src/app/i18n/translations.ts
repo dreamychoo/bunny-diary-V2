@@ -498,7 +498,7 @@ export const translations = {
     "garden.v3.worryPlant": "心事植物",
     "garden.v3.selectedCount": "已选择 {count} / 3",
     "garden.v3.pickExactly": "选满三株植物后，就能预览这封信。",
-    "garden.v3.writeLetter": "让兔兔写这封信",
+    "garden.v3.writeLetter": "让兔兔写信",
 
     "letter.preview.warm-light.title": "将生成：小暖光来信",
     "letter.preview.warm-light.body": "这会是一封更轻、更明亮的小信。",
