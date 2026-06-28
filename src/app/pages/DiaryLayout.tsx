@@ -61,7 +61,7 @@ export default function DiaryLayout() {
     try {
       const dataUrl = await toPng(cardRef.current, { backgroundColor: "#fdf8f2", pixelRatio: 2 });
       const link = document.createElement("a");
-      link.download = `diary-${entry.id.slice(0, 8)}.png`;
+      link.download = `diary-card-${Date.now()}.png`;
       link.href = dataUrl;
       link.click();
     } catch {
