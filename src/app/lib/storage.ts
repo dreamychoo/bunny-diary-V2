@@ -940,6 +940,55 @@ export function saveLanguage(language: Language) {
   saveSettings({ language });
 }
 
+const notebookLines: Record<"en" | "zh", string[]> = {
+  en: [
+    "Some answers aren't thought up — they show up while you're washing a cup, waiting at a crosswalk, or walking home.",
+    "Being ordinary doesn't mean nothing happened. It means most things are still where they belong: the cup on the table, the light on the ceiling, and you, still here.",
+    "Tiredness isn't laziness. Laziness is avoiding things; tiredness is saying there's been too much. One needs a plan, the other needs a rest.",
+    "Comparison is a busy ruler. It measures others, then measures you. Try putting the ruler down today and let flowers bloom at their own pace.",
+    "A mistake isn't proof that you're not good enough. It's more like a footnote from life: try again here, try a different way there.",
+    "Waiting isn't emptiness. While you wait for water to boil, the water is getting hotter. While you wait for a flower to bloom, the flower is getting ready.",
+    "Happiness gets called 'a small thing' too easily. But many small things are exactly where the heart lights up first.",
+    "Regret doesn't become a story right away. At first it stings, then it dulls, then maybe one quiet afternoon it becomes just a sentence.",
+    "Being brave isn't always charging forward. Sometimes it's not running away — it's staying, taking a deep breath, and tying your shoelaces again.",
+    "Plans are maps; life is weather. Maps matter, but when it rains, taking a different road is normal. Detours aren't failure, and they might pass by a flower shop.",
+    "Self-blame is good at pretending to be reflection. It says: think about it again and you'll avoid the mistake next time. But sometimes thinking again just hurts again.",
+    "Goodwill doesn't have to be big. A casual 'it's okay,' a glass of water poured for someone, a seat saved — they all count.",
+    "Certainty comes with no manual. But many good things didn't come with one either. When you don't know the next step, just make sure the step you're on is steady.",
+    "Rest isn't pausing life. It's saving energy for tomorrow. A battery doesn't look productive while charging, but no one blames it for that.",
+    "Gentleness isn't weakness. It's choosing to speak softly when you could be sharper. That's not backing down — it's putting the sharpness away.",
+    "Boundaries aren't about pushing people away. They're like a coaster — letting hot things have a place to rest without scorching the table.",
+    "Being understood is lucky. Not being understood doesn't mean you were wrong. Some frequencies take a while to tune in.",
+    "Being liked is a gentle thing. But it shouldn't become a test. You don't have to perform well every day to deserve being liked."
+  ],
+  zh: [
+    "今天发现，有些答案不是想出来的。它们常常在洗杯子、等红灯、走回家的路上，自己慢慢出现。",
+    "普通不是没有发生什么。普通是很多东西都好好待在原来的地方：杯子在桌上，灯在天花板，自己也还在这里。",
+    "疲惫和偷懒不是同一种东西。偷懒是在躲事情，疲惫是在提醒事情太多了。一个需要计划，一个需要休息。",
+    "比较像一把很忙的尺子。量别人，也量自己，量来量去，最后谁都不太舒服。今天试着把尺子放下。",
+    "失误不是一个人不够好的证据。它更像生活在旁边写的小批注：这里可以再试一次，那里可以换个方法。",
+    "等待不是空着。等水烧开的时候，水也在变热。等花开的时候，花也在准备。",
+    "快乐很容易被说成小事。可很多小事，正是心里最先亮起来的地方。",
+    "遗憾不会马上变成故事。它一开始会有点刺，后来才慢慢变钝，再后来，可能变成某个安静下午里的一句话。",
+    "勇敢不总是往前冲。有时候，勇敢是没有立刻逃走；是停在原地，深吸一口气，然后把鞋带重新系好。",
+    "计划像地图，生活像天气。地图很重要，但下雨的时候，换条路也很正常。绕路不是失败，偶尔还会经过没见过的小店。",
+    "自责很会假装成认真。它会说再想一遍，你就能避免下次出错。但有时候，再想一遍只是再疼一次。记住就够了，不必反复按伤口。",
+    "善意不一定要很大。一句没关系、一杯顺手倒的水、一个留出来的位置，都算。很多温柔都没有名字，但被接住的人会知道。",
+    "不确定让人不安，是因为它没有说明书。可是很多好事刚来的时候，也没有说明书。",
+    "休息不是暂停人生。休息是替明天留一点力气。电池充电的时候看起来也没在工作，但没有谁会责怪电池偷懒。",
+    "温柔不是软弱。温柔是明明可以更尖锐，却选择把话说得轻一点。这不是退让，是把锋利收好。",
+    "边界不是把人推远。它更像桌上的杯垫，让热的东西有地方放，也不烫坏桌面。",
+    "被理解很幸运。没被理解，也不代表自己说错了。世界上有些频道需要调很久，才会听见彼此的声音。",
+    "被喜欢是一件很温柔的事。但它不应该变成考试。你不用每一天都表现得很好，才能保留被喜欢的资格。"
+  ]
+};
+
+export function getBunnyNotebookLine(): string {
+  const lang = getSettings().language;
+  const lines = notebookLines[lang];
+  return lines[Math.floor(Math.random() * lines.length)];
+}
+
 export function exportDiaryData() {
   const { seeds, plots, keepsakes, letters } = readGardenStorage();
   return {

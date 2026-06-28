@@ -1,7 +1,9 @@
+import { useMemo } from "react";
 import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { useI18n } from "../i18n";
+import { getBunnyNotebookLine } from "../lib/storage";
 import { routes } from "../routes";
 
 export default function Home() {
@@ -13,6 +15,8 @@ export default function Home() {
     hour >= 12 && hour < 18 ? "home.greeting.afternoon" :
     hour >= 18 && hour < 23 ? "home.greeting.evening" :
     "home.greeting.night";
+
+  const notebookLine = useMemo(() => getBunnyNotebookLine(), []);
 
   return (
     <AppShell>
@@ -72,7 +76,7 @@ export default function Home() {
         <section className="app-bunny-says mt-4">
           <div>
             <span>{language === "zh" ? "小兔说" : "Bunny Says"}</span>
-            <p>{language === "zh" ? "情绪不是问题，它只是信息。" : "A feeling is not a problem. It is simply information."}</p>
+            <p>{notebookLine}</p>
           </div>
           <span className="zzz">Zzz</span>
           <img src="/assets/v2/rabbits/sleeping.png" alt="" />
