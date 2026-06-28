@@ -69,7 +69,7 @@ export default function Home() {
           </button>
           <div className="min-w-0 flex-1">
             <p className="font-display text-xl font-bold leading-tight text-[#4a3b34]">{t("app.title")}</p>
-            <p className="mt-0.5 text-xs font-medium text-[#8d817a]">{t("app.tagline")}</p>
+            <p className="mt-0.5 text-xs font-medium text-[#8d817a]">{t("home.v4.prompt")}</p>
           </div>
         </div>
         {/* 四格导航 */}
