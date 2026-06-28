@@ -129,26 +129,29 @@ export function PlantingAnimationOverlay({
       onKeyDown={(e) => { if (e.key === "Escape" && secondaryKey && onSecondary) onSecondary(); }}
     >
       <div className="w-full max-w-[22rem] text-center">
-        <div className="relative mx-auto h-[220px] w-[260px] overflow-hidden">
-          {frameSources.map((src, index) => (
-            <img
-              key={src}
-              src={src}
-              alt={index === frameIndex ? imageAlt : ""}
-              aria-hidden={index !== frameIndex}
-              className={cn(
-                "absolute inset-0 h-full w-full object-contain transition-opacity duration-150 ease-out",
-                index === frameIndex ? "opacity-100" : "opacity-0"
-              )}
-            />
-          ))}
-          {/* Sparkle burst */}
+        <div className="relative mx-auto h-[220px] w-[260px]">
+          <div className="relative h-full w-full overflow-hidden">
+            {frameSources.map((src, index) => (
+              <img
+                key={src}
+                src={src}
+                alt={index === frameIndex ? imageAlt : ""}
+                aria-hidden={index !== frameIndex}
+                className={cn(
+                  "absolute inset-0 h-full w-full object-contain transition-opacity duration-150 ease-out",
+                  index === frameIndex ? "opacity-100" : "opacity-0"
+                )}
+              />
+            ))}
+          </div>
+          {/* Sparkle burst — outside overflow so they float above the bunny */}
           {sparkles.map((s) => (
             <span
               key={s.id}
               className="sparkle-dot"
               style={{
-                left: "50%", top: "50%",
+                left: "50%",
+                top: "50%",
                 background: s.color,
                 "--dx": `${s.dx}px`, "--dy": `${s.dy}px`,
                 "--size": `${s.size}px`,
