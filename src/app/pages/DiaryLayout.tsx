@@ -82,8 +82,8 @@ export default function DiaryLayout() {
         >
           {/* Decorative top */}
           <div className="flex justify-center">
-            <div className={`grid h-20 w-20 place-items-center rounded-full ${isEmotion ? "bg-[var(--pink-soft)]" : "bg-[var(--pink-soft)]"}`}>
-              <span className="text-4xl">🐰</span>
+            <div className="grid h-20 w-20 place-items-center rounded-full bg-[var(--pink-soft)]">
+              <img src="/assets/v2/rabbits/holding-heart.png" alt="" className="h-12 w-12 object-contain" />
             </div>
           </div>
 
