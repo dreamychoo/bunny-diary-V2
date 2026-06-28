@@ -105,8 +105,9 @@ export default function DiaryLayout() {
           <div className="mx-auto my-4 h-px w-12 bg-[var(--muted)]/40" />
 
           {notebookQuote ? (
-            <div className="mt-6 rounded-[18px] bg-white p-5 text-center">
+            <div className="mx-2 mt-5 rounded-[14px] bg-[#f7f3ee] px-5 py-5 text-center shadow-[0_2px_12px_rgba(150,105,93,0.06)]">
               <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>{notebookQuote}</p>
+              <p className="mt-3 text-[11px] font-medium text-[var(--muted)]">—— {t("app.title")}</p>
             </div>
           ) : isEmotion ? (
             <>
