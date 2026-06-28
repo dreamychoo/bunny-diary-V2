@@ -125,12 +125,12 @@ export function PlantingAnimationOverlay({
       aria-modal="true"
       aria-label={t(titleKey)}
       tabIndex={-1}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#fdf8f2]/94 px-5 py-6 backdrop-blur-[2px]"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg)] px-5 py-6"
       onKeyDown={(e) => { if (e.key === "Escape" && secondaryKey && onSecondary) onSecondary(); }}
     >
       <div className="w-full max-w-[22rem] text-center">
         <div className="relative mx-auto h-[220px] w-[260px]">
-          <div className="relative h-full w-full overflow-hidden">
+          <div className="relative h-full w-full overflow-hidden rounded-[20px] bg-[var(--bg)]">
             {frameSources.map((src, index) => (
               <img
                 key={src}
