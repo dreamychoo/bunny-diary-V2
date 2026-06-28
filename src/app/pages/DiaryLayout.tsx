@@ -85,10 +85,15 @@ export default function DiaryLayout() {
             <img src="/assets/v2/rabbits/holding-heart.png" alt="" className="h-20 w-20 object-contain" />
           </div>
 
-          {/* Date */}
-          <p className="mt-4 text-center text-[13px] font-semibold tracking-wide text-[var(--muted)]">
-            {formatDate(entry.timestamp, language)}
-          </p>
+          {/* Date + Weather */}
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <p className="text-[13px] font-semibold tracking-wide text-[var(--muted)]">
+              {formatDate(entry.timestamp, language)}
+            </p>
+            {!isEmotion && entry.weather && (
+              <span className="text-xl">{weatherEmojis[entry.weather] || "☀️"}</span>
+            )}
+          </div>
 
           {/* Divider */}
           <div className="mx-auto my-4 h-px w-12 bg-[var(--muted)]/40" />
@@ -153,13 +158,6 @@ export default function DiaryLayout() {
             </>
           ) : (
             <>
-              {/* Weather */}
-              {entry.weather && (
-                <div className="text-center">
-                  <span className="text-5xl">{weatherEmojis[entry.weather] || "☀️"}</span>
-                </div>
-              )}
-
               {/* Gratitude */}
               {entry.gratitude && (
                 <div className="mt-5 rounded-[18px] bg-white p-5">
