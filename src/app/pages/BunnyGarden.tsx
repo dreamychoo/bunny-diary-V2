@@ -274,8 +274,8 @@ export default function BunnyGarden() {
           <p className="flex-1 text-[13px] font-extrabold leading-snug text-[#4d3c33]">
             {garden.waitingSeedCount > 0 ? t("garden.promptBar.plantReady") : t("garden.promptBar.writeForSeed")}
           </p>
-          <button onClick={() => setSeedVaultOpen(true)} className="inline-flex h-11 items-center rounded-[999px] border-0 bg-gradient-to-b from-[#92d096] to-[#78bf83] px-3.5 text-[12px] font-extrabold text-white shadow-[0_8px_18px_rgba(120,191,131,0.28),inset_0_1px_rgba(255,255,255,0.35)]">
-            🌱 {t("garden.openSeedVault")}
+          <button onClick={() => setSeedVaultOpen(true)} className="inline-flex h-11 items-center rounded-[999px] border-0 bg-gradient-to-b from-[#8fc98a] to-[#6ab565] px-3.5 text-[12px] font-extrabold text-white shadow-[0_8px_18px_rgba(106,181,101,0.28),inset_0_1px_rgba(255,255,255,0.35)]">
+            {t("garden.openSeedVault")}
           </button>
         </section>
 
