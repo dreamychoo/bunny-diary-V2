@@ -14,6 +14,7 @@ import {
   createEntryId,
   EmotionEntry,
   EmotionKey,
+  emotionIcons,
   extraEmotionKeys,
   extraSymptomKeys,
   primaryEmotionKeys,
@@ -21,39 +22,6 @@ import {
   SymptomKey
 } from "../lib/storage";
 import { routes } from "../routes";
-
-const emotionIcons: Record<EmotionKey, string> = {
-  sadness: "💧",
-  anger: "🌶️",
-  anxiety: "⚡",
-  disappointed: "🌧️",
-  drained: "🌙",
-  frustrated: "🐝",
-  numbness: "◌",
-  loneliness: "🍂",
-  hurt: "🫧",
-  overwhelm: "🪨",
-  shame: "🌫️",
-  confused: "❔",
-  rejected: "🚪",
-  stressed: "📦",
-  jealous: "🌵",
-  hopeless: "🌑",
-  guilty: "🧵",
-  fear: "🐾",
-  empty: "☁️",
-  sensitive: "🌼",
-  on_edge: "🌊",
-  avoidant: "🍃",
-  unseen: "📭",
-  ignored: "👁️",
-  lost: "🧭",
-  tenderness: "🫶",
-  moved: "✨",
-  calm: "🕊️",
-  grateful: "☀️",
-  hopeful: "🌱"
-};
 
 const prompts = [
   "今天发生了什么想跟兔兔说？",

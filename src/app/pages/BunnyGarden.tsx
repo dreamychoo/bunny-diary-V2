@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, Flower2, Leaf, Mail, Sprout, X } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
-import { GardenNav } from "../components/GardenNav";
 import { Button } from "../components/ui/button";
 import { cn } from "../components/ui/utils";
 import { useI18n } from "../i18n";
@@ -72,7 +71,7 @@ function formatDate(timestamp: string, language: string) {
 function Sheet({ children, onClose, blockClose }: { children: React.ReactNode; onClose: () => void; blockClose?: boolean }) {
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#4b3a34]/20 px-3 pt-14 backdrop-blur-[2px] sm:items-center sm:p-6" onMouseDown={blockClose ? undefined : onClose}>
-      <section className="max-h-[88dvh] w-full max-w-[620px] overflow-y-auto rounded-t-[28px] border border-[#e8ded2] bg-[#fffdf9] p-5 shadow-[0_-12px_45px_rgba(75,58,52,0.12)] sm:rounded-[28px] sm:p-7" onMouseDown={(event) => event.stopPropagation()}>
+      <section className="max-h-[80dvh] w-full max-w-[620px] overflow-y-auto rounded-t-[28px] border border-[#e8ded2] bg-[#fffdf9] p-5 pb-[88px] shadow-[0_-12px_45px_rgba(75,58,52,0.12)] sm:rounded-[28px] sm:p-7 sm:pb-7" onMouseDown={(event) => event.stopPropagation()}>
         {children}
       </section>
     </div>
@@ -236,8 +235,6 @@ export default function BunnyGarden() {
         {garden.availableLetterPlants.length >= 3 && <Button type="button" variant="garden" onClick={() => { setSelectedSeedIds([]); setLetterPickerOpen(true); }}>{t("garden.v3.chooseThree")}</Button>}
       </section>
 
-      <GardenNav />
-
       {seedVaultOpen && <Sheet onClose={() => setSeedVaultOpen(false)}>
         <div className="flex items-start justify-between gap-4">
           <div><h2 className="font-display text-2xl font-bold">{t("garden.seedVaultTitle")}</h2><p className="mt-1 text-sm text-[#8d817a]">{t("garden.v3.vaultSubtitle")}</p></div>
@@ -264,7 +261,7 @@ export default function BunnyGarden() {
 
       {letterPickerOpen && <Sheet onClose={() => !writing && setLetterPickerOpen(false)} blockClose={!writing && selectedSeedIds.length > 0}>
         <div className="flex items-start justify-between gap-4"><div><h2 className="font-display text-2xl font-bold">{t("garden.v3.pickerTitle")}</h2><p className="mt-1 text-sm text-[#8d817a]">{t("garden.v3.pickerSubtitle")}</p></div>{!writing && <button type="button" className="sheet-close" onClick={() => setLetterPickerOpen(false)} aria-label={t("garden.v3.later")}><X /></button>}</div>
-        {writing ? <div className="grid min-h-64 place-items-center text-center"><div><img src="/mascot/poses/writing.png" alt="" className="mx-auto h-32 w-32 object-contain animate-pulse" /><p className="font-display text-xl font-bold">{t("garden.v3.writing")}</p></div></div> : <>
+        {writing ? <div className="grid min-h-64 place-items-center text-center"><div><img src="/assets/v2/rabbits/writing.png" alt="" className="mx-auto h-32 w-32 object-contain animate-pulse" /><p className="font-display text-xl font-bold">{t("garden.v3.writing")}</p></div></div> : <>
           <div className="mt-5 grid gap-2 sm:grid-cols-2">{garden.availableLetterPlants.map((seed) => { const selected = selectedSeedIds.includes(seed.id); return <button type="button" key={seed.id} className={cn("letter-plant-row", selected && "letter-plant-row--selected")} onClick={() => toggleSelected(seed.id)}><img src={matureAssets[seed.plantVariant]} alt="" /><span className="min-w-0 flex-1 text-left"><strong className="block truncate">{t(`garden.variant.${seed.plantVariant}`)}</strong><small>{t(seed.seedType === "warmth" ? "garden.v3.warmPlant" : "garden.v3.worryPlant")}</small></span><span className="selection-check">{selected && <Check />}</span></button>; })}</div>
           <div className="mt-5 rounded-[20px] border border-[#e8ded2] bg-[#faf7f1] p-4"><p className="text-sm font-semibold">{selectedSeedIds.length === 3 ? t(`letter.preview.${previewType}.title`) : t("garden.v3.selectedCount", { count: selectedSeedIds.length })}</p><p className="mt-1 text-sm text-[#7f746e]">{selectedSeedIds.length === 3 ? t(`letter.preview.${previewType}.body`) : t("garden.v3.pickExactly")}</p></div>
           <div className="mt-5 flex justify-end gap-3"><Button variant="ghost" onClick={() => setLetterPickerOpen(false)}>{t("garden.v3.later")}</Button><Button variant="garden" onClick={createLetter} disabled={selectedSeedIds.length !== 3}>{t("garden.v3.writeLetter")}</Button></div>

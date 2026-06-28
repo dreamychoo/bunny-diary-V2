@@ -1,18 +1,27 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { I18nProvider } from "./i18n";
 import { migrateLegacyEntries } from "./lib/storage";
 import { routes } from "./routes";
 import Home from "./pages/Home";
-import BunnyGarden from "./pages/BunnyGarden";
-import CollectionRoom from "./pages/CollectionRoom";
-import BunnyLetterDetail from "./pages/BunnyLetterDetail";
-import EmotionRescue from "./pages/EmotionRescue";
-import DailyWarmth from "./pages/DailyWarmth";
-import JournalEntryDetail from "./pages/JournalEntryDetail";
-import PastJournalList from "./pages/PastJournalList";
-import DiaryLayout from "./pages/DiaryLayout";
-import Settings from "./pages/Settings";
+
+const BunnyGarden = lazy(() => import("./pages/BunnyGarden"));
+const CollectionRoom = lazy(() => import("./pages/CollectionRoom"));
+const BunnyLetterDetail = lazy(() => import("./pages/BunnyLetterDetail"));
+const EmotionRescue = lazy(() => import("./pages/EmotionRescue"));
+const DailyWarmth = lazy(() => import("./pages/DailyWarmth"));
+const JournalEntryDetail = lazy(() => import("./pages/JournalEntryDetail"));
+const PastJournalList = lazy(() => import("./pages/PastJournalList"));
+const DiaryLayout = lazy(() => import("./pages/DiaryLayout"));
+const Settings = lazy(() => import("./pages/Settings"));
+
+function Lazy({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={<div className="mx-auto mt-20 max-w-[200px] text-center font-display text-sm text-[#8d817a]">🐇</div>}>
+      {children}
+    </Suspense>
+  );
+}
 
 export default function App() {
   useEffect(() => {
@@ -23,16 +32,16 @@ export default function App() {
     <I18nProvider>
       <Routes>
         <Route path={routes.home} element={<Home />} />
-        <Route path={routes.bunnyGarden} element={<BunnyGarden />} />
-        <Route path={routes.collection} element={<CollectionRoom />} />
-        <Route path="/bunny-letter/:id" element={<BunnyLetterDetail />} />
-        <Route path={routes.emotionRescue} element={<EmotionRescue />} />
-        <Route path={routes.dailyWarmth} element={<DailyWarmth />} />
-        <Route path={routes.pastJournals} element={<PastJournalList />} />
-        <Route path={routes.diaryLayout(":id")} element={<DiaryLayout />} />
-        <Route path="/journal-entry/:id" element={<JournalEntryDetail />} />
+        <Route path={routes.bunnyGarden} element={<Lazy><BunnyGarden /></Lazy>} />
+        <Route path={routes.collection} element={<Lazy><CollectionRoom /></Lazy>} />
+        <Route path="/bunny-letter/:id" element={<Lazy><BunnyLetterDetail /></Lazy>} />
+        <Route path={routes.emotionRescue} element={<Lazy><EmotionRescue /></Lazy>} />
+        <Route path={routes.dailyWarmth} element={<Lazy><DailyWarmth /></Lazy>} />
+        <Route path={routes.pastJournals} element={<Lazy><PastJournalList /></Lazy>} />
+        <Route path={routes.diaryLayout(":id")} element={<Lazy><DiaryLayout /></Lazy>} />
+        <Route path="/journal-entry/:id" element={<Lazy><JournalEntryDetail /></Lazy>} />
         <Route path="/journal-entry" element={<Navigate to={routes.pastJournals} replace />} />
-        <Route path={routes.settings} element={<Settings />} />
+        <Route path={routes.settings} element={<Lazy><Settings /></Lazy>} />
         <Route path="*" element={<Navigate to={routes.home} replace />} />
       </Routes>
     </I18nProvider>

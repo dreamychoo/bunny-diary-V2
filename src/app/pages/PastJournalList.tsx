@@ -2,11 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { ImageIcon, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
-import { GardenNav } from "../components/GardenNav";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { useI18n } from "../i18n";
-import { deleteEntry, DiaryEntry, emotionKeys, getAllEntries, weatherKeys, WeatherKey, EmotionKey } from "../lib/storage";
+import { deleteEntry, DiaryEntry, emotionIcons, emotionKeys, getAllEntries, weatherKeys, WeatherKey, EmotionKey } from "../lib/storage";
 import { routes } from "../routes";
 
 function formatDate(timestamp: string, language: string) {
@@ -35,20 +34,10 @@ function entryTitle(entry: DiaryEntry, t: (key: string) => string) {
   return t("common.dailyWarmth");
 }
 
-const emotionIcons: Record<string, string> = {
-  sadness: "💧", anger: "🌶️", anxiety: "⚡", disappointed: "🌧️",
-  drained: "🌙", frustrated: "🐝", numbness: "◌", loneliness: "🍂",
-  hurt: "🫧", overwhelm: "🪨", shame: "🌫️", confused: "❔",
-  rejected: "🚪", stressed: "📦", jealous: "🌵", hopeless: "🌑",
-  guilty: "🧵", fear: "🐾", empty: "☁️", sensitive: "🌼",
-  on_edge: "🌊", avoidant: "🍃", unseen: "📭", ignored: "👁️",
-  lost: "🧭", tenderness: "🫶", moved: "✨", calm: "🕊️",
-  grateful: "☀️", hopeful: "🌱"
-};
+const weatherEmoji: Record<WeatherKey, string> = { sunny: "☀️", cloudy: "⛅", rainy: "🌧️", foggy: "🌫️", windy: "💨", moonlit: "🌙", thunder: "⛈️", starry: "✨" };
 
 function getWeatherEmoji(key: WeatherKey): string {
-  const map: Record<WeatherKey, string> = { sunny: "☀️", cloudy: "⛅", rainy: "🌧️", foggy: "🌫️", windy: "💨", moonlit: "🌙", thunder: "⛈️", starry: "✨" };
-  return map[key] ?? "";
+  return weatherEmoji[key] ?? "";
 }
 
 function entryDot(entry: DiaryEntry) {
@@ -159,7 +148,7 @@ export default function PastJournalList() {
           </div>
         </div>
         <aside className="memory-quiet-panel" aria-hidden="true">
-          <img src="/mascot/poses/memory.png" alt="" />
+          <img src="/assets/v2/rabbits/sitting.png" alt="" />
           {query ? (
             <p className="font-display mt-2 text-sm">
               {language === "zh"
@@ -176,7 +165,6 @@ export default function PastJournalList() {
           )}
         </aside>
       </section>
-      <GardenNav />
     </AppShell>
   );
 }

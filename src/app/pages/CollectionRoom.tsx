@@ -2,7 +2,6 @@ import { Archive, ChevronRight, Mail, Sprout } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
-import { GardenNav } from "../components/GardenNav";
 import { useI18n } from "../i18n";
 import { GardenPlantVariant, GardenSeed, getGardenState } from "../lib/storage";
 import { routes } from "../routes";
@@ -85,7 +84,6 @@ export default function CollectionRoom() {
           )}
         </section>
       </div>
-      <GardenNav />
     </AppShell>
   );
 }

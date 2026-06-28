@@ -99,6 +99,39 @@ export type SymptomKey = (typeof symptomKeys)[number];
 export type MoodKey = (typeof moodKeys)[number];
 export type WeatherKey = (typeof weatherKeys)[number];
 
+export const emotionIcons: Record<EmotionKey, string> = {
+  sadness: "💧",
+  anger: "🌶️",
+  anxiety: "⚡",
+  disappointed: "🌧️",
+  drained: "🌙",
+  frustrated: "🐝",
+  numbness: "◌",
+  loneliness: "🍂",
+  hurt: "🫧",
+  overwhelm: "🪨",
+  shame: "🌫️",
+  confused: "❔",
+  rejected: "🚪",
+  stressed: "📦",
+  jealous: "🌵",
+  hopeless: "🌑",
+  guilty: "🧵",
+  fear: "🐾",
+  empty: "☁️",
+  sensitive: "🌼",
+  on_edge: "🌊",
+  avoidant: "🍃",
+  unseen: "📭",
+  ignored: "👁️",
+  lost: "🧭",
+  tenderness: "🫶",
+  moved: "✨",
+  calm: "🕊️",
+  grateful: "☀️",
+  hopeful: "🌱"
+};
+
 export type EmotionEntry = {
   id: string;
   type: "emotion";
@@ -630,7 +663,13 @@ export function setEmotionEntries(entries: EmotionEntry[]) {
 export function appendEmotionEntry(entry: EmotionEntry) {
   const entries = getEmotionEntries();
   setEmotionEntries([...entries, entry]);
-  syncGardenStorage();
+  // ponytail: lightweight seed append instead of full garden rebuild
+  const seeds = readSeeds();
+  const seedId = createSeedId(entry.id);
+  if (!seeds.some((s) => s.id === seedId)) {
+    seeds.push(createSeedForEntry(entry));
+  }
+  writeSeeds(seeds);
 }
 
 export function getWarmthEntries() {
@@ -644,7 +683,13 @@ export function setWarmthEntries(entries: WarmthEntry[]) {
 export function appendWarmthEntry(entry: WarmthEntry) {
   const entries = getWarmthEntries();
   setWarmthEntries([...entries, entry]);
-  syncGardenStorage();
+  // ponytail: lightweight seed append instead of full garden rebuild
+  const seeds = readSeeds();
+  const seedId = createSeedId(entry.id);
+  if (!seeds.some((s) => s.id === seedId)) {
+    seeds.push(createSeedForEntry(entry));
+  }
+  writeSeeds(seeds);
 }
 
 export function getAllEntries() {

@@ -1,7 +1,6 @@
 import { ArrowLeft, Mail } from "lucide-react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
-import { GardenNav } from "../components/GardenNav";
 import { useI18n } from "../i18n";
 import { GardenPlantVariant, getLetterById } from "../lib/storage";
 import { routes } from "../routes";
@@ -29,9 +28,8 @@ export default function BunnyLetterDetail() {
         <div className="letter-rule"><span>{t("letter.from")}</span></div>
         <div className="letter-plants">{letter.seeds.map((seed) => <div key={seed.id}><img src={assets[seed.plantVariant]} alt="" /><span>{t(`garden.variant.${seed.plantVariant}`)}</span></div>)}</div>
         <div className="letter-body"><p>{t(`letter.body.${letter.letterType}.${letter.templateIndex}`)}</p></div>
-        <img src="/mascot/poses/writing.png" alt="" className="mx-auto mt-8 h-24 w-24 object-contain opacity-90" />
+        <img src="/assets/v2/rabbits/writing.png" alt="" className="mx-auto mt-8 h-24 w-24 object-contain opacity-90" />
       </article>
-      <GardenNav />
     </AppShell>
   );
 }

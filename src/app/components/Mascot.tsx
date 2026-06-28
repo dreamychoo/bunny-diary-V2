@@ -11,17 +11,17 @@ type MascotProps = {
 };
 
 const defaultMascotAssets: Record<MascotVariant, string> = {
-  reading: "/mascot/poses/reading.png",
-  writing: "/mascot/poses/writing.png",
-  listening: "/mascot/poses/listening.png",
-  comfort: "/mascot/poses/listening.png",
-  happy: "/mascot/poses/happy.png",
-  warmth: "/mascot/poses/warmth.png",
-  memory: "/mascot/poses/memory.png",
-  garden: "/mascot/poses/garden.png",
-  waiting: "/mascot/poses/waiting.png",
-  empty: "/mascot/poses/waiting.png",
-  sleep: "/mascot/poses/sleep.png"
+  reading: "/assets/v2/rabbits/reading.png",
+  writing: "/assets/v2/rabbits/writing.png",
+  listening: "/assets/v2/rabbits/reading.png",
+  comfort: "/assets/v2/rabbits/holding-lantern.png",
+  happy: "/assets/v2/rabbits/cheering.png",
+  warmth: "/assets/v2/rabbits/holding-mug.png",
+  memory: "/assets/v2/rabbits/sitting.png",
+  garden: "/assets/v2/rabbits/watering.png",
+  waiting: "/assets/v2/rabbits/sitting.png",
+  empty: "/assets/v2/rabbits/sitting.png",
+  sleep: "/assets/v2/rabbits/sleeping.png"
 };
 
 const moodMarks: Partial<Record<MascotVariant, React.ReactNode>> = {

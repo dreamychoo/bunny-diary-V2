@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Settings, Sparkles } from "lucide-react";
+import { Home as HomeIcon, Settings, Sparkles } from "lucide-react";
 import { useI18n } from "../i18n";
 import { routes } from "../routes";
 import { Mascot } from "./Mascot";
@@ -26,88 +26,51 @@ export function AppShell({ children, title, subtitle, headerMascotVariant = "rea
   const bunnyTapCountRef = useRef(0);
   const bunnyTapResetRef = useRef<number | null>(null);
   const bunnyTimerRef = useRef<number | null>(null);
+  const inJournal = location.pathname.startsWith("/journal-entry/") || location.pathname.startsWith("/diary-layout/") || location.pathname.startsWith("/bunny-letter/");
+  const showTabBar = !isSettings && !inJournal;
 
   useEffect(() => {
     return () => {
-      if (bunnyTapResetRef.current !== null) {
-        window.clearTimeout(bunnyTapResetRef.current);
-      }
-      if (bunnyTimerRef.current !== null) {
-        window.clearTimeout(bunnyTimerRef.current);
-      }
+      if (bunnyTapResetRef.current !== null) window.clearTimeout(bunnyTapResetRef.current);
+      if (bunnyTimerRef.current !== null) window.clearTimeout(bunnyTimerRef.current);
     };
   }, []);
 
   const showBunnyMessage = () => {
     const lines = [t("home.bunnyHelloAgain"), t("home.bunnyThanksForVisiting"), t("home.bunnyNiceToSeeYou")];
-    const nextMessage = lines[Math.floor(Math.random() * lines.length)];
-    setBunnyMessage(nextMessage);
-
-    if (bunnyTimerRef.current !== null) {
-      window.clearTimeout(bunnyTimerRef.current);
-    }
-
-    bunnyTimerRef.current = window.setTimeout(() => {
-      setBunnyMessage(null);
-    }, 1000);
+    setBunnyMessage(lines[Math.floor(Math.random() * lines.length)]);
+    if (bunnyTimerRef.current !== null) window.clearTimeout(bunnyTimerRef.current);
+    bunnyTimerRef.current = window.setTimeout(() => setBunnyMessage(null), 1000);
   };
 
   const handleBunnyTap = () => {
     bunnyTapCountRef.current += 1;
-
-    if (bunnyTapResetRef.current !== null) {
-      window.clearTimeout(bunnyTapResetRef.current);
-    }
-
+    if (bunnyTapResetRef.current !== null) window.clearTimeout(bunnyTapResetRef.current);
     if (bunnyTapCountRef.current >= 3) {
       bunnyTapCountRef.current = 0;
       showBunnyMessage();
       return;
     }
-
-    bunnyTapResetRef.current = window.setTimeout(() => {
-      bunnyTapCountRef.current = 0;
-    }, 900);
+    bunnyTapResetRef.current = window.setTimeout(() => { bunnyTapCountRef.current = 0; }, 900);
   };
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-clip px-4 pb-6 pt-3 text-[#4a3b34] sm:px-6 sm:pb-8 sm:pt-6">
+    <main className="relative min-h-[100dvh] overflow-x-clip px-4 pb-[92px] pt-3 text-[var(--ink)] sm:px-6 sm:pb-[100px] sm:pt-5">
       {!isHome && (
-        <Link
-          to={routes.home}
-          className="absolute left-4 top-4 z-20 grid h-11 w-11 place-items-center rounded-full border border-[#d8d3cc] bg-[#ffffff]/88 text-[#6f6158] shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition hover:bg-[#ffffff] active:scale-[0.98] sm:left-5 sm:top-6 sm:h-12 sm:w-12"
-          aria-label={t("common.home")}
-        >
-          <Home className="h-5 w-5" />
+        <Link to={routes.home} className="absolute left-4 top-4 z-20 grid h-11 w-11 place-items-center rounded-full border border-[#d9cdc5]/50 bg-white/82 text-[#6f6158] shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition hover:bg-white active:scale-[0.98] sm:left-5 sm:top-6 sm:h-12 sm:w-12" aria-label={t("common.home")}>
+          <HomeIcon className="h-5 w-5" />
         </Link>
       )}
       {!isSettings && (
-        <Link
-          to={routes.settings}
-          className="absolute right-4 top-4 z-20 grid h-11 w-11 place-items-center rounded-full border border-[#d8d3cc] bg-[#ffffff]/88 text-[#6f6158] shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition hover:bg-[#ffffff] active:scale-[0.98] sm:right-5 sm:top-6 sm:h-12 sm:w-12"
-          aria-label={t("nav.settings")}
-        >
+        <Link to={routes.settings} className="absolute right-4 top-4 z-20 grid h-11 w-11 place-items-center rounded-full border border-[#d9cdc5]/50 bg-white/82 text-[#6f6158] shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition hover:bg-white active:scale-[0.98] sm:right-5 sm:top-6 sm:h-12 sm:w-12" aria-label={t("nav.settings")}>
           <Settings className="h-5 w-5" />
         </Link>
       )}
 
-      <div
-        className={cn(
-          "mx-auto flex w-full flex-col",
-          wide ? "max-w-[1040px]" : "max-w-[520px]",
-          showBrand
-            ? "min-h-[calc(100dvh-52px)] justify-center py-6 sm:justify-start sm:py-0"
-            : "min-h-[calc(100dvh-52px)] pt-12 sm:pt-14"
-        )}
-      >
+      <div className={cn("mx-auto flex w-full flex-col", wide ? "max-w-[1040px]" : "max-w-[520px]", showBrand ? "min-h-[calc(100dvh-52px)] justify-center py-6 sm:justify-start sm:py-0" : "min-h-[calc(100dvh-52px)] pt-6 sm:pt-8")}>
         {showBrand && (
           <div className="sticky top-0 z-10 -mx-4 flex flex-col items-center gap-3 bg-[#faf9f7]/95 px-4 pb-4 pt-3 text-center backdrop-blur-sm sm:static sm:mx-0 sm:bg-transparent sm:px-4 sm:pb-5 sm:pt-0 sm:backdrop-blur-none">
-            <button
-              type="button"
-              onClick={handleBunnyTap}
-              className="relative grid h-[6.25rem] w-[8.75rem] place-items-center outline-none transition-transform duration-200 ease-out hover:-translate-y-0.5 sm:h-[10.5rem] sm:w-[13.5rem]"
-              aria-label={t("app.title")}
-            >
+            <button type="button" onClick={handleBunnyTap} className="relative grid h-[6.25rem] w-[8.75rem] place-items-center outline-none transition-transform duration-200 ease-out hover:-translate-y-0.5 sm:h-[10.5rem] sm:w-[13.5rem]" aria-label={t("app.title")}>
               <Mascot variant="reading" className="h-[6.25rem] w-[8.75rem] object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.035)] sm:h-[10.5rem] sm:w-[13.5rem]" />
               <Sparkles className="absolute right-0 top-3 h-3 w-3 text-[#e6c779] sm:right-4 sm:top-7 sm:h-4 sm:w-4" />
               {bunnyMessage && (
@@ -117,9 +80,7 @@ export function AppShell({ children, title, subtitle, headerMascotVariant = "rea
                 </span>
               )}
             </button>
-            <p className="font-display -mt-2 text-[1.66rem] font-semibold leading-[0.95] text-[#4a3b34] sm:-mt-1 sm:text-[2.9rem] sm:font-bold">
-              {t("app.title")}
-            </p>
+            <p className="font-display -mt-2 text-[1.66rem] font-semibold leading-[0.95] text-[#241b18] sm:-mt-1 sm:text-[2.9rem] sm:font-bold">{t("app.title")}</p>
             <p className="font-hand -mt-1 max-w-[14rem] text-[10px] italic leading-[1.2] text-[#7f746e] sm:max-w-[18rem] sm:text-sm sm:leading-5">{t("app.tagline")}</p>
             {brandAction}
           </div>
@@ -132,8 +93,8 @@ export function AppShell({ children, title, subtitle, headerMascotVariant = "rea
                 <Mascot variant={headerMascotVariant} className="h-14 w-14 object-contain sm:h-16 sm:w-16" />
               </div>
               <div className="min-w-0 flex-1 text-left">
-                {title && <h1 className="font-display text-[1.75rem] font-bold leading-[1.05] tracking-normal text-[#4a3b34] sm:text-[2rem]">{title}</h1>}
-                {subtitle && <p className="mt-1 whitespace-pre-line text-sm leading-[1.5] text-[#7f746e] opacity-70 sm:text-[15px]">{subtitle}</p>}
+                {title && <h1 className="font-display text-[1.75rem] font-bold leading-[1.05] tracking-normal text-[#241b18] sm:text-[2rem]">{title}</h1>}
+                {subtitle && <p className="mt-1 whitespace-pre-line text-sm leading-[1.5] text-[#9b8f87] sm:text-[15px]">{subtitle}</p>}
               </div>
             </div>
           </section>
@@ -141,6 +102,37 @@ export function AppShell({ children, title, subtitle, headerMascotVariant = "rea
 
         <div className="flex-1">{children}</div>
       </div>
+
+      {/* Bottom tab bar */}
+      {showTabBar && (
+        <nav className="bunny-tabbar" aria-label={t("garden.nav.label")}>
+          {[
+            { to: routes.home, label: t("nav.home") },
+            { to: routes.bunnyGarden, label: t("garden.nav.garden") },
+            { to: routes.collection, label: t("garden.nav.collection") },
+            { to: routes.pastJournals, label: t("garden.nav.memories") },
+          ].map((tab) => {
+            const active = location.pathname === tab.to || (tab.to === routes.collection && location.pathname.startsWith("/bunny-letter/"));
+            return (
+              <Link key={tab.to} to={tab.to} className={active ? "active" : ""}>
+                {tab.to === routes.home && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+                )}
+                {tab.to === routes.bunnyGarden && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21V9"/><path d="M12 9C9 5 5 5 3 8c3 0 6 2 9 6"/><path d="M12 9c3-4 7-4 9-1-3 0-6 2-9 6"/></svg>
+                )}
+                {tab.to === routes.collection && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6-5.4-2.9-5.4 2.9 1-6-4.4-4.3 6.1-.9z"/></svg>
+                )}
+                {tab.to === routes.pastJournals && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="5" y="4" width="14" height="16" rx="3"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+                )}
+                <span>{tab.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+      )}
     </main>
   );
 }
