@@ -274,7 +274,7 @@ const LEGACY_WARMTH_KEY = "currentWarmth";
 
 const defaultSettings: BunnyDiarySettings = {
   bunnyName: "Bunny",
-  language: "en"
+  language: "zh"
 };
 
 const GARDEN_PLOT_COUNT = 10;
