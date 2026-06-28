@@ -429,8 +429,7 @@ a { color: inherit; text-decoration: none; }
 
 .collection-panel { overflow:hidden; border:1px solid rgba(217,205,197,0.35); border-radius:24px; background:rgba(255,253,249,.9); }
 .collection-section-heading { display:flex; align-items:center; gap:.65rem; padding:1rem 1.25rem; border-bottom:1px solid rgba(217,205,197,0.35); background:var(--pink-soft); color:var(--pink); }
-.collection-section-heading svg { width:20px; height:20px; }
-.collection-section-heading h2 { font-family:"Lora", Georgia, serif; font-size:1.12rem; font-weight:700; }
+.collection-section-heading h2 { font-weight:700; }
 
 /* Plant grid — specimen wall */
 .collection-plant-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0; padding:.75rem; }
