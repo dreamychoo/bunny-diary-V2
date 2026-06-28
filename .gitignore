@@ -15,3 +15,6 @@ tools/new-style-assets/
 *.node
 *.map
 *.png
+
+# 首次运行需要 npm install
+/.claude/settings.local.json
