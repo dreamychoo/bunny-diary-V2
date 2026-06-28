@@ -102,7 +102,7 @@ export default function DiaryLayout() {
             <>
               {/* Emotions */}
               {entry.emotions.length > 0 && (
-                <div className="text-center">
+                <div className="mt-5 text-center">
                   <span className="text-4xl">{emotionIcons[entry.emotions[0]] || "💧"}</span>
                   <div className="mt-2 flex flex-wrap justify-center gap-1.5">
                     {entry.emotions.map((em) => (
@@ -128,9 +128,9 @@ export default function DiaryLayout() {
 
               {/* What happened */}
               {entry.whatHappened && (
-                <div className="mt-5 rounded-[18px] bg-white p-5">
+                <div className="mt-5 rounded-[18px] bg-white p-5 text-center">
                   <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                    "{entry.whatHappened}"
+                    {entry.whatHappened}
                   </p>
                 </div>
               )}
@@ -152,7 +152,7 @@ export default function DiaryLayout() {
                   <p className="text-[11px] font-semibold text-[#8177a4]">
                     {t("detail.whatNeeded")}
                   </p>
-                  <p className="mt-1 text-[13px] leading-6 text-[#5f5149]">{entry.childhood}</p>
+                  <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#5f5149]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>{entry.childhood}</p>
                 </div>
               )}
             </>
@@ -160,9 +160,9 @@ export default function DiaryLayout() {
             <>
               {/* Gratitude */}
               {entry.gratitude && (
-                <div className="mt-5 rounded-[18px] bg-white p-5">
+                <div className="mt-5 rounded-[18px] bg-white p-5 text-center">
                   <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                    "{entry.gratitude}"
+                    {entry.gratitude}
                   </p>
                 </div>
               )}
