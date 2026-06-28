@@ -29,6 +29,11 @@ export default function BunnyLetterDetail() {
         <div className="letter-plants">{letter.seeds.map((seed) => <div key={seed.id}><img src={assets[seed.plantVariant]} alt="" /><span>{t(`garden.variant.${seed.plantVariant}`)}</span></div>)}</div>
         <div className="letter-body"><p>{t(`letter.body.${letter.letterType}.${letter.templateIndex}`)}</p></div>
         <img src="/assets/v2/rabbits/writing.png" alt="" className="mx-auto mt-8 h-24 w-24 object-contain opacity-90" />
+        <div className="mt-8 flex justify-center">
+          <Link to={routes.collection} className="inline-flex h-12 items-center rounded-[999px] border-0 bg-gradient-to-b from-[var(--pink-2)] to-[var(--pink)] px-7 text-[15px] font-extrabold text-white shadow-[0_8px_20px_rgba(255,111,134,0.30),inset_0_1px_rgba(255,255,255,0.35)]">
+            {t("letter.back")}
+          </Link>
+        </div>
       </article>
     </AppShell>
   );
