@@ -72,7 +72,6 @@ export function AppShell({ children, title, subtitle, headerMascotVariant = "rea
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-clip px-4 pb-6 pt-3 text-[#4a3b34] sm:px-6 sm:pb-8 sm:pt-6">
-      <span className="pointer-events-none absolute right-[7%] top-[21%] h-6 w-12 rotate-[8deg] rounded-[5px] border border-[#dbe7d2] bg-[#f0f6ec]/70 sm:right-[9%]" />
       {!isHome && (
         <Link
           to={routes.home}

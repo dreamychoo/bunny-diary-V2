@@ -92,7 +92,7 @@ export const extraSymptomKeys = [
 
 export const symptomKeys = [...primarySymptomKeys, ...extraSymptomKeys] as const;
 export const moodKeys = ["gentle", "tired", "hopeful", "quiet", "tender", "unsettled"] as const;
-export const weatherKeys = ["sunny", "cloudy", "rainy", "foggy", "windy", "moonlit"] as const;
+export const weatherKeys = ["sunny", "cloudy", "rainy", "foggy", "thunder", "starry"] as const;
 
 export type EmotionKey = (typeof emotionKeys)[number];
 export type SymptomKey = (typeof symptomKeys)[number];
@@ -338,10 +338,14 @@ const legacyWeatherMap: Record<string, WeatherKey> = {
   rainy: "rainy",
   Foggy: "foggy",
   foggy: "foggy",
-  Windy: "windy",
+  Wind: "windy",
   windy: "windy",
   Moonlit: "moonlit",
-  moonlit: "moonlit"
+  moonlit: "moonlit",
+  Thunder: "thunder",
+  thunder: "thunder",
+  Starry: "starry",
+  starry: "starry"
 };
 
 function hasStorage() {
@@ -546,7 +550,7 @@ export function getSeedDisplayState(seed: GardenSeed) {
   };
 }
 
-function syncGardenStorage() {
+function readGardenStorage() {
   const entries = getAllEntries();
   const entryMap = new Map(entries.map((entry) => [entry.id, entry]));
   const existingSeeds = readSeeds();
@@ -564,16 +568,16 @@ function syncGardenStorage() {
     }
   });
 
-  let nextSeeds = [...nextSeedsMap.values()].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  const nextSeeds = [...nextSeedsMap.values()].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
   const validSeedIds = new Set(nextSeeds.map((seed) => seed.id));
 
   const nextPlots: GardenPlot[] = readPlots().map((plot) => {
     const seed = plot.seedId ? nextSeedsMap.get(plot.seedId) ?? null : null;
-    if (!seed || !validSeedIds.has(seed.id) || seed.status === "inventory" || seed.status === "archived") {
+    if (!seed || !validSeedIds.has(seed.id) || seed.status === "inventory" || seed.status === "archived" || seed.status === "usedForLetter") {
       return { ...plot, state: "empty" as const, seedId: null };
     }
 
-    const state = seed.status === "ready" ? "ready" : seed.status === "grown" || seed.status === "usedForLetter" ? "grown" : "planted";
+    const state = seed.status === "ready" ? "ready" : seed.status === "grown" ? "grown" : "planted";
     return { ...plot, state, seedId: seed.id };
   });
 
@@ -593,37 +597,7 @@ function syncGardenStorage() {
     })
     .filter((keepsake) => keepsake.entryIds.length > 0 && keepsake.plantIds.length > 0);
 
-  let nextLetters = readLetters().filter((letter) => letter.seedIds.every((seedId) => validSeedIds.has(seedId)));
-  if (!nextLetters.length && nextKeepsakes.length) {
-    nextLetters = nextKeepsakes.map((keepsake, index) => {
-      const relatedSeeds = nextSeeds.filter((seed) => keepsake.entryIds.includes(seed.entryId)).slice(0, 3);
-      const warmCount = relatedSeeds.filter((seed) => seed.seedType === "warmth").length;
-      const letterType: BunnyLetterType = warmCount === 3 ? "warm-light" : warmCount === 0 ? "slow-growth" : "after-rain";
-      return {
-        id: `letter_${keepsake.id}`,
-        letterType,
-        seedIds: relatedSeeds.map((seed) => seed.id),
-        createdAt: keepsake.createdAt,
-        templateIndex: index % 3
-      };
-    }).filter((letter) => letter.seedIds.length === 3);
-    const migratedSeedIds = new Set(nextLetters.flatMap((letter) => letter.seedIds));
-    nextSeeds = nextSeeds.map((seed) =>
-      migratedSeedIds.has(seed.id)
-        ? {
-            ...seed,
-            status: "usedForLetter" as const,
-            harvestedAt: seed.harvestedAt ?? seed.revealedAt ?? seed.createdAt,
-            usedInLetterIds: nextLetters.filter((letter) => letter.seedIds.includes(seed.id)).map((letter) => letter.id)
-          }
-        : seed
-    );
-  }
-
-  writeSeeds(nextSeeds);
-  writePlots(nextPlots);
-  writeKeepsakes(nextKeepsakes);
-  writeLetters(nextLetters);
+  const nextLetters = readLetters().filter((letter) => letter.seedIds.every((seedId) => validSeedIds.has(seedId)));
 
   return {
     entries,
@@ -632,6 +606,17 @@ function syncGardenStorage() {
     keepsakes: nextKeepsakes,
     letters: nextLetters
   };
+}
+
+function syncGardenStorage() {
+  const state = readGardenStorage();
+
+  writeSeeds(state.seeds);
+  writePlots(state.plots);
+  writeKeepsakes(state.keepsakes);
+  writeLetters(state.letters);
+
+  return state;
 }
 
 export function getEmotionEntries() {
@@ -673,7 +658,7 @@ export function getEntryById(id: string) {
 }
 
 export function getGardenState(): GardenState {
-  const { entries, seeds, plots, keepsakes, letters } = syncGardenStorage();
+  const { entries, seeds, plots, keepsakes, letters } = readGardenStorage();
   const chronologicalEntries = [...entries].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
   const firstEntry = chronologicalEntries[0];
   const now = Date.now();
@@ -838,7 +823,7 @@ export function revealSeed(seedId: string) {
 export const harvestSeed = revealSeed;
 
 export function getLetterById(letterId: string) {
-  const state = syncGardenStorage();
+  const state = readGardenStorage();
   const letter = state.letters.find((item) => item.id === letterId) ?? null;
   if (!letter) return null;
   return {
@@ -880,15 +865,15 @@ export function createBunnyLetter(seedIds: string[]) {
 }
 
 export function getSeedById(seedId: string) {
-  return syncGardenStorage().seeds.find((seed) => seed.id === seedId) ?? null;
+  return readGardenStorage().seeds.find((seed) => seed.id === seedId) ?? null;
 }
 
 export function getPlotById(plotId: string) {
-  return syncGardenStorage().plots.find((plot) => plot.id === plotId) ?? null;
+  return readGardenStorage().plots.find((plot) => plot.id === plotId) ?? null;
 }
 
 export function getEntryGardenAttachment(id: string) {
-  const { seeds, keepsakes } = syncGardenStorage();
+  const { seeds, keepsakes } = readGardenStorage();
   const seed = seeds.find((item) => item.entryId === id) ?? null;
   const keepsake = keepsakes.find((item) => item.entryIds.includes(id)) ?? null;
   return {
@@ -929,7 +914,7 @@ export function saveLanguage(language: Language) {
 }
 
 export function exportDiaryData() {
-  const { seeds, plots, keepsakes, letters } = syncGardenStorage();
+  const { seeds, plots, keepsakes, letters } = readGardenStorage();
   return {
     exportedAt: new Date().toISOString(),
     settings: getSettings(),

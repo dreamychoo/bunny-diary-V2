@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Sparkles, Sprout } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { PlantingAnimationOverlay } from "../components/PlantingAnimationOverlay";
 import { Button } from "../components/ui/button";
@@ -141,6 +141,7 @@ function StickerPicker<TValue extends string>({
 export default function EmotionRescue() {
   const { t } = useI18n();
   const navigate = useNavigate();
+  const location = useLocation();
   const [emotions, setEmotions] = useState<EmotionKey[]>([]);
   const [symptoms, setSymptoms] = useState<SymptomKey[]>([]);
   const [intensity, setIntensity] = useState(6);
@@ -155,6 +156,13 @@ export default function EmotionRescue() {
   const whatHappenedRef = useRef<HTMLTextAreaElement | null>(null);
   const intensityRatio = ((intensity - 1) / 9) * 100;
   const letterDate = useMemo(() => formatLetterDate(new Date()), []);
+
+  useEffect(() => {
+    if ((location.state as { prefill?: string } | null)?.prefill) {
+      setWhatHappened((location.state as { prefill: string }).prefill);
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.pathname, location.state, navigate]);
 
   useEffect(() => {
     const textarea = whatHappenedRef.current;

@@ -11,7 +11,7 @@ export const translations = {
     "app.diarySuffix": "Diary",
     "app.tagline": "\"Let's put today's feelings somewhere safe.\"",
     "nav.home": "Home",
-    "nav.pastJournals": "Past Journals",
+    "nav.pastJournals": "Memory Book",
     "nav.garden": "Bunny Garden",
     "nav.settings": "Settings",
 
@@ -162,13 +162,18 @@ export const translations = {
     "emotion.feedback.saved_3": "Thank you for telling me.",
     "emotion.feedback.saved_4": "Today was a lot. You made it here.",
 
-    "daily.title": "Warm Moments",
-    "daily.subtitle": "It does not have to be much. A little still counts.",
+    "daily.title": "Casual Note",
+    "daily.subtitle": "What's your inner weather today?",
     "daily.mood": "Mood",
     "daily.weather": "Inner weather",
-    "daily.note": "What made you a little happy today?",
-    "daily.notePlaceholder": "I had coffee I really liked today.\nThe sunset after work was beautiful.\nI finally went to that restaurant I had saved for a long time.\nI finally got enough sleep today.",
-    "daily.save": "Save Warmth Entry",
+    "daily.note": "What's on your mind?",
+    "daily.notePlaceholder": "Write whatever comes to mind.\nBunny is listening.",
+    "daily.save": "Save Note",
+    "daily.weatherPrompt": "What's the weather like inside today?",
+    "daily.writeHint": "Write something. Bunny will keep it safe.",
+    "daily.comfort.title": "Bunny is here with you",
+    "daily.comfort.body": "Rainy days are part of inner weather too. Bunny will keep this tucked away for you.\n\nCome look at the garden when you feel like it — the plants are still growing.",
+    "daily.comfort.garden": "Visit the Garden",
 
     "past.title": "Memory Book",
     "past.subtitle": "Every word you wrote is still here.",
@@ -402,14 +407,16 @@ export const translations = {
     "weatherKey.rainy": "Raining",
     "weatherKey.foggy": "Foggy",
     "weatherKey.windy": "Windy",
-    "weatherKey.moonlit": "Moonlit"
+    "weatherKey.moonlit": "Moonlit",
+    "weatherKey.thunder": "Thunder",
+    "weatherKey.starry": "Starry"
   },
   zh: {
     "app.title": "小兔日记",
     "app.diarySuffix": "日记",
     "app.tagline": "“把心事放在这里吧。”",
     "nav.home": "首页",
-    "nav.pastJournals": "以前写的",
+    "nav.pastJournals": "回忆册",
     "nav.garden": "兔兔花园",
     "nav.settings": "设置",
 
@@ -494,9 +501,9 @@ export const translations = {
     "common.noNoteText": "这条还没有写文字。",
     "common.backToPastJournals": "回到以前写的",
     "common.emotion": "情绪",
-    "common.warmth": "暖一点",
+    "common.warmth": "暖心",
     "common.emotionRescue": "情绪急救",
-    "common.dailyWarmth": "今日暖意",
+    "common.dailyWarmth": "随便写写",
     "common.openEntry": "打开这条",
     "common.bunnyGarden": "兔兔花园",
     "common.viewGarden": "去花园看看",
@@ -560,13 +567,18 @@ export const translations = {
     "emotion.feedback.saved_3": "谢谢告诉我。",
     "emotion.feedback.saved_4": "今天辛苦了。",
 
-    "daily.title": "今日小暖光",
-    "daily.subtitle": "不用很多。一点点也算。",
-    "daily.mood": "今天的心情",
-    "daily.weather": "今天的心里天气",
-    "daily.note": "今天有什么让你有点开心？",
-    "daily.notePlaceholder": "今天喝到了喜欢的咖啡。\n下班时晚霞很好看。\n终于去了收藏很久餐厅。\n今天终于睡够了。",
-    "daily.save": "保存今日暖意",
+    "daily.title": "随便写写",
+    "daily.subtitle": "写点什么都可以～",
+    "daily.mood": "心情",
+    "daily.weather": "心里天气",
+    "daily.note": "心里有什么想写的？",
+    "daily.notePlaceholder": "慢慢写，兔兔在听。",
+    "daily.save": "写好了，收起来",
+    "daily.weatherPrompt": "今天心里天气怎么样？",
+    "daily.writeHint": "写点什么吧，兔兔会替你收好。",
+    "daily.comfort.title": "兔兔在身边",
+    "daily.comfort.body": "下雨天也是心里天气的一部分。兔兔帮你把这份心情收好了。\n\n想的时候去花园看看，植物还在慢慢长。",
+    "daily.comfort.garden": "去花园看看",
 
     "past.title": "回忆册",
     "past.subtitle": "每一天写下来的话，都还在这里。",
@@ -800,7 +812,9 @@ export const translations = {
     "weatherKey.rainy": "在下雨",
     "weatherKey.foggy": "有雾",
     "weatherKey.windy": "有风",
-    "weatherKey.moonlit": "有月光"
+    "weatherKey.moonlit": "有月光",
+    "weatherKey.thunder": "有雷",
+    "weatherKey.starry": "有星光"
   }
 } as const satisfies Record<Language, Record<string, string>>;
 
