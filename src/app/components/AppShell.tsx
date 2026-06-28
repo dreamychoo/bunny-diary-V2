@@ -93,7 +93,7 @@ export function AppShell({ children, title, subtitle, headerMascotVariant = "rea
                 <Mascot variant={headerMascotVariant} className="h-20 w-20 object-contain" />
               </div>
               <div className="min-w-0 flex-1 text-left">
-                {title && <h1 className="font-display text-[22px] font-extrabold leading-[1.1] tracking-tight text-[var(--ink)]">{title}</h1>}
+                {title && <h1 className="text-[22px] font-extrabold tracking-tight leading-[1.1] text-[var(--ink)]">{title}</h1>}
                 {subtitle && <p className="mt-1 whitespace-pre-line text-sm leading-[1.5] text-[#9b8f87] sm:text-[15px]">{subtitle}</p>}
               </div>
             </div>
