@@ -753,7 +753,7 @@ export const translations = {
     "garden.variant.four_leaf": "四叶草",
     "garden.variant.cactus": "仙人掌",
     "garden.variant.palm": "椰子树",
-    "garden.variant.bamboo": "竹子",
+    "garden.variant.bamboo": "草丛",
     "garden.variant.mushroom": "小蘑菇",
     "garden.emptyTitle": "还没有种子",
     "garden.emptyBody": "写一条情绪，或随便写写，兔兔会把第一颗种子种在这里。",
