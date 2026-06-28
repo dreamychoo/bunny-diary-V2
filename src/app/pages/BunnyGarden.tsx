@@ -260,9 +260,9 @@ export default function BunnyGarden() {
     <AppShell>
       <div className="mx-auto w-full max-w-[390px]">
         {/* Top: watering bunny + title */}
-        <section className="relative min-h-[90px] pt-1">
-          <img src="/assets/v2/rabbits/watering.png" alt="" className="absolute -left-2 -top-2 z-2 h-[90px] w-[90px] object-contain drop-shadow-[0_14px_18px_rgba(95,64,48,0.16)]" />
-          <div className="pl-[76px] pt-3">
+        <section className="relative min-h-[110px] pt-2">
+          <img src="/assets/v2/rabbits/watering.png" alt="" className="absolute -left-2 top-0 z-2 h-[90px] w-[90px] object-contain drop-shadow-[0_14px_18px_rgba(95,64,48,0.16)]" />
+          <div className="pl-[76px] pt-5">
             <h1 className="text-[22px] font-extrabold tracking-tight leading-none text-[var(--ink)]">{t("garden.title")}<span className="ml-1 text-[15px] text-[var(--pink)]">♥</span></h1>
             <p className="mt-1 text-[12px] font-semibold leading-snug text-[var(--muted)] max-w-[210px]">{t("garden.shortSubtitle")}</p>
           </div>
