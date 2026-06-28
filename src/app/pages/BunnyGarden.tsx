@@ -260,16 +260,16 @@ export default function BunnyGarden() {
     <AppShell>
       <div className="mx-auto w-full max-w-[390px]">
         {/* Top: watering bunny + title */}
-        <section className="relative min-h-[128px] pt-1">
-          <img src="/assets/v2/rabbits/watering.png" alt="" className="absolute -left-2 -top-2 z-2 h-[100px] w-[100px] object-contain drop-shadow-[0_14px_18px_rgba(95,64,48,0.16)]" />
-          <div className="pl-[80px] pt-6">
+        <section className="relative min-h-[90px] pt-1">
+          <img src="/assets/v2/rabbits/watering.png" alt="" className="absolute -left-2 -top-2 z-2 h-[90px] w-[90px] object-contain drop-shadow-[0_14px_18px_rgba(95,64,48,0.16)]" />
+          <div className="pl-[76px] pt-3">
             <h1 className="text-[22px] font-extrabold tracking-tight leading-none text-[var(--ink)]">{t("garden.title")}<span className="ml-1 text-[15px] text-[var(--pink)]">♥</span></h1>
-            <p className="mt-2 text-[12px] font-semibold leading-snug text-[var(--muted)] max-w-[210px]">{t("garden.shortSubtitle")}</p>
+            <p className="mt-1 text-[12px] font-semibold leading-snug text-[var(--muted)] max-w-[210px]">{t("garden.shortSubtitle")}</p>
           </div>
         </section>
 
         {/* Prompt bar */}
-        <section className="flex items-center gap-3 rounded-[22px] border border-[rgba(255,255,255,0.8)] bg-[rgba(255,254,250,0.86)] px-3 py-3 shadow-[0_10px_30px_rgba(126,91,72,0.10)] backdrop-blur-[18px]">
+        <section className="mt-2 flex items-center gap-3 rounded-[22px] border border-[rgba(255,255,255,0.8)] bg-[rgba(255,254,250,0.86)] px-3 py-3 shadow-[0_10px_30px_rgba(126,91,72,0.10)] backdrop-blur-[18px]">
           <img src="/assets/v2/plants/sprout.png" alt="" className="h-11 w-11 flex-shrink-0 object-contain drop-shadow-[0_6px_9px_rgba(95,64,48,0.12)]" />
           <p className="flex-1 text-[13px] font-extrabold leading-snug text-[#4d3c33]">
             {garden.waitingSeedCount > 0 ? t("garden.promptBar.plantReady") : t("garden.promptBar.writeForSeed")}
