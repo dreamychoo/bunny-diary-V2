@@ -63,8 +63,8 @@ export default function Home() {
         <Sparkles className="h-5 w-5" />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="font-ui block text-sm font-extrabold leading-tight text-[#4a3b34]">{language === "zh" ? "想和兔兔聊聊" : "Talk to Bunny"}</span>
-        <span className="mt-1 block text-[11px] leading-[1.3] text-[#7f746e]">{language === "zh" ? "有想说的，兔兔在听。" : "Bunny is here to listen."}</span>
+        <span className="font-ui block text-sm font-extrabold leading-tight text-[#4a3b34]">{t("home.v4.emotionTitle")}</span>
+        <span className="mt-1 block text-[11px] leading-[1.3] text-[#7f746e]">{t("home.v4.emotionSubtitle")}</span>
       </span>
       <ChevronRight className="h-4 w-4 shrink-0 text-[#9b8f88] transition-transform group-hover:translate-x-0.5" />
     </Link>
@@ -73,9 +73,9 @@ export default function Home() {
   const gridCards = [
     {
       to: routes.dailyWarmth,
-      title: language === "zh" ? "随便写写" : "Casual Note",
-      subtitle: language === "zh" ? "写点什么都可以～" : "Write whatever you like～",
-      label: language === "zh" ? "写写" : "Note",
+      title: t("home.v4.warmTitle"),
+      subtitle: t("home.v4.warmSubtitle"),
+      label: language === "zh" ? "写写" : "Write",
       icon: NotebookPen,
       tone: "warm" as const
     },

@@ -196,7 +196,7 @@ export default function BunnyGarden() {
           <p className="font-display text-xl font-semibold leading-8 text-[#4b3a34] sm:text-[26px]">{statusLine}</p>
           <p className="mt-1 text-sm leading-6 text-[#8d817a] sm:text-base">{t("garden.v3.status.support")}</p>
         </div>
-        <Button type="button" variant="garden" onClick={() => setSeedVaultOpen(true)} disabled={!garden.seedInventory.length}>{t("garden.openSeedVault")}</Button>
+        <Button type="button" variant="garden" className="shrink-0" onClick={() => setSeedVaultOpen(true)} disabled={!garden.seedInventory.length}>{t("garden.openSeedVault")}</Button>
       </section>
 
       <div className="garden-counts" aria-label={t("garden.v3.summary")}> 

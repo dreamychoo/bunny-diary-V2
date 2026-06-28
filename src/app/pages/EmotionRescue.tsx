@@ -55,12 +55,23 @@ const emotionIcons: Record<EmotionKey, string> = {
   hopeful: "🌱"
 };
 
-function formatLetterDate(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}.${month}.${day}`;
-}
+const prompts = [
+  "今天发生了什么想跟兔兔说？",
+  "今天有点不开心",
+  "今天有点想不通",
+  "今天有点焦虑",
+  "今天有点生气",
+  "今天状态好像不太对劲"
+];
+
+const promptsEn = [
+  "What happened today? Bunny is listening.",
+  "Feeling a bit down today",
+  "Something I can't quite figure out",
+  "Feeling anxious today",
+  "Feeling angry today",
+  "Something feels off today"
+];
 
 function StickerPicker<TValue extends string>({
   options,
@@ -139,7 +150,7 @@ function StickerPicker<TValue extends string>({
 }
 
 export default function EmotionRescue() {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
   const [emotions, setEmotions] = useState<EmotionKey[]>([]);
@@ -147,15 +158,18 @@ export default function EmotionRescue() {
   const [intensity, setIntensity] = useState(6);
   const [whatHappened, setWhatHappened] = useState("");
   const [childhood, setChildhood] = useState("");
+  const [showDetails, setShowDetails] = useState(false);
   const [showEmotionMore, setShowEmotionMore] = useState(false);
   const [showSymptomMore, setShowSymptomMore] = useState(false);
-  const [showDeeperNotes, setShowDeeperNotes] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [showPlanting, setShowPlanting] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [emptyNoteError, setEmptyNoteError] = useState(false);
+  const [promptIndex, setPromptIndex] = useState(0);
   const whatHappenedRef = useRef<HTMLTextAreaElement | null>(null);
   const intensityRatio = ((intensity - 1) / 9) * 100;
-  const letterDate = useMemo(() => formatLetterDate(new Date()), []);
+
+  const currentPrompts = language === "zh" ? prompts : promptsEn;
 
   useEffect(() => {
     if ((location.state as { prefill?: string } | null)?.prefill) {
@@ -181,10 +195,31 @@ export default function EmotionRescue() {
     return `linear-gradient(90deg, #e8b6aa 0%, #bc7a6f ${intensityRatio}%, rgba(216,211,204,0.48) ${intensityRatio}%, rgba(216,211,204,0.48) 100%)`;
   }, [intensity, intensityRatio]);
 
+  const handleRefreshPrompt = () => {
+    setPromptIndex((prev) => (prev + 1) % currentPrompts.length);
+  };
+
+  const handleWritePrompt = () => {
+    const prompt = currentPrompts[promptIndex];
+    setWhatHappened((prev) => (prev ? `${prev}\n${prompt}\n` : `${prompt}\n`));
+    setEmptyNoteError(false);
+    setTimeout(() => {
+      if (whatHappenedRef.current) {
+        whatHappenedRef.current.focus();
+      }
+    }, 0);
+  };
+
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
     if (isSaving) return;
     setSaveError(null);
+
+    if (!whatHappened.trim()) {
+      setEmptyNoteError(true);
+      return;
+    }
+    setEmptyNoteError(false);
 
     const entry: EmotionEntry = {
       id: createEntryId("emotion"),
@@ -228,132 +263,126 @@ export default function EmotionRescue() {
       >
         <section className="pb-1 text-center">
           {saveError && <p className="mx-auto max-w-xs rounded-[16px] border border-[#e7c7c2] bg-[#fff5f3] px-4 py-3 text-sm leading-6 text-[#8a615a]">{saveError}</p>}
+          {emptyNoteError && <p className="mx-auto max-w-xs rounded-[16px] border border-[#e7c7c2] bg-[#fff5f3] px-4 py-3 text-sm leading-6 text-[#8a615a]">{t("common.saveRequired")}</p>}
         </section>
 
-        <Card className="border-[#ead6d1]/65 bg-[#fffdfb] p-4 sm:p-5">
-          <Label className="text-[1rem]">{t("emotion.emotionsLabel")}</Label>
-          <div className="mt-3">
-            <StickerPicker
-              options={[...primaryEmotionKeys, ...extraEmotionKeys]}
-              selected={emotions}
-              onChange={setEmotions}
-              labelPrefix="emotionKey"
-              tone="emotion"
-              expanded={showEmotionMore}
-              onToggleExpanded={() => setShowEmotionMore((value) => !value)}
-              moreLabel={t("emotion.more")}
-              lessLabel={t("emotion.less")}
-              defaultCount={primaryEmotionKeys.length}
-            />
+        <Card className="overflow-hidden border-[#ead6d1]/68 bg-[#fffdf9] p-0">
+          <div className="border-b border-[#efe5dc] bg-[#fbf6ef] px-5 py-3 sm:px-6">
+            <div className="flex items-center gap-2 text-[11px] font-medium text-[#9a8f88]">
+              <span className="text-[#e5c8c4]">✨</span>
+              <span className="animate-fade-in">{currentPrompts[promptIndex]}</span>
+              <button type="button" onClick={handleRefreshPrompt} className="ml-auto grid h-6 w-6 place-items-center rounded-full text-[#b3a79f] hover:bg-[#f8f4ee]" aria-label="refresh prompt">
+                <ChevronDown className="h-3 w-3" />
+              </button>
+              <button type="button" onClick={handleWritePrompt} className="grid h-6 w-6 place-items-center rounded-full text-[#b3a79f] hover:bg-[#f8f4ee]" aria-label="write prompt">
+                <span className="text-[12px]">✏️</span>
+              </button>
+            </div>
           </div>
-        </Card>
-
-        <Card className="border-[#e5ddee]/68 bg-[#fffdfb] p-4 sm:p-5">
-          <Label className="text-[1rem]">{t("emotion.symptomsLabel")}</Label>
-          <div className="mt-3">
-            <StickerPicker
-              options={[...primarySymptomKeys, ...extraSymptomKeys]}
-              selected={symptoms}
-              onChange={setSymptoms}
-              labelPrefix="symptomKey"
-              tone="body"
-              expanded={showSymptomMore}
-              onToggleExpanded={() => setShowSymptomMore((value) => !value)}
-              moreLabel={t("emotion.more")}
-              lessLabel={t("emotion.less")}
-              defaultCount={primarySymptomKeys.length}
+          <div className="px-5 pb-5 pt-4 sm:px-6 sm:pb-6">
+            <Textarea
+              ref={whatHappenedRef}
+              value={whatHappened}
+              onChange={(event) => {
+                setWhatHappened(event.target.value);
+                setEmptyNoteError(false);
+              }}
+              placeholder={t("emotion.whatHappenedPlaceholder")}
+              className="mt-2 min-h-[8.75rem] overflow-hidden border-[#e7ddd3] bg-transparent text-[15px] leading-8 shadow-none focus:border-[#e5c8c4] focus:ring-0"
             />
           </div>
         </Card>
 
         <Card className="border-[#ead6d1]/65 bg-[#ffffff] p-5 sm:p-6">
-          <div className="flex items-center justify-between gap-3">
-            <Label htmlFor="intensity" className="text-[1rem]">
-              {t("emotion.intensity")}
-            </Label>
-            {emotions.length > 0 && (
-              <span className="inline-flex items-center gap-1 rounded-full border border-[#dfd6ca] bg-[#fff9ef] px-3 py-1 text-[12px] font-semibold text-[#8a7651] shadow-[0_2px_10px_rgba(0,0,0,0.03)]">
-                <Sprout className={cn("h-3.5 w-3.5 transition-transform", isSaving && "translate-y-3 opacity-0")} />
-                {t("emotion.seedReady")}
-              </span>
-            )}
-          </div>
-
-          <div className="mt-5 px-1">
-            <div className="flex h-10 items-center">
-              <input
-                id="intensity"
-                type="range"
-                min="1"
-                max="10"
-                value={intensity}
-                onInput={(event) => setIntensity(Number(event.currentTarget.value))}
-                className="intensity-slider w-full"
-                style={{ background: trackGradient }}
-              />
-            </div>
-          </div>
-
-          <div className="mt-3 flex items-center justify-between text-[12px] text-[#8b7f78]">
-            <span>{t("emotion.intensityLow")}</span>
-            <span className="text-[#c1b4ad]">↔</span>
-            <span>{t("emotion.intensityHigh")}</span>
-          </div>
-        </Card>
-
-        <Card
-          className={cn(
-            "overflow-hidden border-[#ead6d1]/68 bg-[#fffdf9] p-0 transition duration-500",
-            isSaving && "translate-y-[2px] scale-[0.992]"
-          )}
-        >
-          <div className="border-b border-[#efe5dc] bg-[#fbf6ef] px-5 py-3 sm:px-6">
-            <div className="flex items-center justify-between gap-3 text-[12px] text-[#9b8f87]">
-              <span>{letterDate}</span>
-              <span className="font-hand text-[15px] text-[#887b73]">{t("emotion.dearBunny")}</span>
-            </div>
-          </div>
-          <div className="px-5 pb-5 pt-4 sm:px-6 sm:pb-6">
-            <Label htmlFor="whatHappened" className="text-[1rem]">
-              {t("emotion.whatHappened")}
-            </Label>
-            <Textarea
-              id="whatHappened"
-              ref={whatHappenedRef}
-              value={whatHappened}
-              onChange={(event) => setWhatHappened(event.target.value)}
-              placeholder={t("emotion.whatHappenedPlaceholder")}
-              className="mt-4 min-h-[8.75rem] overflow-hidden border-[#e7ddd3] bg-transparent text-[15px] leading-8 shadow-none focus:border-[#e5c8c4] focus:ring-0"
-            />
-          </div>
+          <Label className="text-[1rem]">{t("emotion.childhood")}</Label>
+          <Textarea
+            value={childhood}
+            onChange={(event) => setChildhood(event.target.value)}
+            placeholder={t("emotion.childhoodPlaceholder")}
+            className="mt-3 min-h-[8.5rem] border-[#e7ddd3] bg-[#fffdfb]"
+          />
         </Card>
 
         <div className="flex justify-center">
           <button
             type="button"
-            onClick={() => setShowDeeperNotes((value) => !value)}
+            onClick={() => setShowDetails((value) => !value)}
             className="inline-flex items-center gap-2 rounded-full border border-[#e6ddd4] bg-[#ffffff]/88 px-4 py-2 text-[13px] font-semibold text-[#7f746e] transition hover:bg-[#ffffff]"
           >
-            {showDeeperNotes ? t("emotion.hideDetails") : t("emotion.expandDetails")}
-            <ChevronDown className={cn("h-4 w-4 transition", showDeeperNotes && "rotate-180")} />
+            {showDetails ? t("emotion.hideDetails") : t("emotion.expandDetails")}
+            <ChevronDown className={cn("h-4 w-4 transition", showDetails && "rotate-180")} />
           </button>
         </div>
 
-        {showDeeperNotes && (
-          <Card className="border-[#ead6d1]/62 bg-[#ffffff] p-5 sm:p-6">
-            <div>
-              <Label htmlFor="childhood" className="text-[1rem]">
-                {t("emotion.childhood")}
-              </Label>
-              <Textarea
-                id="childhood"
-                value={childhood}
-                onChange={(event) => setChildhood(event.target.value)}
-                placeholder={t("emotion.childhoodPlaceholder")}
-                className="mt-3 min-h-[8.5rem] border-[#e7ddd3] bg-[#fffdfb]"
-              />
-            </div>
-          </Card>
+        {showDetails && (
+          <>
+            <Card className="border-[#ead6d1]/65 bg-[#fffdfb] p-4 sm:p-5">
+              <Label className="text-[1rem]">{t("emotion.emotionsLabel")}</Label>
+              <div className="mt-3">
+                <StickerPicker
+                  options={[...primaryEmotionKeys, ...extraEmotionKeys]}
+                  selected={emotions}
+                  onChange={setEmotions}
+                  labelPrefix="emotionKey"
+                  tone="emotion"
+                  expanded={showEmotionMore}
+                  onToggleExpanded={() => setShowEmotionMore((value) => !value)}
+                  moreLabel={t("emotion.more")}
+                  lessLabel={t("emotion.less")}
+                  defaultCount={primaryEmotionKeys.length}
+                />
+              </div>
+            </Card>
+
+            <Card className="border-[#e5ddee]/68 bg-[#fffdfb] p-4 sm:p-5">
+              <Label className="text-[1rem]">{t("emotion.symptomsLabel")}</Label>
+              <div className="mt-3">
+                <StickerPicker
+                  options={[...primarySymptomKeys, ...extraSymptomKeys]}
+                  selected={symptoms}
+                  onChange={setSymptoms}
+                  labelPrefix="symptomKey"
+                  tone="body"
+                  expanded={showSymptomMore}
+                  onToggleExpanded={() => setShowSymptomMore((value) => !value)}
+                  moreLabel={t("emotion.more")}
+                  lessLabel={t("emotion.less")}
+                  defaultCount={primarySymptomKeys.length}
+                />
+              </div>
+            </Card>
+
+            <Card className="border-[#ead6d1]/65 bg-[#ffffff] p-5 sm:p-6">
+              <div className="flex items-center justify-between gap-3">
+                <Label htmlFor="intensity" className="text-[1rem]">{t("emotion.intensity")}</Label>
+                {emotions.length > 0 && (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-[#dfd6ca] bg-[#fff9ef] px-3 py-1 text-[12px] font-semibold text-[#8a7651] shadow-[0_2px_10px_rgba(0,0,0,0.03)]">
+                    <Sprout className={cn("h-3.5 w-3.5 transition-transform", isSaving && "translate-y-3 opacity-0")} />
+                    {t("emotion.seedReady")}
+                  </span>
+                )}
+              </div>
+              <div className="mt-5 px-1">
+                <div className="flex h-10 items-center">
+                  <input
+                    id="intensity"
+                    type="range"
+                    min="1"
+                    max="10"
+                    value={intensity}
+                    onInput={(event) => setIntensity(Number(event.currentTarget.value))}
+                    className="intensity-slider w-full"
+                    style={{ background: trackGradient }}
+                  />
+                </div>
+              </div>
+              <div className="mt-3 flex items-center justify-between text-[12px] text-[#8b7f78]">
+                <span>{t("emotion.intensityLow")}</span>
+                <span className="text-[#c1b4ad]">↔</span>
+                <span>{t("emotion.intensityHigh")}</span>
+              </div>
+            </Card>
+          </>
         )}
 
         <div className="sticky bottom-3 z-10 flex justify-center">

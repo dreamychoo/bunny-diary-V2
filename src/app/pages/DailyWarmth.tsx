@@ -1,7 +1,8 @@
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, RefreshCw, Save, X } from "lucide-react";
+import { ArrowLeft, RefreshCw, Save } from "lucide-react";
 import { AppShell } from "../components/AppShell";
+import { PlantingAnimationOverlay } from "../components/PlantingAnimationOverlay";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
 import { Textarea } from "../components/ui/textarea";
@@ -29,21 +30,23 @@ const innerWeatherOptions: InnerWeather[] = [
 const negativeWeatherKeys = new Set<WeatherKey>(["rainy", "foggy", "thunder"]);
 
 const prompts = [
-  "想一件今天让你觉得还可以的事",
-  "有没有一句让你心里暖了一下的话？",
-  "今天有没有为自己做了一件小事？",
-  "有想感谢的人或事吗？",
-  "今天有什么让你笑了的事？",
-  "如果今天有一帧可以保存，是什么？"
+  "今天有什么事想记下来？",
+  "今天好像也没什么大事……但有个小事让我心情好了点",
+  "有一句话今天一直在我脑子里转",
+  "今天有人给了我一点小小的善意",
+  "想记一件今天发生的事",
+  "今天有一个瞬间我觉得挺好的",
+  "好像没什么特别的……但随便写点吧"
 ];
 
 const promptsEn = [
-  "Something that felt okay today",
-  "A line that stayed with you?",
-  "One small thing you did for yourself",
-  "Someone or something you're grateful for",
-  "Something that made you smile today",
-  "One frame worth saving from today"
+  "Something worth noting from today?",
+  "Nothing big happened... but something small felt good",
+  "One line that kept circling in my head today",
+  "Someone showed me a small kindness today",
+  "One thing that happened today I want to remember",
+  "One moment today that felt okay",
+  "Nothing special... but let me just write something."
 ];
 
 export default function DailyWarmth() {
@@ -56,6 +59,7 @@ export default function DailyWarmth() {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [showComfort, setShowComfort] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [showPlanting, setShowPlanting] = useState(false);
   const [promptIndex, setPromptIndex] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -94,25 +98,6 @@ export default function DailyWarmth() {
     if (isSaving) return;
     setSaveError(null);
 
-    if (negativeWeatherKeys.has(weather as WeatherKey)) {
-      const entry: WarmthEntry = {
-        id: createEntryId("warmth"),
-        type: "warmth",
-        timestamp: new Date().toISOString(),
-        mood: "",
-        weather: weather || "",
-        gratitude: note,
-        success: ""
-      };
-      try {
-        appendWarmthEntry(entry);
-        setShowComfort(true);
-      } catch {
-        setSaveError(t("common.saveFailed"));
-      }
-      return;
-    }
-
     const entry: WarmthEntry = {
       id: createEntryId("warmth"),
       type: "warmth",
@@ -125,10 +110,16 @@ export default function DailyWarmth() {
 
     try {
       appendWarmthEntry(entry);
-      setIsSaving(true);
-      navigate(routes.home);
+
+      if (!weather || negativeWeatherKeys.has(weather as WeatherKey)) {
+        setShowComfort(true);
+      } else {
+        setIsSaving(true);
+        setShowPlanting(true);
+      }
     } catch {
       setIsSaving(false);
+      setShowPlanting(false);
       setSaveError(t("common.saveFailed"));
     }
   }
@@ -146,14 +137,26 @@ export default function DailyWarmth() {
             <h2 className="font-display mt-4 text-xl font-bold text-[#4a3b34]">{t("daily.comfort.title")}</h2>
             <p className="mt-3 whitespace-pre-line text-sm leading-7 text-[#7f746e]">{t("daily.comfort.body")}</p>
             <div className="mt-6 flex justify-center gap-3">
-              <Button variant="ghost" onClick={() => navigate(routes.home)}>{t("common.home")}</Button>
-              <Button variant="garden" onClick={() => navigate(routes.bunnyGarden)}>{t("daily.comfort.garden")}</Button>
+              <Button variant="garden" onClick={() => navigate(routes.emotionRescue, { state: { prefill: note } })}>
+                {t("daily.comfort.talkToBunny")}
+              </Button>
+              <Button variant="ghost" onClick={() => navigate(routes.home)}>
+                {t("daily.comfort.home")}
+              </Button>
             </div>
           </Card>
         </div>
       ) : (
         <form onSubmit={handleSaveAndCheck} className="mx-auto grid w-full max-w-[34rem] gap-4">
           {saveError && <p className="rounded-[16px] border border-[#e7c7c2] bg-[#fff5f3] px-4 py-3 text-sm leading-6 text-[#8a615a]">{saveError}</p>}
+
+          <PlantingAnimationOverlay
+            open={showPlanting}
+            variant="save-success"
+            tone="warmth"
+            onPrimary={() => navigate(routes.bunnyGarden, { state: { openSeedVault: true } })}
+            onSecondary={() => navigate(routes.home)}
+          />
 
           <Card className="border-[#e6c779]/60 bg-[#ffffff] p-5">
             <div className="flex items-center gap-2 text-[11px] font-medium text-[#9a8f88]">
@@ -209,21 +212,30 @@ export default function DailyWarmth() {
                   )}
                 >
                   <span className="text-[16px]">{opt.emoji}</span>
-                  <span>{opt.emoji === "✨" ? t(`weatherKey.${opt.key}`) : opt.key === "thunder" ? t("weatherKey.thunder") : t(`weatherKey.${opt.key}`)}</span>
+                  <span>{t(`weatherKey.${opt.key}`)}</span>
                 </button>
               ))}
             </div>
           </Card>
 
-          <div className="flex flex-wrap justify-between gap-3">
+          <div className="flex items-center justify-between gap-3">
             <Button type="button" variant="ghost" onClick={() => navigate(routes.home)}>
               <ArrowLeft className="h-4 w-4" />
               {t("common.home")}
             </Button>
-            <Button type="submit" disabled={isSaving}>
-              <Save className="h-4 w-4" />
-              {t("daily.save")}
-            </Button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => navigate(routes.emotionRescue, { state: { prefill: note } })}
+                className="text-[11px] font-semibold text-[#ad7f7b] hover:underline"
+              >
+                {t("daily.goToEmotionRescue")}
+              </button>
+              <Button type="submit" disabled={isSaving}>
+                <Save className="h-4 w-4" />
+                {t("daily.save")}
+              </Button>
+            </div>
           </div>
         </form>
       )}

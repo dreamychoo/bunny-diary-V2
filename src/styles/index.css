@@ -323,8 +323,8 @@ a {
 .memory-quiet-panel p { max-width:220px; margin-top:1rem; font-size:1.12rem; line-height:1.7; }
 
 @media (max-width: 720px) {
-  .garden-status-band { align-items:flex-start; flex-direction:column; gap:1rem; padding:1.15rem; }
-  .garden-status-band button { width:100%; }
+  .garden-status-band { align-items:center; flex-direction:row; gap:0.75rem; padding:1.15rem; }
+  .garden-status-band button { width:auto; }
   .garden-counts > div { grid-template-columns:1fr; justify-items:center; gap:.15rem; padding:.7rem .3rem; text-align:center; font-size:.72rem; }
   .garden-counts svg { width:17px; height:17px; }
   .garden-counts strong { font-size:1rem; }
