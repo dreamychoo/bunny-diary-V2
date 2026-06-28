@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, RefreshCw, Save } from "lucide-react";
+import { ArrowLeft, ChevronDown, RefreshCw, Save } from "lucide-react";
 import { AppShell } from "../components/AppShell";
 import { PlantingAnimationOverlay } from "../components/PlantingAnimationOverlay";
 import { Button } from "../components/ui/button";
@@ -157,11 +157,11 @@ export default function DailyWarmth() {
             <div className="flex items-center gap-2 text-sm font-medium text-[#9a8f88]">
               <span className="text-[#e6c779]">✨</span>
               <span className="animate-fade-in text-[14px]">{currentPrompts[promptIndex]}</span>
-              <button type="button" onClick={handleRefreshPrompt} className="ml-auto grid h-6 w-6 place-items-center rounded-full text-[#b3a79f] hover:bg-[#f8f4ee]" aria-label="refresh prompt">
-                <RefreshCw className="h-3 w-3" />
+              <button type="button" onClick={handleRefreshPrompt} className="ml-auto grid h-7 w-7 place-items-center rounded-full text-[#b3a79f] hover:bg-[#f8f4ee]" aria-label="refresh prompt">
+                <RefreshCw className="h-3.5 w-3.5" />
               </button>
-              <button type="button" onClick={handleWritePrompt} className="grid h-6 w-6 place-items-center rounded-full text-[#b3a79f] hover:bg-[#f8f4ee]" aria-label="write prompt">
-                <span className="text-[12px]">✏️</span>
+              <button type="button" onClick={handleWritePrompt} className="grid h-7 w-7 place-items-center rounded-full text-[#b3a79f] hover:bg-[#f8f4ee]" aria-label="write prompt">
+                <ChevronDown className="h-3.5 w-3.5 -rotate-45" />
               </button>
             </div>
 
@@ -170,7 +170,7 @@ export default function DailyWarmth() {
               value={note}
               onChange={(event) => setNote(event.target.value)}
               placeholder={t("daily.notePlaceholder")}
-              className="mt-3 min-h-[8.75rem] overflow-hidden border-[#e7ddd3] bg-transparent text-[15px] leading-8 shadow-none focus:border-[#e6c779]/55 focus:ring-0"
+              className="mt-3 min-h-[8.75rem] overflow-hidden border-[#e7ddd3] bg-transparent text-[16px] leading-8 shadow-none focus:border-[#e6c779]/55 focus:ring-0"
             />
           </Card>
 

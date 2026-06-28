@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronDown, Sparkles, Sprout } from "lucide-react";
+import { ChevronDown, RefreshCw, Sparkles, Sprout } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { PlantingAnimationOverlay } from "../components/PlantingAnimationOverlay";
@@ -267,14 +267,14 @@ export default function EmotionRescue() {
 
         <Card className="overflow-hidden border-[#ead6d1]/68 bg-[#fffdf9] p-0">
           <div className="border-b border-[#efe5dc] bg-[#fbf6ef] px-5 py-3 sm:px-6">
-            <div className="flex items-center gap-2 text-[11px] font-medium text-[#9a8f88]">
+            <div className="flex items-center gap-2 text-[13px] font-medium text-[#9a8f88]">
               <span className="text-[#e5c8c4]">✨</span>
-              <span className="animate-fade-in">{currentPrompts[promptIndex]}</span>
-              <button type="button" onClick={handleRefreshPrompt} className="ml-auto grid h-6 w-6 place-items-center rounded-full text-[#b3a79f] hover:bg-[#f8f4ee]" aria-label="refresh prompt">
-                <ChevronDown className="h-3 w-3" />
+              <span className="animate-fade-in text-[14px]">{currentPrompts[promptIndex]}</span>
+              <button type="button" onClick={handleRefreshPrompt} className="ml-auto grid h-7 w-7 place-items-center rounded-full text-[#b3a79f] hover:bg-[#f8f4ee]" aria-label="refresh prompt">
+                <RefreshCw className="h-3.5 w-3.5" />
               </button>
-              <button type="button" onClick={handleWritePrompt} className="grid h-6 w-6 place-items-center rounded-full text-[#b3a79f] hover:bg-[#f8f4ee]" aria-label="write prompt">
-                <span className="text-[12px]">✏️</span>
+              <button type="button" onClick={handleWritePrompt} className="grid h-7 w-7 place-items-center rounded-full text-[#b3a79f] hover:bg-[#f8f4ee]" aria-label="write prompt">
+                <ChevronDown className="h-3.5 w-3.5 -rotate-45" />
               </button>
             </div>
           </div>
@@ -287,7 +287,7 @@ export default function EmotionRescue() {
                 setEmptyNoteError(false);
               }}
               placeholder={t("emotion.whatHappenedPlaceholder")}
-              className="mt-2 min-h-[8.75rem] overflow-hidden border-[#e7ddd3] bg-transparent text-[15px] leading-8 shadow-none focus:border-[#e5c8c4] focus:ring-0"
+              className="mt-2 min-h-[8.75rem] overflow-hidden border-[#e7ddd3] bg-transparent text-[16px] leading-8 shadow-none focus:border-[#e5c8c4] focus:ring-0"
             />
           </div>
         </Card>
