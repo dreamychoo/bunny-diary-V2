@@ -141,7 +141,7 @@ export default function DailyWarmth() {
       {showPlanting && weather && negativeWeatherKeys.has(weather as WeatherKey) ? (
         <Card className="p-6 text-center">
           <img src="/assets/v2/rabbits/cheering.png" alt="" className="mx-auto h-40 w-40 object-contain" />
-          <h2 className="font-display mt-4 text-xl font-bold text-[var(--ink)]">{t("daily.comfort.title")}</h2>
+          <h2 className="mt-4 text-xl font-bold text-[var(--ink)]">{t("daily.comfort.title")}</h2>
           <p className="mt-3 whitespace-pre-line text-sm leading-7 text-[var(--muted)]">{t("daily.comfort.body")}</p>
           <div className="mt-6 flex justify-center gap-3">
             <Button variant="primary" onClick={() => navigate(routes.emotionRescue, { state: { prefill: note } })}>
@@ -179,7 +179,7 @@ export default function DailyWarmth() {
 
           <Card className="p-5">
             <div className="flex items-center justify-between">
-              <h2 className="font-display text-lg font-bold text-[var(--ink)]">{t("daily.mood")}</h2>
+              <h2 className="text-lg font-bold text-[var(--ink)]">{t("daily.mood")}</h2>
               <button
                 type="button"
                 onClick={() => setShowHelp((v) => !v)}
