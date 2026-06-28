@@ -69,13 +69,15 @@ export function PlantingAnimationOverlay({
     const frameThreeTimer = window.setTimeout(() => setFrameIndex(3), frameChangeTimeline[2]);
     const contentTimer = window.setTimeout(() => {
       setShowContent(true);
-      // Burst of sparkles
-      const colors = ["#ffc2a8", "#ffd7c4", "#ffe5d9", "#ff9aaa"];
-      const burst = Array.from({ length: 6 }, (_, i) => ({
+      // Burst of sparkles with varied sizes and delays
+      const colors = ["#ffc2a8", "#ffd7c4", "#ffe5d9", "#ff9aaa", "#ffb3c6"];
+      const burst = Array.from({ length: 8 }, (_, i) => ({
         id: i,
-        dx: (Math.random() - 0.5) * 80,
-        dy: (Math.random() - 0.5) * 80 - 10,
-        color: colors[i % colors.length]
+        dx: (Math.random() - 0.5) * 120,
+        dy: -(Math.random() * 100 + 20),
+        color: colors[i % colors.length],
+        size: 6 + Math.random() * 6,
+        delay: Math.random() * 120
       }));
       setSparkles(burst);
     }, contentRevealDelay);
@@ -145,7 +147,13 @@ export function PlantingAnimationOverlay({
             <span
               key={s.id}
               className="sparkle-dot"
-              style={{ left: "50%", top: "50%", background: s.color, "--dx": `${s.dx}px`, "--dy": `${s.dy}px` } as React.CSSProperties}
+              style={{
+                left: "50%", top: "50%",
+                background: s.color,
+                "--dx": `${s.dx}px`, "--dy": `${s.dy}px`,
+                "--size": `${s.size}px`,
+                "--delay": `${s.delay}ms`
+              } as React.CSSProperties}
             />
           ))}
         </div>
