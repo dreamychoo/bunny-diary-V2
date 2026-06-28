@@ -116,16 +116,16 @@ export function AppShell({ children, title, subtitle, headerMascotVariant = "rea
             return (
               <Link key={tab.to} to={tab.to} className={active ? "active" : ""}>
                 {tab.to === routes.home && (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
                 )}
                 {tab.to === routes.bunnyGarden && (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21V9"/><path d="M12 9C9 5 5 5 3 8c3 0 6 2 9 6"/><path d="M12 9c3-4 7-4 9-1-3 0-6 2-9 6"/></svg>
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21V9"/><path d="M12 9C9 5 5 5 3 8c3 0 6 2 9 6"/><path d="M12 9c3-4 7-4 9-1-3 0-6 2-9 6"/></svg>
                 )}
                 {tab.to === routes.collection && (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6-5.4-2.9-5.4 2.9 1-6-4.4-4.3 6.1-.9z"/></svg>
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6-5.4-2.9-5.4 2.9 1-6-4.4-4.3 6.1-.9z"/></svg>
                 )}
                 {tab.to === routes.pastJournals && (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="5" y="4" width="14" height="16" rx="3"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="5" y="4" width="14" height="16" rx="3"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
                 )}
                 <span>{tab.label}</span>
               </Link>

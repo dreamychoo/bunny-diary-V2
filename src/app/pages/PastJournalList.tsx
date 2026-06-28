@@ -75,9 +75,9 @@ export default function PastJournalList() {
   const emotionCount = entries.filter((e) => e.type === "emotion").length;
   const warmthCount = entries.filter((e) => e.type === "warmth").length;
   const filterLabels = [
-    { key: "all", label: language === "zh" ? `全部 (${entries.length})` : `All (${entries.length})` },
-    { key: "emotion", label: language === "zh" ? `💧 ${emotionCount}` : `💧 ${emotionCount}` },
-    { key: "warmth", label: language === "zh" ? `☀️ ${warmthCount}` : `☀️ ${warmthCount}` }
+    { key: "all", label: t("common.all") + ` (${entries.length})` },
+    { key: "emotion", label: `💧 ${emotionCount}` },
+    { key: "warmth", label: `☀️ ${warmthCount}` }
   ] as const;
 
   return (
@@ -99,6 +99,7 @@ export default function PastJournalList() {
                 key={key}
                 type="button"
                 onClick={() => setFilterType(key)}
+                aria-pressed={filterType === key}
                 className={`rounded-full px-3 py-1 text-[12px] font-semibold transition ${
                   filterType === key
                     ? "bg-[var(--pink)] text-white"
@@ -128,7 +129,7 @@ export default function PastJournalList() {
                       <Link
                         to={routes.diaryLayout(entry.id)}
                         className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[var(--muted)]/50 bg-[rgba(255,255,255,0.88)] text-[var(--muted)] transition hover:bg-white active:scale-[0.98]"
-                        aria-label="share card"
+                        aria-label={t("detail.shareCard")}
                       >
                         <ImageIcon className="h-4 w-4" />
                       </Link>
@@ -151,16 +152,14 @@ export default function PastJournalList() {
           <img src="/assets/v2/rabbits/sitting.png" alt="" />
           {query ? (
             <p className="font-display mt-2 text-sm">
-              {language === "zh"
-                ? `找到 ${filteredEntries.length} 条`
-                : `Found ${filteredEntries.length} entries`}
+              {t("past.searchResult", { count: filteredEntries.length })}
             </p>
           ) : (
             <p className="font-display">{t("past.quietLine")}</p>
           )}
           {filteredEntries.length > 0 && !query && (
             <p className="mt-4 text-xs text-[#a89e97]">
-              {language === "zh" ? `共 ${filteredEntries.length} 条记录` : `${filteredEntries.length} entries total`}
+              {t("past.totalCount", { count: filteredEntries.length })}
             </p>
           )}
         </aside>

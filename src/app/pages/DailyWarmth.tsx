@@ -79,9 +79,14 @@ export default function DailyWarmth() {
   };
 
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "0px";
-      textareaRef.current.style.height = `${Math.max(140, textareaRef.current.scrollHeight)}px`;
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    const prevHeight = textarea.style.height;
+    textarea.style.height = "auto";
+    const newHeight = `${Math.max(140, textarea.scrollHeight)}px`;
+    // Only set if different to avoid layout flicker
+    if (prevHeight !== newHeight) {
+      textarea.style.height = newHeight;
     }
   }, [note]);
 
@@ -158,7 +163,7 @@ export default function DailyWarmth() {
               <button type="button" onClick={handleRefreshPrompt} className="ml-auto grid h-7 w-7 place-items-center rounded-full text-[var(--muted)] hover:bg-[rgba(255,255,255,0.5)]" aria-label="refresh prompt">
                 <RefreshCw className="h-3.5 w-3.5" />
               </button>
-              <button type="button" onClick={handleWritePrompt} className="grid h-7 w-7 place-items-center rounded-full text-[var(--muted)] hover:bg-[rgba(255,255,255,0.5)]" aria-label="write prompt">
+              <button type="button" onClick={handleWritePrompt} className="grid h-7 w-7 place-items-center rounded-full text-[var(--muted)] hover:bg-[rgba(255,255,255,0.5)]" aria-label={t("daily.writePrompt")}>
                 <ChevronDown className="h-3.5 w-3.5 -rotate-45" />
               </button>
             </div>
@@ -179,7 +184,7 @@ export default function DailyWarmth() {
                 type="button"
                 onClick={() => setShowHelp((v) => !v)}
                 className="grid h-7 w-7 place-items-center rounded-full border border-[var(--muted)] text-[11px] text-[var(--muted)] hover:bg-[rgba(255,255,255,0.5)]"
-                aria-label="help"
+                aria-label={t("daily.save")}
               >
                 ?
               </button>

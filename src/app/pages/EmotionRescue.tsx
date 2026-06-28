@@ -140,16 +140,23 @@ export default function EmotionRescue() {
   const currentPrompts = language === "zh" ? prompts : promptsEn;
 
   useEffect(() => {
-    if ((location.state as { prefill?: string } | null)?.prefill) {
-      setWhatHappened((location.state as { prefill: string }).prefill);
+    const state = location.state as { prefill?: string } | null;
+    if (state?.prefill) {
+      setWhatHappened(state.prefill);
+      // Clear the state so it won't re-prefill on subsequent navigations
+      window.history.replaceState(null, "");
     }
-  }, []);
+  }, [location.state]);
 
   useEffect(() => {
     const textarea = whatHappenedRef.current;
     if (!textarea) return;
-    textarea.style.height = "0px";
-    textarea.style.height = `${Math.max(140, textarea.scrollHeight)}px`;
+    const prevHeight = textarea.style.height;
+    textarea.style.height = "auto";
+    const newHeight = `${Math.max(140, textarea.scrollHeight)}px`;
+    if (prevHeight !== newHeight) {
+      textarea.style.height = newHeight;
+    }
   }, [whatHappened]);
 
   const trackGradient = useMemo(() => {
@@ -238,10 +245,10 @@ export default function EmotionRescue() {
             <div className="flex items-center gap-2 text-[13px] font-medium text-[var(--muted)]">
               <span className="text-[var(--pink)]">✨</span>
               <span className="animate-fade-in text-[14px] text-[var(--ink)]">{currentPrompts[promptIndex]}</span>
-              <button type="button" onClick={handleRefreshPrompt} className="ml-auto grid h-7 w-7 place-items-center rounded-full text-[var(--muted)] hover:bg-[rgba(255,255,255,0.5)]" aria-label="refresh prompt">
+              <button type="button" onClick={handleRefreshPrompt} className="ml-auto grid h-7 w-7 place-items-center rounded-full text-[var(--muted)] hover:bg-[rgba(255,255,255,0.5)]" aria-label={t("emotion.more")}>
                 <RefreshCw className="h-3.5 w-3.5" />
               </button>
-              <button type="button" onClick={handleWritePrompt} className="grid h-7 w-7 place-items-center rounded-full text-[var(--muted)] hover:bg-[rgba(255,255,255,0.5)]" aria-label="write prompt">
+              <button type="button" onClick={handleWritePrompt} className="grid h-7 w-7 place-items-center rounded-full text-[var(--muted)] hover:bg-[rgba(255,255,255,0.5)]" aria-label={t("daily.writePrompt")}>
                 <ChevronDown className="h-3.5 w-3.5 -rotate-45" />
               </button>
             </div>

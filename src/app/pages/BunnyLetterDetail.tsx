@@ -19,7 +19,7 @@ export default function BunnyLetterDetail() {
 
   return (
     <AppShell wide>
-      <Link to={routes.collection} className="letter-back"><ArrowLeft />{t("letter.back")}</Link>
+      <Link to={routes.collection} className="letter-back" aria-label={t("letter.back")}><ArrowLeft />{t("letter.back")}</Link>
       <article className="letter-paper">
         <Mail className="mx-auto h-7 w-7 text-[#c99b52]" />
         <p className="letter-type">{t(`letter.type.${letter.letterType}`)}</p>

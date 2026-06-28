@@ -23,30 +23,26 @@ const gardenSlots = [
   { x: 22, y: 58 },
   { x: 47, y: 56 },
   { x: 72, y: 58 },
+  { x: 90, y: 60 },
+  { x: 5, y: 62 },
+  { x: 50, y: 78 },
 ] as const;
 
 const gardenPlotSizes = [
-  "w-[60px] h-[68px]",
-  "w-[50px] h-[56px]",
-  "w-[54px] h-[62px]",
-  "w-[50px] h-[56px]",
-  "w-[72px] h-[82px]",
-  "w-[64px] h-[72px]",
-  "w-[68px] h-[78px]",
+  "w-[60px] h-[68px]", "w-[50px] h-[56px]", "w-[54px] h-[62px]", "w-[50px] h-[56px]",
+  "w-[72px] h-[82px]", "w-[64px] h-[72px]", "w-[68px] h-[78px]",
+  "w-[52px] h-[58px]", "w-[46px] h-[52px]", "w-[42px] h-[48px]",
 ] as const;
 
 const gardenPlotSizesSmall = [
-  "w-[44px] h-[50px]",
-  "w-[38px] h-[42px]",
-  "w-[40px] h-[46px]",
-  "w-[38px] h-[42px]",
-  "w-[52px] h-[60px]",
-  "w-[46px] h-[52px]",
-  "w-[50px] h-[58px]",
+  "w-[44px] h-[50px]", "w-[38px] h-[42px]", "w-[40px] h-[46px]", "w-[38px] h-[42px]",
+  "w-[52px] h-[60px]", "w-[46px] h-[52px]", "w-[50px] h-[58px]",
+  "w-[38px] h-[42px]", "w-[34px] h-[38px]", "w-[30px] h-[34px]",
 ] as const;
 
 // ponytail: 7 planting plots + 3 empty soil plots, indexed 0-6 = plant, 7-9 = empty
 const PLANT_SLOT_COUNT = 7;
+const EMPTY_SLOT_START = 7;
 
 const matureAssets: Record<GardenSeed["plantVariant"], string> = {
   daisy: "/assets/v2/plants/daisy.png",
@@ -101,7 +97,20 @@ function Plot({ plot, index, onEmpty, onHarvest, onPlant }: { plot: GardenPlotVi
   const seed = plot.seed;
   const isUsed = seed?.status === "usedForLetter";
 
-  if (!seed) return null;
+  if (!seed) {
+    // Empty plot — show clickable patch
+    return (
+      <button
+        type="button"
+        className="absolute z-5 -translate-x-1/2 -translate-y-1/2 garden-plot--empty"
+        style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
+        onClick={onEmpty}
+        aria-label="Plant seed"
+      >
+        <span className="garden-empty-patch" />
+      </button>
+    );
+  }
 
   return (
     <button
@@ -112,7 +121,11 @@ function Plot({ plot, index, onEmpty, onHarvest, onPlant }: { plot: GardenPlotVi
         seed?.status === "planted" && "animate-pulse"
       )}
       style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
-      onClick={() => seed.status === "ready" ? onHarvest(seed) : onPlant(seed)}
+      onClick={() => {
+        if (seed.status === "ready") onHarvest(seed);
+        else if (seed.status === "grown" || seed.status === "usedForLetter") onPlant(seed);
+        else onPlant(seed);
+      }}
       aria-label={seed.plantVariant}
     >
       <img src={plantAsset(seed)} alt="" className="h-full w-full object-contain drop-shadow-[0_8px_10px_rgba(58,82,45,0.14)]" />
@@ -212,8 +225,8 @@ export default function BunnyGarden() {
         <section className="relative min-h-[128px] pt-1">
           <img src="/assets/v2/rabbits/watering.png" alt="" className="absolute -left-2 -top-2 z-2 h-[100px] w-[100px] object-contain drop-shadow-[0_14px_18px_rgba(95,64,48,0.16)]" />
           <div className="pl-[80px] pt-6">
-            <h1 className="text-[29px] font-black tracking-tight leading-none text-[var(--ink)]">{language === "zh" ? "兔兔花园" : "Bunny Garden"}<span className="ml-1 text-[20px] text-[var(--pink)]">♥</span></h1>
-            <p className="mt-2 text-[12px] font-semibold leading-snug text-[var(--muted)] max-w-[210px]">{language === "zh" ? "有些心情开成花，有些慢慢长成树。" : "Some feelings bloom, some grow slowly into trees."}</p>
+            <h1 className="text-[29px] font-black tracking-tight leading-none text-[var(--ink)]">{t("garden.title")}<span className="ml-1 text-[20px] text-[var(--pink)]">♥</span></h1>
+            <p className="mt-2 text-[12px] font-semibold leading-snug text-[var(--muted)] max-w-[210px]">{t("garden.shortSubtitle")}</p>
           </div>
         </section>
 
@@ -221,10 +234,10 @@ export default function BunnyGarden() {
         <section className="flex items-center gap-3 rounded-[22px] border border-[rgba(255,255,255,0.8)] bg-[rgba(255,254,250,0.86)] px-3 py-3 shadow-[0_10px_30px_rgba(126,91,72,0.10)] backdrop-blur-[18px]">
           <img src="/assets/v2/plants/sprout.png" alt="" className="h-11 w-11 flex-shrink-0 object-contain drop-shadow-[0_6px_9px_rgba(95,64,48,0.12)]" />
           <p className="flex-1 text-[13px] font-extrabold leading-snug text-[#4d3c33]">
-            {garden.waitingSeedCount > 0 ? (language === "zh" ? "点一颗种子，兔兔会帮它找一块安静的空地。" : "Pick a seed, Bunny will find it a quiet spot.") : (language === "zh" ? "写一篇日记，就会得到新的种子。" : "Write a diary entry and a new seed will appear.")}
+            {garden.waitingSeedCount > 0 ? t("garden.promptBar.plantReady") : t("garden.promptBar.writeForSeed")}
           </p>
           <button onClick={() => setSeedVaultOpen(true)} className="inline-flex h-11 items-center rounded-[999px] border-0 bg-gradient-to-b from-[#92d096] to-[#78bf83] px-3.5 text-[12px] font-extrabold text-white shadow-[0_8px_18px_rgba(120,191,131,0.28),inset_0_1px_rgba(255,255,255,0.35)]">
-            🌱 {language === "zh" ? "打开种子库" : "Seed Vault"}
+            🌱 {t("garden.openSeedVault")}
           </button>
         </section>
 
@@ -246,7 +259,7 @@ export default function BunnyGarden() {
         {/* Garden */}
         <section className="relative h-[250px] overflow-visible -mt-3 -mx-5">
           <img src="/garden-assets/prepped/grass-board.png" alt="" className="absolute left-1/2 top-[58%] w-[440px] -translate-x-1/2 -translate-y-1/2 object-contain drop-shadow-[0_18px_28px_rgba(83,132,70,0.18)]" />
-          {garden.plots.slice(0, 7).map((plot, index) => (
+          {garden.plots.slice(0, 10).map((plot, index) => (
             <Plot key={plot.id} plot={plot} index={index} onEmpty={() => garden.seedInventory.length ? setSeedVaultOpen(true) : setToast(t("garden.v3.writeForSeed"))} onHarvest={setHarvestTarget} onPlant={setPlantInfo} />
           ))}
         </section>

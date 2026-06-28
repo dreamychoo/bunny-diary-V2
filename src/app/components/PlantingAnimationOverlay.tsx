@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import { cn } from "./ui/utils";
 import { useI18n } from "../i18n";
@@ -31,20 +31,29 @@ export function PlantingAnimationOverlay({
   const { t } = useI18n();
   const [frameIndex, setFrameIndex] = useState(0);
   const [showContent, setShowContent] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const images = frameSources.map((src) => {
-      const image = new Image();
-      image.src = src;
-      return image;
-    });
-
-    return () => {
-      images.forEach((image) => {
-        image.src = "";
+    if (open) {
+      previousFocusRef.current = document.activeElement as HTMLElement;
+      // Preload images only when opening
+      const images = frameSources.map((src) => {
+        const image = new Image();
+        image.src = src;
+        return image;
       });
-    };
-  }, []);
+      // Focus the dialog after render
+      requestAnimationFrame(() => dialogRef.current?.focus());
+      return () => {
+        images.forEach((image) => {
+          image.src = "";
+        });
+        // Restore focus when closing
+        previousFocusRef.current?.focus();
+      };
+    }
+  }, [open]);
 
   useEffect(() => {
     if (!open) {
@@ -95,7 +104,15 @@ export function PlantingAnimationOverlay({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#fdf8f2]/94 px-5 py-6 backdrop-blur-[2px]">
+    <div
+      ref={dialogRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label={t(titleKey)}
+      tabIndex={-1}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#fdf8f2]/94 px-5 py-6 backdrop-blur-[2px]"
+      onKeyDown={(e) => { if (e.key === "Escape" && secondaryKey && onSecondary) onSecondary(); }}
+    >
       <div className="w-full max-w-[22rem] text-center">
         <div className="relative mx-auto h-[220px] w-[260px] overflow-hidden">
           {frameSources.map((src, index) => (

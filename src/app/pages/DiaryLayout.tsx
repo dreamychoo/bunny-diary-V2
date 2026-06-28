@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { toPng } from "html-to-image";
 import { ArrowLeft, Download } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -39,6 +39,7 @@ export default function DiaryLayout() {
   const { id } = useParams();
   const navigate = useNavigate();
   const cardRef = useRef<HTMLDivElement>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const entry = id ? getEntryById(id) : null;
 
   if (!entry) {
@@ -54,7 +55,7 @@ export default function DiaryLayout() {
   const handleSave = async () => {
     if (!cardRef.current) return;
     const btn = document.activeElement as HTMLButtonElement | null;
-    if (btn) { btn.disabled = true; btn.textContent = language === "zh" ? "生成中…" : "Saving…"; }
+    if (btn) { btn.disabled = true; btn.textContent = t("detail.generating"); }
     try {
       const dataUrl = await toPng(cardRef.current, { backgroundColor: "#fdf8f2", pixelRatio: 2 });
       const link = document.createElement("a");
@@ -62,17 +63,18 @@ export default function DiaryLayout() {
       link.href = dataUrl;
       link.click();
     } catch {
-      // silently fail
+      setSaveError(t("detail.saveFailed"));
     } finally {
-      if (btn) { btn.disabled = false; btn.textContent = language === "zh" ? "保存图片" : "Save Image"; }
+      if (btn) { btn.disabled = false; btn.textContent = t("detail.saveImage"); }
     }
   };
 
   const isEmotion = entry.type === "emotion";
 
   return (
-    <AppShell title={language === "zh" ? "日记卡片" : "Diary Card"}>
+    <AppShell title={t("detail.diaryCard")}>
       <div className="mx-auto max-w-[420px]">
+        {saveError && <p className="mb-4 rounded-[16px] border border-[#e7c7c2] bg-[#fff5f3] px-4 py-3 text-sm leading-6 text-[#8a615a]">{saveError}</p>}
         <div
           ref={cardRef}
           className="overflow-hidden rounded-[28px] bg-[var(--bg)] p-6 shadow-[0_8px_40px_rgba(75,58,52,0.08)]"
@@ -145,7 +147,7 @@ export default function DiaryLayout() {
               {entry.childhood && (
                 <div className="mt-4 rounded-[14px] bg-[#f3f0fb]/70 px-4 py-3">
                   <p className="text-[11px] font-semibold text-[#8177a4]">
-                    {language === "zh" ? "这一刻最需要的" : "What I needed"}
+                    {t("detail.whatNeeded")}
                   </p>
                   <p className="mt-1 text-[13px] leading-6 text-[#5f5149]">{entry.childhood}</p>
                 </div>
@@ -186,7 +188,7 @@ export default function DiaryLayout() {
           </Button>
           <Button variant="primary" onClick={handleSave}>
             <Download className="h-4 w-4" />
-            {language === "zh" ? "保存图片" : "Save Image"}
+            {t("detail.saveImage")}
           </Button>
         </div>
       </div>

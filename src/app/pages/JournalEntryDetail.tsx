@@ -91,6 +91,11 @@ export default function JournalEntryDetail() {
 
   function saveEdit() {
     if (!entry || !editText.trim()) return;
+    // Re-check 48h window at save time
+    if (Date.now() - new Date(entry.timestamp).getTime() >= 48 * 60 * 60 * 1000) {
+      setIsEditing(false);
+      return;
+    }
     const allEntries = getAllEntries();
     const updated = allEntries.map((e) => {
       if (e.id !== entry.id) return e;
@@ -219,7 +224,7 @@ export default function JournalEntryDetail() {
           </Button>
           <Button variant="garden" onClick={() => navigate(routes.diaryLayout(entry.id))}>
             <ImageIcon className="h-4 w-4" />
-            {language === "zh" ? "分享卡片" : "Share Card"}
+            {t("detail.shareCard")}
           </Button>
         </div>
       </Card>
