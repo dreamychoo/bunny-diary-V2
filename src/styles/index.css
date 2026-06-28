@@ -268,7 +268,7 @@ a {
 .selection-check svg { width:15px; height:15px; }
 .garden-toast { position:fixed; left:50%; bottom:5.75rem; z-index:70; transform:translateX(-50%); padding:.75rem 1rem; border:1px solid #dfd6cc; border-radius:999px; background:#fffdf9; color:#4b3a34; box-shadow:0 10px 30px rgba(75,58,52,.12); font-size:.86rem; font-weight:650; }
 
-.collection-layout { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; }
+.collection-layout { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; align-items:start; }
 .collection-panel { overflow:hidden; border:1px solid #e8ded2; border-radius:24px; background:rgba(255,253,249,.9); }
 .collection-section-heading { display:flex; align-items:center; gap:.65rem; padding:1rem 1.25rem; border-bottom:1px solid #e8ded2; background:#f0f6ec; color:#607759; }
 .collection-section-heading--mail { background:#fbf3dc; color:#a97932; }
@@ -337,7 +337,9 @@ a {
   .seed-row { align-items:center; gap:.7rem; padding:.8rem; }
   .seed-row > img { width:44px; height:48px; }
   .seed-row button { min-height:40px; padding-inline:.8rem; }
-  .collection-layout,.memory-book-layout { grid-template-columns:1fr; }
+  .collection-layout { grid-template-columns:1fr; }
+  .collection-plant-list { max-height:50dvh; overflow-y:auto; }
+  .memory-book-layout { grid-template-columns:1fr; }
   .memory-quiet-panel { display:none; }
   .collection-garden-link { align-items:flex-start; flex-direction:column; }
   .letter-paper { padding:2rem 1.25rem; border-radius:22px; }
