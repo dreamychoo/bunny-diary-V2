@@ -9,7 +9,11 @@
     "preview": "vite preview",
     "prepare:garden-assets": "bash ./tools/prepare-bunny-garden-assets.sh",
     "asset:extract": "python3 tools/extract_nonwhite_regions.py",
-    "asset:extract-gui": "python3 tools/garden_asset_extractor_gui.py"
+    "asset:extract-gui": "python3 tools/garden_asset_extractor_gui.py",
+    "bunny-brain:init": "node tools/bunny-brain-vault.mjs init",
+    "bunny-brain:sync": "node tools/bunny-brain-vault.mjs sync",
+    "bunny-brain:self-check": "node tools/bunny-brain-vault.mjs self-check",
+    "bunny-brain:import": "node tools/bunny-brain-vault.mjs import-anthology"
   },
   "dependencies": {
     "clsx": "^2.1.1",
