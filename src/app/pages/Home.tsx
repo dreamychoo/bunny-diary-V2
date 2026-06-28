@@ -73,7 +73,7 @@ export default function Home() {
           ))}
         </section>
 
-        <section className="app-bunny-says mt-4">
+        <section className="app-bunny-says mt-8">
           <div>
             <span>{language === "zh" ? "小兔说" : "Bunny Says"}</span>
             <p>{notebookLine}</p>
