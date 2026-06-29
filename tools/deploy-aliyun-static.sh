@@ -143,7 +143,7 @@ if [[ ! -d "$DIST_DIR" ]]; then
   exit 1
 fi
 
-OSS_SYNC_CMD=("$OSSUTIL_BIN" sync "$DIST_DIR/" "$OSS_DEST" --delete --update)
+OSS_SYNC_CMD=("$OSSUTIL_BIN" sync "$DIST_DIR/" "$OSS_DEST" -f --delete --update)
 if [[ -n "${ALIYUN_OSS_ENDPOINT:-}" ]]; then
   OSS_SYNC_CMD+=(--endpoint "${ALIYUN_OSS_ENDPOINT}")
 fi
