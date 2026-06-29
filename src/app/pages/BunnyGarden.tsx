@@ -107,7 +107,7 @@ function Sheet({ children, onClose, blockClose }: { children: React.ReactNode; o
   );
 }
 
-function Plot({ plot, index, emptyLabel, onEmpty, onHarvest, onPlant }: { plot: GardenPlotView; index: number; emptyLabel: string; onEmpty: () => void; onHarvest: (seed: GardenSeed) => void; onPlant: (seed: GardenSeed) => void }) {
+function Plot({ plot, index, emptyLabel, onEmpty, onHarvest, onPlant }: { plot: GardenPlotView; index: number; emptyLabel: string; onEmpty: (plotId: string) => void; onHarvest: (seed: GardenSeed) => void; onPlant: (seed: GardenSeed) => void }) {
   const slot = gardenSlots[index];
   const seed = plot.seed;
   const isUsed = seed?.status === "usedForLetter";
@@ -119,7 +119,7 @@ function Plot({ plot, index, emptyLabel, onEmpty, onHarvest, onPlant }: { plot: 
         type="button"
         className="garden-plot absolute z-5 -translate-x-1/2 -translate-y-1/2 garden-plot--empty"
         style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
-        onClick={onEmpty}
+        onClick={() => onEmpty(plot.id)}
         aria-label={emptyLabel}
       >
         <span className="garden-empty-patch" />
@@ -162,6 +162,7 @@ export default function BunnyGarden() {
   const navigate = useNavigate();
   const [garden, setGarden] = useState(() => getGardenState());
   const [seedVaultOpen, setSeedVaultOpen] = useState(false);
+  const [plantTargetPlot, setPlantTargetPlot] = useState<string | null>(null);
   const [harvestTarget, setHarvestTarget] = useState<GardenSeed | null>(null);
   const [plantInfo, setPlantInfo] = useState<GardenSeed | null>(null);
   const [letterPickerOpen, setLetterPickerOpen] = useState(false);
@@ -224,9 +225,11 @@ export default function BunnyGarden() {
   function refresh() { setGarden(getGardenState()); }
 
   function plant(seed: GardenSeed) {
-    const emptyPlot = garden.plots.find((plot) => plot.state === "empty");
-    if (!emptyPlot) { setToast(t("garden.v3.noSpace")); return; }
-    const result = plantSeedInPlot(seed.id, emptyPlot.id);
+    const plotId = plantTargetPlot;
+    setPlantTargetPlot(null);
+    const targetPlot = plotId ? garden.plots.find((p) => p.id === plotId) : garden.plots.find((plot) => plot.state === "empty");
+    if (!targetPlot || targetPlot.state !== "empty") { setToast(t("garden.v3.noSpace")); return; }
+    const result = plantSeedInPlot(seed.id, targetPlot.id);
     if (!result.ok) return;
     setSeedVaultOpen(false);
     setToast(t("garden.plantedToast"));
@@ -303,7 +306,14 @@ export default function BunnyGarden() {
               plot={plot}
               index={index}
               emptyLabel={garden.seedInventory.length ? t("garden.v3.plant") : t("garden.v3.writeForSeed")}
-              onEmpty={() => garden.seedInventory.length ? setSeedVaultOpen(true) : setToast(t("garden.v3.writeForSeed"))}
+              onEmpty={(plotId) => {
+                if (garden.seedInventory.length) {
+                  setPlantTargetPlot(plotId);
+                  setSeedVaultOpen(true);
+                } else {
+                  setToast(t("garden.v3.writeForSeed"));
+                }
+              }}
               onHarvest={setHarvestTarget}
               onPlant={setPlantInfo}
             />
