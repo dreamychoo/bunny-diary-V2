@@ -1005,6 +1005,62 @@ export function getBunnyNotebookLine(seed?: number): string {
   return lines[index];
 }
 
+const coffeeTimeLines: Record<"en" | "zh", string[]> = {
+  en: [
+    "Coffee got cold. I only remembered I made coffee when I found the cup. Turns out a lot of life is like that — not forgotten, just distracted.",
+    "Saved the last cookie for the afternoon. Ate it in the morning. I reflected for a while and decided 'afternoon' shouldn't be set too far.",
+    "The spoon fell into the cup with a soft clink. A reminder that small things can still make their presence known.",
+    "I issued myself a staring-into-space permit today. Valid until the tea goes cold.",
+    "Put too much sugar in my tea. Too sweet at first, but I got used to it. Some days are like that too.",
+    "The chair is very quiet every day. Sit on it and it holds. No one sits, it doesn't complain.",
+    "Today's menu: hot tea, two cookies, three minutes of staring into space.",
+    "There's a round cup ring on the table. Like a stamp — proof there was coffee here once.",
+    "I just closed my eyes for a rest. Woke up to find time had walked a stretch.",
+    "A blanket's greatest talent: making you give up on being tough really fast.",
+    "The tea bag sits quiet in the cup. Slowly giving its flavor to the water. Some gentle changes happen without a sound.",
+    "Kinda want to hang a sign: Rabbit temporarily closed. But basic services still available: breathing, drinking water, sitting, blinking.",
+    "Looked for my pen for ages. It was in my hand. This proves people ignore what they already have.",
+    "Don't make life decisions when you're very hungry. The answers tend to be too dramatic.",
+    "An empty cup doesn't mean the tea failed. It just finished its job.",
+    "I'm slow sometimes. But slow means you notice the tiny patterns on the table and find where the cookies are.",
+    "I want to give you a pause button today. A small one. Press it and the world keeps spinning, but you can sit for a bit.",
+    "Some problems are like strong coffee. Bitter at first. Let it cool and it goes down easier.",
+    "A tiny plate caught the falling cookie crumbs. It didn't complain about being meant for small things.",
+    "The sugar jar is empty. I looked at it for a while. It didn't fail — it just gave all its sweetness away.",
+    "There's a patch of sunlight on the corner of the table. Just enough to light up one cup.",
+    "Today I held a rabbit meeting. Topic: snacks. Conclusion: snacks are very good at hiding and being found.",
+    "The blanket's advice is usually simple: 'Stay a little longer.'",
+    "Today's list has three things: drink water, eat food, don't be too hard on yourself. The third one is the hardest."
+  ],
+  zh: [
+    "咖啡凉掉的时候，我才想起来自己泡过咖啡。后来发现，生活里很多事情也是这样：不是不重要，只是刚才脑袋去别处散步了。",
+    "今天把最后一块饼干留到下午。结果上午就吃掉了。我认真反省了一会儿，决定下次不要把下午定得太远。",
+    "小勺子掉进杯子里，发出很轻的一声。它好像在提醒我：就算是小东西，也可以制造一点存在感。",
+    "今天给自己发了一张发呆许可证。有效期：直到茶凉之前。备注：发呆期间不处理复杂问题，不思考人生，不责怪自己。",
+    "今天茶里糖放多了。一开始觉得太甜，后来喝着喝着也习惯了。原来有些日子也是这样，不太像预期，但也能过下去。",
+    "椅子每天都很安静。有人坐下，它就接住；没人坐，它也不抱怨。后来觉得，能稳定地待在那里，也是一种了不起。",
+    "今日菜单：热茶一杯，饼干两块，发呆三分钟。如果还有力气，再加一点点认真生活。",
+    "桌上留下一个圆圆的杯印。它看起来像一枚小章，证明这里曾经有过一杯咖啡。",
+    "今天本来只是闭眼休息一下。结果醒来的时候，时间已经走了一段路。我决定不责怪自己，毕竟时间自己有腿。",
+    "小毯子最大的本事，是让人很快放弃逞强。一盖上去，就会发现原来我也不是机器。",
+    "茶包泡在杯子里，看起来很安静。其实它正在慢慢把味道交给水。很多温柔的变化，都是这样发生的：不响，但有用。",
+    "今天有一点想挂出牌子：兔子暂时不营业。不过想了想，还是可以提供基础服务：呼吸、喝水、坐着、偶尔眨眼。",
+    "找了很久的笔，最后发现它就在手里。这说明人认真寻找的时候，偶尔会忽略自己已经拥有的东西。",
+    "不要在很饿的时候思考人生。那时候想出来的答案，通常会比较悲壮。先吃点东西，世界可能会自动温柔一点。",
+    "杯子空了，不代表这杯茶失败了。它只是完成了自己的任务。很多结束其实不是坏事。",
+    "我发现自己做事有时候很慢。但慢也有慢的好处，比如不容易错过桌上的小花纹，也比较适合发现饼干藏在哪里。",
+    "今天想送你一个暂停键。不用很大，一个小小的就好。按下去以后，世界继续转，但你可以先坐一会儿。",
+    "有些问题像很浓的咖啡。刚入口会苦，放一会儿，温度降下来，反而比较容易喝。",
+    "小盘子接住了掉下来的饼干屑。它没有抱怨自己装的不是大餐。能接住一点点，也是一种贡献。",
+    "糖罐子空了。我认真看了它一会儿，觉得它没有失败。它只是把甜都给出去了。",
+    "桌角有一小块阳光。它没有照亮整个房间，但足够照亮一只杯子。原来一点点亮，也可以让普通东西变得好看。",
+    "今天召开了一次兔子会议。议题是：为什么总在整理东西时翻到零食。会议结果：零食很会躲，也很会被发现。",
+    "被窝给我的建议通常很简单：再待一会儿。我知道它不一定客观，但它的语气实在太有说服力了。",
+    "今天的清单只写三件事。喝水。吃饭。不要对自己太凶。第三件最难，所以我把它写得最大。"
+  ]
+};
+
+
 export function exportDiaryData() {
   const { seeds, plots, keepsakes, letters } = readGardenStorage();
   return {
