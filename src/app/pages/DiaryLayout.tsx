@@ -5,7 +5,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { Button } from "../components/ui/button";
 import { useI18n } from "../i18n";
-import { emotionKeys, getEntryById, moodKeys, symptomKeys, weatherKeys, type EmotionKey, type SymptomKey, type WeatherKey } from "../lib/storage";
+import { emotionKeys, getEntryById, symptomKeys } from "../lib/storage";
 import { routes } from "../routes";
 
 const emotionIcons: Record<string, string> = {
@@ -71,7 +71,9 @@ export default function DiaryLayout() {
     }
   };
 
-  const isEmotion = notebookQuote ? false : entry.type === "emotion";
+  const emotionEntry = notebookQuote || entry?.type !== "emotion" ? null : entry;
+  const warmthEntry = notebookQuote || entry?.type !== "warmth" ? null : entry;
+  const isEmotion = Boolean(emotionEntry);
 
   return (
     <AppShell title={t("detail.diaryCard")}>
@@ -79,7 +81,7 @@ export default function DiaryLayout() {
         {saveError && <p className="mb-4 rounded-[16px] border border-[#e7c7c2] bg-[#fff5f3] px-4 py-3 text-sm leading-6 text-[#8a615a]">{saveError}</p>}
         <div
           ref={cardRef}
-          className="overflow-hidden rounded-[28px] bg-[var(--bg)] p-6 shadow-[0_8px_40px_rgba(75,58,52,0.08)]"
+          className="overflow-hidden rounded-[12px] bg-[var(--bg)] p-12 pb-8 shadow-[0_8px_40px_rgba(75,58,52,0.08)]"
           style={{ fontFamily: "Inter, Nunito, system-ui, sans-serif" }}
         >
           {/* Decorative top */}
@@ -93,10 +95,10 @@ export default function DiaryLayout() {
           ) : (
             <div className="mt-4 flex items-center justify-center gap-2">
               <p className="text-[13px] font-semibold tracking-wide text-[var(--muted)]">
-                {formatDate(entry.timestamp, language)}
+                {formatDate(entry!.timestamp, language)}
               </p>
-              {!isEmotion && entry.weather && (
-                <span className="text-xl">{weatherEmojis[entry.weather] || "☀️"}</span>
+              {warmthEntry?.weather && (
+                <span className="text-xl">{weatherEmojis[warmthEntry.weather] || "☀️"}</span>
               )}
             </div>
           )}
@@ -111,11 +113,11 @@ export default function DiaryLayout() {
           ) : isEmotion ? (
             <>
               {/* Emotions */}
-              {entry.emotions.length > 0 && (
+              {emotionEntry && emotionEntry.emotions.length > 0 && (
                 <div className="mt-5 text-center">
-                  <span className="text-4xl">{emotionIcons[entry.emotions[0]] || "💧"}</span>
+                  <span className="text-4xl">{emotionIcons[emotionEntry.emotions[0]] || "💧"}</span>
                   <div className="mt-2 flex flex-wrap justify-center gap-1.5">
-                    {entry.emotions.map((em) => (
+                    {emotionEntry.emotions.map((em) => (
                       <span key={em} className="rounded-full bg-[var(--pink-soft)] px-3 py-1 text-[13px] font-semibold text-[var(--pink)]">
                         {optionLabel(em, "emotionKey", emotionKeys, t)}
                       </span>
@@ -125,30 +127,30 @@ export default function DiaryLayout() {
               )}
 
               {/* Intensity */}
-              {entry.intensity > 0 && (
+              {emotionEntry && emotionEntry.intensity > 0 && (
                 <div className="mt-4 flex justify-center gap-1">
                   {Array.from({ length: 10 }, (_, i) => (
                     <span
                       key={i}
-                      className={`block h-2 w-2 rounded-full ${i < entry.intensity ? "bg-[var(--pink)]" : "bg-[var(--muted)]/30"}`}
+                      className={`block h-2 w-2 rounded-full ${i < emotionEntry.intensity ? "bg-[var(--pink)]" : "bg-[var(--muted)]/30"}`}
                     />
                   ))}
                 </div>
               )}
 
               {/* What happened */}
-              {entry.whatHappened && (
+              {emotionEntry?.whatHappened && (
                 <div className="mt-5 rounded-[18px] bg-white p-5 text-center">
                   <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                    {entry.whatHappened}
+                    {emotionEntry.whatHappened}
                   </p>
                 </div>
               )}
 
               {/* Symptoms */}
-              {entry.symptoms.length > 0 && (
+              {emotionEntry && emotionEntry.symptoms.length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-1.5">
-                  {entry.symptoms.map((s) => (
+                  {emotionEntry.symptoms.map((s) => (
                     <span key={s} className="rounded-full bg-[#f4f0fb] px-2.5 py-1 text-[11px] font-medium text-[#6f6486]">
                       {optionLabel(s, "symptomKey", symptomKeys, t)}
                     </span>
@@ -157,22 +159,22 @@ export default function DiaryLayout() {
               )}
 
               {/* Childhood */}
-              {entry.childhood && (
+              {emotionEntry?.childhood && (
                 <div className="mt-4 rounded-[14px] bg-[#f3f0fb]/70 px-4 py-3">
                   <p className="text-[11px] font-semibold text-[#8177a4]">
                     {t("detail.whatNeeded")}
                   </p>
-                  <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#5f5149]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>{entry.childhood}</p>
+                  <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#5f5149]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>{emotionEntry.childhood}</p>
                 </div>
               )}
             </>
           ) : (
             <>
               {/* Gratitude */}
-              {entry.gratitude && (
+              {warmthEntry?.gratitude && (
                 <div className="mt-5 rounded-[18px] bg-white p-5 text-center">
                   <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                    {entry.gratitude}
+                    {warmthEntry.gratitude}
                   </p>
                 </div>
               )}
