@@ -25,7 +25,7 @@ export type GardenPlantVariant = GardenWarmthVariant | GardenFeelingVariant;
 export type GardenKeepsakeType = "bouquet" | "herbarium" | "grove";
 
 export const primaryEmotionKeys = [
-  "numbness",
+  "nothingness",
   "sadness",
   "anger",
   "anxiety",
@@ -53,7 +53,8 @@ export const extraEmotionKeys = [
   "unseen",
   "ignored",
   "lost",
-  "nothingness"
+  "nothingness",
+  "numbness"
 ] as const;
 
 const archivedEmotionKeys = ["tenderness", "moved", "calm", "grateful", "hopeful"] as const;
