@@ -910,7 +910,7 @@ export const translations = {
     "emotionKey.confused": "困惑",
     "emotionKey.rejected": "被拒绝",
     "emotionKey.frustrated": "烦躁",
-    "emotionKey.stressed": "压力大",
+    "emotionKey.stressed": "焦虑",
     "emotionKey.burnout": "内耗",
     "emotionKey.emo": "emo",
     "emotionKey.jealous": "有点嫉妒",
