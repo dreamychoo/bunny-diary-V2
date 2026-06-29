@@ -81,7 +81,7 @@ export default function DiaryLayout() {
         {saveError && <p className="mb-4 rounded-[16px] border border-[#e7c7c2] bg-[#fff5f3] px-4 py-3 text-sm leading-6 text-[#8a615a]">{saveError}</p>}
         <div
           ref={cardRef}
-          className="overflow-hidden rounded-[12px] bg-[var(--bg)] p-12 pb-8 shadow-[0_8px_40px_rgba(75,58,52,0.08)]"
+          className="overflow-hidden rounded-[12px] bg-[var(--bg)] p-14 pb-8 shadow-[0_8px_40px_rgba(75,58,52,0.08)]"
           style={{ fontFamily: "Inter, Nunito, system-ui, sans-serif" }}
         >
           {/* Decorative top */}
