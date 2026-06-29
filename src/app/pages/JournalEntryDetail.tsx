@@ -6,9 +6,8 @@ import { Mascot } from "../components/Mascot";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
 import { Textarea } from "../components/ui/textarea";
-import { cn } from "../components/ui/utils";
 import { useI18n } from "../i18n";
-import { deleteEntry, emotionKeys, getEntryById, getEntryGardenAttachment, getAllEntries, setEmotionEntries, setWarmthEntries, moodKeys, symptomKeys, weatherKeys } from "../lib/storage";
+import { deleteEntry, emotionKeys, getEntryById, getEntryGardenAttachment, getAllEntries, setEmotionEntries, setWarmthEntries, moodKeys, symptomKeys, weatherKeys, type EmotionEntry, type WarmthEntry } from "../lib/storage";
 import { routes } from "../routes";
 
 function formatDate(timestamp: string, language: string) {
@@ -69,16 +68,19 @@ export default function JournalEntryDetail() {
     );
   }
 
+  const currentEntry = entry;
+  const emotionEntry = currentEntry.type === "emotion" ? currentEntry : null;
+  const warmthEntry = currentEntry.type === "warmth" ? currentEntry : null;
+
   function handleDelete() {
-    if (!entry) return;
-    deleteEntry(entry.id);
+    deleteEntry(currentEntry.id);
     navigate(routes.pastJournals);
   }
 
   function startEditing() {
-    const text = entry.type === "warmth"
-      ? `${entry.gratitude}${entry.success ? "\n" + entry.success : ""}`
-      : `${entry.whatHappened}${entry.childhood ? "\n\n" + entry.childhood : ""}${entry.beliefs ? "\n\n" + entry.beliefs : ""}`;
+    const text = warmthEntry
+      ? `${warmthEntry.gratitude}${warmthEntry.success ? "\n" + warmthEntry.success : ""}`
+      : `${emotionEntry!.whatHappened}${emotionEntry!.childhood ? "\n\n" + emotionEntry!.childhood : ""}${emotionEntry!.beliefs ? "\n\n" + emotionEntry!.beliefs : ""}`;
     setEditText(text.trim());
     setIsEditing(true);
     setConfirmingDelete(false);
@@ -90,16 +92,16 @@ export default function JournalEntryDetail() {
   }
 
   function saveEdit() {
-    if (!entry || !editText.trim()) return;
+    if (!editText.trim()) return;
     // Re-check 48h window at save time
-    if (Date.now() - new Date(entry.timestamp).getTime() >= 48 * 60 * 60 * 1000) {
+    if (Date.now() - new Date(currentEntry.timestamp).getTime() >= 48 * 60 * 60 * 1000) {
       setIsEditing(false);
       return;
     }
     const allEntries = getAllEntries();
     const updated = allEntries.map((e) => {
-      if (e.id !== entry.id) return e;
-      if (entry.type === "warmth") {
+      if (e.id !== currentEntry.id) return e;
+      if (currentEntry.type === "warmth") {
         return { ...e, gratitude: editText, success: "" };
       }
       const lines = editText.split("\n\n");
@@ -110,22 +112,22 @@ export default function JournalEntryDetail() {
         beliefs: lines[2] || ""
       };
     });
-    setEmotionEntries(updated.filter((e): e is import("../lib/storage").EmotionEntry => e.type === "emotion"));
-    setWarmthEntries(updated.filter((e): e is import("../lib/storage").WarmthEntry => e.type === "warmth"));
+    setEmotionEntries(updated.filter((e): e is EmotionEntry => e.type === "emotion"));
+    setWarmthEntries(updated.filter((e): e is WarmthEntry => e.type === "warmth"));
     setIsEditing(false);
   }
 
   return (
     <AppShell
-      title={entry.type === "emotion" ? t("detail.emotionTitle") : t("detail.warmthTitle")}
-      headerMascotVariant={entry.type === "emotion" ? "listening" : "warmth"}
+      title={emotionEntry ? t("detail.emotionTitle") : t("detail.warmthTitle")}
+      headerMascotVariant={emotionEntry ? "listening" : "warmth"}
     >
-      <Card className={`p-6 ${detailTone(entry.type)}`}>
+      <Card className={`p-6 ${detailTone(currentEntry.type)}`}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="inline-flex items-center gap-2 rounded-full border border-[var(--muted)]/40 bg-[rgba(255,255,255,0.6)] px-4 py-2 text-sm font-bold">
               <CalendarDays className="h-4 w-4" />
-              {formatDate(entry.timestamp, language)}
+              {formatDate(currentEntry.timestamp, language)}
             </p>
             {isWithin48h && !isEditing && (
               <p className="mt-2 text-[11px] font-medium text-[#8a9f78]">{t("detail.editableHint")}</p>
@@ -172,7 +174,7 @@ export default function JournalEntryDetail() {
         </div>
 
         <div className="mt-6 grid gap-4">
-          {entry.type === "emotion" ? (
+          {emotionEntry ? (
             isEditing ? (
               <div className="rounded-[18px] bg-[#ffffff] p-5">
                 <p className="text-sm font-bold text-[#4a3b34]">{t("detail.whatHappened")}</p>
@@ -184,12 +186,12 @@ export default function JournalEntryDetail() {
               </div>
             ) : (
               <>
-                <Field label={t("detail.emotions")} value={entry.emotions.map((emotion) => optionLabel(emotion, "emotionKey", emotionKeys, t)).join(", ")} />
-                <Field label={t("detail.symptoms")} value={entry.symptoms.map((symptom) => optionLabel(symptom, "symptomKey", symptomKeys, t)).join(", ")} />
-                <Field label={t("detail.intensity")} value={`${entry.intensity}/10`} />
-                <Field label={t("detail.whatHappened")} value={entry.whatHappened} />
-                <Field label={t("detail.childhood")} value={entry.childhood} />
-                <Field label={t("detail.belief")} value={entry.beliefs} />
+                <Field label={t("detail.emotions")} value={emotionEntry.emotions.map((emotion) => optionLabel(emotion, "emotionKey", emotionKeys, t)).join(", ")} />
+                <Field label={t("detail.symptoms")} value={emotionEntry.symptoms.map((symptom) => optionLabel(symptom, "symptomKey", symptomKeys, t)).join(", ")} />
+                <Field label={t("detail.intensity")} value={`${emotionEntry.intensity}/10`} />
+                <Field label={t("detail.whatHappened")} value={emotionEntry.whatHappened} />
+                <Field label={t("detail.childhood")} value={emotionEntry.childhood} />
+                <Field label={t("detail.belief")} value={emotionEntry.beliefs} />
               </>
             )
           ) : (
@@ -204,10 +206,10 @@ export default function JournalEntryDetail() {
               </div>
             ) : (
               <>
-                <Field label={t("detail.mood")} value={optionLabel(entry.mood, "moodKey", moodKeys, t)} />
-                <Field label={t("detail.weather")} value={optionLabel(entry.weather, "weatherKey", weatherKeys, t)} />
-                <Field label={t("detail.gratitude")} value={entry.gratitude} />
-                <Field label={t("detail.success")} value={entry.success} />
+                <Field label={t("detail.mood")} value={optionLabel(warmthEntry!.mood, "moodKey", moodKeys, t)} />
+                <Field label={t("detail.weather")} value={optionLabel(warmthEntry!.weather, "weatherKey", weatherKeys, t)} />
+                <Field label={t("detail.gratitude")} value={warmthEntry!.gratitude} />
+                <Field label={t("detail.success")} value={warmthEntry!.success} />
               </>
             )
           )}

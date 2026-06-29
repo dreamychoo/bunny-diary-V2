@@ -15,6 +15,16 @@ tools/new-style-assets/
 *.node
 *.map
 *.png
+!public/favicon.png
+!public/apple-touch-icon.png
+!public/icons/icon-192.png
+!public/icons/icon-512.png
+!public/favicon-bunny-v2.png
+!public/apple-touch-icon-bunny-v2.png
+!public/icons/icon-192-bunny-v2.png
+!public/icons/icon-512-bunny-v2.png
 
 # 首次运行需要 npm install
 /.claude/settings.local.json
+.vercel
+.env*

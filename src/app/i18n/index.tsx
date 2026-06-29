@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, useState } from "react";
 import { getSettings, saveLanguage } from "../lib/storage";
-import { Language, TranslationKey, translations } from "./translations";
+import { Language, translations } from "./translations";
 
 type I18nContextValue = {
   language: Language;
@@ -23,7 +23,9 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       language,
       setLanguage,
       t: (key: string, params?: Record<string, string | number>) => {
-        const template = String(translations[language][key as TranslationKey] ?? translations.en[key as TranslationKey] ?? key);
+        const currentTranslations = translations[language] as Record<string, string>;
+        const fallbackTranslations = translations.en as Record<string, string>;
+        const template = String(currentTranslations[key] ?? fallbackTranslations[key] ?? key);
         if (!params) return template;
         return Object.entries(params).reduce<string>(
           (message, [name, value]) => message.split(`{${name}}`).join(String(value)),

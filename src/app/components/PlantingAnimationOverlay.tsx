@@ -21,6 +21,15 @@ type PlantingAnimationOverlayProps = {
   onSecondary?: () => void;
 };
 
+type Sparkle = {
+  id: number;
+  dx: number;
+  dy: number;
+  color: string;
+  size: number;
+  delay: number;
+};
+
 export function PlantingAnimationOverlay({
   open,
   variant = "save-success",
@@ -31,7 +40,7 @@ export function PlantingAnimationOverlay({
   const { t } = useI18n();
   const [frameIndex, setFrameIndex] = useState(0);
   const [showContent, setShowContent] = useState(false);
-  const [sparkles, setSparkles] = useState<{ id: number; dx: number; dy: number; color: string }[]>([]);
+  const [sparkles, setSparkles] = useState<Sparkle[]>([]);
   const dialogRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
