@@ -463,9 +463,9 @@ a { color: inherit; text-decoration: none; }
 .letter-paper time { display:block; margin-top:.7rem; color:var(--muted); font-size:.85rem; }
 .letter-rule { display:flex; align-items:center; gap:1rem; margin:2.4rem 0 1.1rem; color:var(--muted); font-size:.8rem; }
 .letter-rule::before,.letter-rule::after { height:1px; flex:1; content:""; background:rgba(217,205,197,0.5); }
-.letter-plants { display:flex; justify-content:center; gap:clamp(1rem,5vw,3rem); }
-.letter-plants div { display:grid; gap:.35rem; justify-items:center; font-size:.78rem; color:var(--muted); }
-.letter-plants img { width:64px; height:82px; object-fit:contain; }
+.letter-plants { display:flex; justify-content:center; gap:clamp(0.8rem,3vw,2rem); }
+.letter-plants div { display:grid; gap:.25rem; justify-items:center; font-size:.7rem; color:var(--muted); }
+.letter-plants img { width:44px; height:56px; object-fit:contain; }
 .letter-body { margin-top:2rem; padding-top:1.7rem; border-top:1px solid rgba(217,205,197,0.4); text-align:left; }
 .letter-body p { font-family:"Lora",Georgia,serif; font-size:1.02rem; line-height:2; }
 
