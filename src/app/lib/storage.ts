@@ -663,7 +663,7 @@ export function canWriteToday(): boolean {
   const today = new Date().toDateString();
   const all = getAllEntries();
   const todayCount = all.filter((e) => new Date(e.timestamp).toDateString() === today).length;
-  return todayCount < 2;
+  return todayCount < 3;
 }
 
 export function getWarmthEntries() {
