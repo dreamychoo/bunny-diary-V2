@@ -84,7 +84,7 @@ export default function CollectionRoom() {
                 const seedType = seeds[0].seedType;
                 const targetEntryId = seeds[0].entryId;
                 return (
-                  <Link key={variant} to={routes.journalEntry(targetEntryId)} state={{ groupIds: seeds.map((s) => s.entryId) }}>
+                  <Link key={variant} to={routes.diaryLayout(targetEntryId)}>
                     <img src={assets[variant]} alt="" />
                     <h3>{t(`garden.variant.${variant}`)}</h3>
                     {seeds.length > 1 && <span className="plant-count">× {seeds.length}</span>}
