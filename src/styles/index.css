@@ -460,12 +460,12 @@ a { color: inherit; text-decoration: none; }
 .letter-paper { max-width:700px; margin:0 auto; padding:clamp(2rem,5vw,4.5rem); border:1px solid rgba(217,205,197,0.4); border-radius:12px; background:radial-gradient(circle at 1px 1px,rgba(116,91,67,.035) 1px,transparent 0),#fffaf0; background-size:18px 18px; box-shadow:0 16px 50px rgba(75,58,52,.08); text-align:center; }
 .letter-paper h1 { margin-top:.45rem; font-family:"Lora",Georgia,serif; font-size:clamp(1.8rem,4vw,2.6rem); font-weight:700; line-height:1.25; }
 .letter-type { margin-top:.8rem; color:var(--pink); font-size:.78rem; font-weight:750; letter-spacing:.08em; text-transform:uppercase; }
-.letter-paper time { display:block; margin-top:.7rem; color:var(--muted); font-size:.85rem; }
-.letter-rule { display:flex; align-items:center; gap:1rem; margin:2.4rem 0 1.1rem; color:var(--muted); font-size:.8rem; }
+.letter-paper time { display:block; margin-top:.4rem; color:var(--muted); font-size:.85rem; }
+.letter-rule { display:flex; align-items:center; gap:1rem; margin:1.2rem 0 .8rem; color:var(--muted); font-size:.8rem; }
 .letter-rule::before,.letter-rule::after { height:1px; flex:1; content:""; background:rgba(217,205,197,0.5); }
-.letter-plants { display:flex; justify-content:center; gap:clamp(0.5rem,2vw,1.25rem); }
-.letter-plants div { display:grid; gap:.15rem; justify-items:center; font-size:.6rem; color:var(--muted); }
-.letter-plants img { width:28px; height:36px; object-fit:contain; }
+.letter-plants { display:flex; justify-content:center; gap:clamp(0.6rem,2vw,1.25rem); }
+.letter-plants div { display:grid; gap:.15rem; justify-items:center; font-size:.65rem; color:var(--muted); }
+.letter-plants img { width:36px; height:46px; object-fit:contain; }
 .letter-body { margin-top:2rem; padding-top:1.7rem; border-top:1px solid rgba(217,205,197,0.4); text-align:left; }
 .letter-body p { font-family:"Lora",Georgia,serif; font-size:1.02rem; line-height:2; }
 
@@ -503,5 +503,5 @@ a { color: inherit; text-decoration: none; }
   .collection-garden-link { align-items:flex-start; flex-direction:column; }
   .letter-paper { padding:2rem 1.25rem; border-radius:22px; }
   .letter-plants { gap:.5rem; }
-  .letter-plants img { width:28px; height:36px; }
+  .letter-plants img { width:36px; height:46px; }
 }
