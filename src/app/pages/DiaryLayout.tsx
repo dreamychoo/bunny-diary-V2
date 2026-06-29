@@ -140,7 +140,7 @@ export default function DiaryLayout() {
 
               {/* What happened */}
               {emotionEntry?.whatHappened && (
-                <div className="mt-5 rounded-[18px] bg-white p-5 text-center">
+                <div className="mt-6 border-l-2 border-[rgba(255,111,134,0.25)] pl-5">
                   <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
                     {emotionEntry.whatHappened}
                   </p>
@@ -172,7 +172,7 @@ export default function DiaryLayout() {
             <>
               {/* Gratitude */}
               {warmthEntry?.gratitude && (
-                <div className="mt-5 rounded-[18px] bg-white p-5 text-center">
+                <div className="mt-6 border-l-2 border-[rgba(255,111,134,0.25)] pl-5">
                   <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
                     {warmthEntry.gratitude}
                   </p>
