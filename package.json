@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "deploy:aliyun": "bash ./tools/deploy-aliyun-static.sh",
+    "deploy:aliyun:check": "bash ./tools/deploy-aliyun-static.sh --check",
     "prepare:garden-assets": "bash ./tools/prepare-bunny-garden-assets.sh",
     "asset:extract": "python3 tools/extract_nonwhite_regions.py",
     "asset:extract-gui": "python3 tools/garden_asset_extractor_gui.py",
