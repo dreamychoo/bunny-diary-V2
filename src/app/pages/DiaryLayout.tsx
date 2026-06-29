@@ -114,7 +114,7 @@ export default function DiaryLayout() {
             <>
               {/* Emotion row: icon + name + intensity inline */}
               {emotionEntry && emotionEntry.emotions.length > 0 && (
-                <div className="mt-4 flex items-center justify-center gap-2">
+                <div className="mt-2 flex items-center justify-center gap-2">
                   <span className="text-lg">{emotionIcons[emotionEntry.emotions[0]] || "💧"}</span>
                   <span className="rounded-full bg-[var(--pink-soft)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--pink)]">
                     {optionLabel(emotionEntry.emotions[0], "emotionKey", emotionKeys, t)}
