@@ -1,0 +1,21 @@
+{
+  "name": "小兔日记",
+  "short_name": "小兔日记",
+  "description": "你的情绪觉察伙伴",
+  "theme_color": "#f7c9bc",
+  "background_color": "#f7c9bc",
+  "display": "standalone",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/icons/icon-192-bunny-v2.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512-bunny-v2.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
