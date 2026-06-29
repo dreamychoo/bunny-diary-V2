@@ -10,7 +10,7 @@ import { routes } from "../routes";
 
 const emotionIcons: Record<string, string> = {
   sadness: "💧", anger: "🌶️", anxiety: "⚡", disappointed: "🌧️",
-  drained: "🌙", frustrated: "🐝", numbness: "◌", nothingness: "·", loneliness: "🍂",
+  drained: "🌙", frustrated: "🐝", numbness: "◌", nothingness: "·", burnout: "🪫", emo: "🌑", loneliness: "🍂",
   hurt: "🫧", overwhelm: "🪨", shame: "🌫️", confused: "❔",
   rejected: "🚪", stressed: "📦", jealous: "🌵", hopeless: "🌑",
   guilty: "🧵", fear: "🐾", empty: "☁️", sensitive: "🌼",

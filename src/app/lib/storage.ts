@@ -25,13 +25,16 @@ export type GardenPlantVariant = GardenWarmthVariant | GardenFeelingVariant;
 export type GardenKeepsakeType = "bouquet" | "herbarium" | "grove";
 
 export const primaryEmotionKeys = [
-  "nothingness",
   "sadness",
   "anger",
   "anxiety",
   "disappointed",
   "drained",
-  "frustrated"
+  "nothingness",
+  "frustrated",
+  "stressed",
+  "burnout",
+  "emo"
 ] as const;
 
 export const extraEmotionKeys = [
@@ -41,7 +44,6 @@ export const extraEmotionKeys = [
   "shame",
   "confused",
   "rejected",
-  "stressed",
   "jealous",
   "hopeless",
   "guilty",
@@ -110,6 +112,8 @@ export const emotionIcons: Record<EmotionKey, string> = {
   frustrated: "🐝",
   numbness: "◌",
   nothingness: "·",
+  burnout: "🪫",
+  emo: "🌑",
   loneliness: "🍂",
   hurt: "🫧",
   overwhelm: "🪨",
