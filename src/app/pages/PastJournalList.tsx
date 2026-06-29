@@ -81,7 +81,7 @@ export default function PastJournalList() {
   ] as const;
 
   return (
-    <AppShell title={t("past.title")} subtitle={t("past.subtitle")} headerMascotVariant="memory" wide>
+    <AppShell title={t("past.title")} subtitle={t("past.subtitle")} headerMascotVariant="writing" wide>
       <section className="memory-book-layout">
         <div className="memory-list-panel">
           <div className="relative memory-search">
