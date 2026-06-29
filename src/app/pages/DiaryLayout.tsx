@@ -119,6 +119,12 @@ export default function DiaryLayout() {
                   <span className="rounded-full bg-[var(--pink-soft)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--pink)]">
                     {optionLabel(emotionEntry.emotions[0], "emotionKey", emotionKeys, t)}
                   </span>
+                  {/* Symptoms inline */}
+                  {emotionEntry && emotionEntry.symptoms.length > 0 && (
+                    <span className="rounded-full bg-[#f4f0fb] px-2.5 py-0.5 text-[10px] font-medium text-[#6f6486]">
+                      {emotionEntry.symptoms.map((s) => optionLabel(s, "symptomKey", symptomKeys, t)).join(" · ")}
+                    </span>
+                  )}
                   {emotionEntry.intensity > 0 && (
                     <div className="flex gap-0.5">
                       {Array.from({ length: 10 }, (_, i) => (
@@ -135,17 +141,6 @@ export default function DiaryLayout() {
                   <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
                     {emotionEntry.whatHappened}
                   </p>
-                </div>
-              )}
-
-              {/* Symptoms */}
-              {emotionEntry && emotionEntry.symptoms.length > 0 && (
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  {emotionEntry.symptoms.map((s) => (
-                    <span key={s} className="rounded-full bg-[#f4f0fb] px-2.5 py-1 text-[11px] font-medium text-[#6f6486]">
-                      {optionLabel(s, "symptomKey", symptomKeys, t)}
-                    </span>
-                  ))}
                 </div>
               )}
 
