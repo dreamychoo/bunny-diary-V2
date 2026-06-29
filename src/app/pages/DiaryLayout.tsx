@@ -112,29 +112,20 @@ export default function DiaryLayout() {
             </div>
           ) : isEmotion ? (
             <>
-              {/* Emotions */}
+              {/* Emotion row: icon + name + intensity inline */}
               {emotionEntry && emotionEntry.emotions.length > 0 && (
-                <div className="mt-5 text-center">
-                  <span className="text-4xl">{emotionIcons[emotionEntry.emotions[0]] || "💧"}</span>
-                  <div className="mt-2 flex flex-wrap justify-center gap-1.5">
-                    {emotionEntry.emotions.map((em) => (
-                      <span key={em} className="rounded-full bg-[var(--pink-soft)] px-3 py-1 text-[13px] font-semibold text-[var(--pink)]">
-                        {optionLabel(em, "emotionKey", emotionKeys, t)}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Intensity */}
-              {emotionEntry && emotionEntry.intensity > 0 && (
-                <div className="mt-4 flex justify-center gap-1">
-                  {Array.from({ length: 10 }, (_, i) => (
-                    <span
-                      key={i}
-                      className={`block h-2 w-2 rounded-full ${i < emotionEntry.intensity ? "bg-[var(--pink)]" : "bg-[var(--muted)]/30"}`}
-                    />
-                  ))}
+                <div className="mt-4 flex items-center justify-center gap-2">
+                  <span className="text-lg">{emotionIcons[emotionEntry.emotions[0]] || "💧"}</span>
+                  <span className="rounded-full bg-[var(--pink-soft)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--pink)]">
+                    {optionLabel(emotionEntry.emotions[0], "emotionKey", emotionKeys, t)}
+                  </span>
+                  {emotionEntry.intensity > 0 && (
+                    <div className="flex gap-0.5">
+                      {Array.from({ length: 10 }, (_, i) => (
+                        <span key={i} className={`block h-2 w-2 rounded-full ${i < emotionEntry.intensity ? "bg-[var(--pink)]" : "bg-[var(--muted)]/30"}`} />
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
