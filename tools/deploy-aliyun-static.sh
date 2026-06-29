@@ -69,6 +69,13 @@ find_ossutil() {
     return
   fi
 
+  for candidate in "$HOME/.local/bin/ossutil" "$HOME/.local/bin/ossutil64"; do
+    if [[ -x "$candidate" ]]; then
+      echo "$candidate"
+      return
+    fi
+  done
+
   for candidate in ossutil ossutil64; do
     if command -v "$candidate" >/dev/null 2>&1; then
       echo "$candidate"
