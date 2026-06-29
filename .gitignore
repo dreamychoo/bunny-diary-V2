@@ -28,3 +28,4 @@ tools/new-style-assets/
 /.claude/settings.local.json
 .vercel
 .env*
+.deploy.aliyun.env
