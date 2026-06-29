@@ -45,7 +45,7 @@ export default function Home() {
               to: routes.emotionRescue,
               title: language === "zh" ? "整理心事" : "Feelings",
               desc: language === "zh" ? "慢慢说" : "Talk to Bunny",
-              img: "/assets/v2/items/sticky-note.png"
+              img: "/assets/v2/rabbits/worried.png"
             },
             {
               to: routes.bunnyGarden,
