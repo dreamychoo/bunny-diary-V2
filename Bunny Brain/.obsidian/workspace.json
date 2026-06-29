@@ -1,0 +1,225 @@
+{
+  "main": {
+    "id": "af37c8922e65cf0c",
+    "type": "split",
+    "children": [
+      {
+        "id": "3d1e44413eacdebd",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1822a6258d74c067",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "01 Bunny Letters/Bunny 碎碎念/Vol.1/001 今日备忘.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "001 今日备忘"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "074a770df2379424",
+    "type": "split",
+    "children": [
+      {
+        "id": "3bf3e6b19e80a184",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "978a09457586bf4a",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "94460595062d5fad",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "e0913bfd6fd6baca",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "aa0184d3f0c00406",
+    "type": "split",
+    "children": [
+      {
+        "id": "6099db516d9daa66",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ec70c3bad1debaae",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "01 Bunny Letters/Bunny 碎碎念/Vol.1/001 今日备忘.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "001 今日备忘 的反向链接列表"
+            }
+          },
+          {
+            "id": "98344ad4cc738d67",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "01 Bunny Letters/Bunny 碎碎念/Vol.1/001 今日备忘.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "001 今日备忘 的出链列表"
+            }
+          },
+          {
+            "id": "4443849e6e3d1d22",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "fdf864c832593cbc",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
+          },
+          {
+            "id": "87132721502d5958",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "01 Bunny Letters/Bunny 碎碎念/Vol.1/001 今日备忘.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "001 今日备忘 的大纲"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "bases:新建数据库": false
+    }
+  },
+  "active": "1822a6258d74c067",
+  "lastOpenFiles": [
+    "01 Bunny Letters/Bunny Notebook/Vol.2/060 关于自己.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/059 关于放手.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/058 关于被喜欢.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/057 关于合适.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/056 关于不回复.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/055 关于羡慕.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/054 关于信任.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/053 关于脾气.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/052 关于分享.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/051 关于小心翼翼.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/050 关于真心.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/049 关于离开.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/048 关于陪伴.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/047 关于距离.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/046 关于道歉.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/045 关于在意.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/044 关于分寸.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/043 关于表达.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/042 关于讨好.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/041 关于好朋友.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/040 关于拒绝.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/039 关于失望.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/038 关于靠近.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/037 关于被理解.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/036 关于喜欢的人.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2/035 关于解释.md",
+    "01 Bunny Letters/Bunny Notebook/Vol.2",
+    "01 Bunny Letters/Bunny Notebook/Vol.1",
+    "01 Bunny Letters/Bunny Notebook",
+    "01 Bunny Letters/Bunny Letter Library/Vol.1",
+    "01 Bunny Letters/Bunny Letter Library",
+    "01 Bunny Letters/Bunny Garden Notes/Vol.1",
+    "01 Bunny Letters/Bunny Garden Notes",
+    "01 Bunny Letters/Bunny Coffee Time/Vol.2",
+    "01 Bunny Letters/Bunny Coffee Time/Vol.1",
+    "01 Bunny Letters/Bunny Coffee Time"
+  ]
+}

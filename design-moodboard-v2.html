@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>小兔日记 — 毛玻璃 3D 表情兔版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=Noto+Sans+SC:wght@400..700&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --font-sans:'Inter','Noto Sans SC',system-ui,sans-serif;
+  --font-label:'Inter','Noto Sans SC',system-ui,sans-serif;
+  --bg:linear-gradient(145deg,#f5f0eb 0%,#ece6df 50%,#f2ece6 100%);
+  --glass-bg:rgba(255,255,255,.5);
+  --glass-border:rgba(255,255,255,.7);
+  --glass-shadow:0 4px 24px rgba(90,70,64,.06);
+  --glass-inset:inset 0 1px 0 rgba(255,255,255,.8);
+  --text-primary:#3a2e28;
+  --text-secondary:#7a6e68;
+  --accent-pink:#ff7b89;
+  --accent-orange:#ff9f43;
+  --accent-yellow:#faca2e;
+  --accent-green:#6bc47f;
+  --accent-blue:#5f9cf0;
+  --accent-purple:#b47bd5;
+  --card-radius:18px;
+}
+body{font-family:var(--font-sans);background:#f2f0ed;color:var(--text-primary);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* ── header ── */
+.nav-bar{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;gap:6px;
+  padding:14px 24px;
+  background:rgba(242,240,237,.75);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(0,0,0,.05);
+}
+.nav-bar h1{font-size:15px;font-weight:600;letter-spacing:-.01em;color:#2d2a27;flex:1}
+.nav-bar > span{font-size:11px;font-weight:500;color:#88827c;background:rgba(0,0,0,.04);padding:4px 10px;border-radius:6px}
+
+.content{padding:24px;max-width:1320px;margin:0 auto}
+.panel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+
+@media(max-width:1000px){
+  .panel-grid{grid-template-columns:1fr;gap:18px}
+  .content{padding:14px}
+}
+
+/* ── 模拟状态栏 ── */
+.status-bar{
+  display:flex;justify-content:space-between;padding:10px 16px 4px;
+  font-size:11px;font-weight:600;color:var(--text-secondary);opacity:.6;
+}
+
+/* ── 3D 表情兔组件 ── */
+.emoji-bunny{
+  display:flex;align-items:center;justify-content:center;
+  filter:drop-shadow(0 4px 12px rgba(255,123,137,.25));
+}
+.emoji-bunny svg{width:100%;height:100%}
+
+/* ── 全局场景 ── */
+.scene{
+  position:relative;min-height:100%;padding:0 16px 24px;
+  background:var(--bg);overflow:hidden;
+}
+.scene::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 400px 300px at 15% 10%,rgba(255,215,175,.15) 0%,transparent 70%),
+    radial-gradient(ellipse 350px 350px at 85% 75%,rgba(255,200,220,.1) 0%,transparent 70%),
+    radial-gradient(ellipse 300px 250px at 50% 90%,rgba(200,230,255,.08) 0%,transparent 60%);
+  pointer-events:none;
+}
+
+/* ── 毛玻璃卡片 ── */
+.glass-card{
+  background:var(--glass-bg);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border-radius:var(--card-radius);
+  border:1px solid var(--glass-border);
+  box-shadow:var(--glass-shadow),var(--glass-inset);
+}
+.glass-card + .glass-card{margin-top:12px}
+
+/* ── 3D 按钮（苹果表情风格阴影） ── */
+.btn-3d{
+  display:block;width:100%;padding:12px;margin-top:14px;
+  border:none;border-radius:14px;
+  font-family:var(--font-sans);font-size:13px;font-weight:600;
+  cursor:default;transition:all .2s;
+  position:relative;
+}
+.btn-3d::after{
+  content:'';position:absolute;inset:0;border-radius:14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.35) 0%,rgba(255,255,255,0) 40%);
+  pointer-events:none;
+}
+.btn-3d:hover{transform:translateY(-2px)}
+.btn-3d:active{transform:translateY(0)}
+
+/* ── 四格网格 ── */
+.grid-2x2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ── 导航项 ── */
+.nav-item{
+  position:relative;
+  background:var(--glass-bg);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-radius:var(--card-radius);
+  padding:16px 14px 14px;
+  border:1px solid var(--glass-border);
+  box-shadow:0 2px 12px rgba(90,70,64,.03),var(--glass-inset);
+  transition:all .2s;cursor:default;
+}
+.nav-item:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(255,123,137,.12),var(--glass-inset)}
+
+/* 3D emoji 图标 */
+.emoji-icon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:38px;height:38px;border-radius:12px;
+  margin-bottom:6px;
+  filter:drop-shadow(0 3px 6px rgba(0,0,0,.08));
+  font-size:20px;
+  position:relative;
+}
+.emoji-icon::after{
+  content:'';position:absolute;inset:0;border-radius:12px;
+  background:linear-gradient(180deg,rgba(255,255,255,.5) 0%,rgba(255,255,255,0) 50%);
+  pointer-events:none;
+}
+
+.nav-label{display:block;font-size:13px;font-weight:700;color:var(--text-primary);}
+.nav-desc{display:block;margin-top:2px;font-size:9.5px;color:var(--text-secondary);line-height:1.3}
+
+/* ── 情绪标签 ── */
+.mood-pill{
+  display:inline-flex;padding:5px 12px;border-radius:30px;
+  font-size:11px;font-weight:600;cursor:default;
+  background:rgba(255,255,255,.45);
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.6);
+  box-shadow:0 1px 4px rgba(0,0,0,.02);
+  transition:all .15s;
+}
+.mood-pill:hover{background:rgba(255,255,255,.7);transform:scale(1.04)}
+
+/* ── 条目行 ── */
+.entry-row{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 0;border-bottom:1px solid rgba(0,0,0,.04);
+}
+.entry-row:last-child{border:none}
+.entry-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;position:relative}
+.entry-dot::after{
+  content:'';position:absolute;inset:-2px;border-radius:50%;
+  background:inherit;opacity:.25;
+}
+.entry-text{font-size:12px;color:var(--text-primary);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.entry-time{font-size:10px;color:var(--text-secondary);flex-shrink:0;opacity:.6}
+
+/* ── 日记卡片 ── */
+.diary-area{background:var(--glass-bg);backdrop-filter:blur(20px);border-radius:var(--card-radius);padding:20px 18px;border:1px solid var(--glass-border);box-shadow:var(--glass-shadow),var(--glass-inset)}
+.diary-area textarea{width:100%;min-height:100px;border:none;background:transparent;resize:none;font-family:var(--font-sans);font-size:14px;line-height:1.7;color:var(--text-primary);outline:none}
+.diary-area textarea::placeholder{color:#b5aba5}
+
+/* ── section title ── */
+.section-title{font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:10px;letter-spacing:.03em;opacity:.7}
+
+/* ── bunny avatar rows ── */
+.header-row{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.header-text{flex:1}
+.header-text h2{font-size:18px;font-weight:700;color:var(--text-primary)}
+.header-text p{font-size:11px;color:var(--text-secondary)}
+
+/* ── mid foot ── */
+.foot-note{margin-top:16px;text-align:center;font-size:11px;color:#8f9f7d;font-weight:600;opacity:.8}
+
+/* ── page label ── */
+.panel-header{
+  display:flex;align-items:center;gap:8px;
+  padding:12px 16px;font-size:11px;font-weight:600;color:#8c8680;
+  border-bottom:1px solid rgba(0,0,0,.04);
+  letter-spacing:.04em;
+}
+.style-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 8px;border-radius:5px;font-size:9px;font-weight:700;
+  letter-spacing:.03em;margin-left:auto;
+}
+
+/* ── tabs ── */
+.view-tabs{display:flex;gap:6px;padding:14px 24px 0;flex-wrap:wrap}
+.view-tab{
+  font-family:var(--font-label);font-size:11px;font-weight:600;
+  padding:6px 14px;border-radius:7px;
+  border:none;cursor:pointer;transition:all .2s;
+  background:rgba(0,0,0,.03);color:#7a7570;
+}
+.view-tab:hover{background:rgba(0,0,0,.06);color:#2d2a27}
+.view-tab.active{background:#fff;color:#1a1a1a;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+
+/* ── panel visibility ── */
+.panel{display:none}
+.panel.active{display:block}
+
+/* ── 3D emoji big bunny ── */
+.big-bunny-3d{
+  width:54px;height:54px;border-radius:50%;
+  background:linear-gradient(145deg,#fff5f5,#ffe8ec);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;
+  box-shadow:
+    0 4px 14px rgba(255,123,137,.2),
+    0 1px 3px rgba(0,0,0,.04),
+    inset 0 2px 0 rgba(255,255,255,.8);
+  position:relative;flex-shrink:0;
+}
+.big-bunny-3d::after{
+  content:'';position:absolute;inset:3px;border-radius:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.5) 0%,transparent 60%);
+  pointer-events:none;
+}
+
+/* ── 写日记页面的一键保存按钮 ── */
+.btn-save{
+  display:block;width:100%;padding:13px;margin-top:14px;
+  border:none;border-radius:14px;
+  background:linear-gradient(135deg,#ff7b89,#ff6b7a);
+  font-family:var(--font-sans);font-size:14px;font-weight:600;
+  color:#fff;cursor:default;transition:all .2s;
+  box-shadow:
+    0 4px 16px rgba(255,123,137,.3),
+    0 1px 3px rgba(0,0,0,.05);
+  position:relative;
+}
+.btn-save::after{
+  content:'';position:absolute;inset:0;border-radius:14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.3) 0%,transparent 45%);
+  pointer-events:none;
+}
+.btn-save:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(255,123,137,.35)}
+
+/* ── 3D badge ── */
+.nav-badge-3d{
+  position:absolute;top:-8px;left:10px;
+  display:inline-flex;height:20px;padding:0 10px;align-items:center;
+  background:linear-gradient(135deg,#ff7b89,#ff6b7a);
+  border-radius:30px;
+  font-size:8px;font-weight:800;color:#fff;letter-spacing:.02em;
+  box-shadow:0 2px 8px rgba(255,123,137,.3);
+  z-index:2;
+}
+
+/* ── 磨砂分隔装饰条 ── */
+.divider{
+  height:1px;margin:16px 0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);
+}
+
+/* ── 首页的二级圆点菜单指示条 ── */
+.indicator-dots{
+  display:flex;gap:5px;justify-content:center;margin-top:10px;
+}
+.indicator-dot{width:6px;height:6px;border-radius:50%;background:rgba(0,0,0,.08)}
+.indicator-dot.active{background:var(--accent-pink);width:16px;border-radius:3px}
+</style>
+</head>
+<body>
+
+<div class="nav-bar">
+  <h1>🐇 小兔日记 · 3D 表情兔 × 毛玻璃</h1>
+  <span>建议 / 选择你喜欢的</span>
+</div>
+
+<div class="view-tabs">
+  <button class="view-tab active" data-view="home">🏠 首页</button>
+  <button class="view-tab" data-view="diary">📝 写日记</button>
+  <button class="view-tab" data-view="emotion">💫 情绪救援</button>
+</div>
+
+<div class="content">
+  <div class="panel-grid">
+
+    <!-- ===== 首页 ===== -->
+    <div class="panel active" data-view="home">
+      <div class="panel-header">
+        首页概览
+        <span class="style-badge" style="background:rgba(255,123,137,.12);color:#ff5b6a">毛玻璃 + 3D 表情兔</span>
+      </div>
+      <div class="scene">
+        <!-- status -->
+        <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+
+        <!-- header: 3D 大兔兔 -->
+        <div class="header-row" style="margin-top:2px">
+          <div class="big-bunny-3d">🐰</div>
+          <div class="header-text">
+            <h2>小兔日记</h2>
+            <p>今天想写点什么？兔兔在听 🐇</p>
+          </div>
+        </div>
+
+        <!-- 四格导航卡 -->
+        <div class="grid-2x2">
+          <div class="nav-item">
+            <span class="nav-badge-3d">写写</span>
+            <span class="emoji-icon" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2)">✍️</span>
+            <span class="nav-label">每日暖意</span>
+            <span class="nav-desc">记录一件温暖的小事</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-badge-3d">心事</span>
+            <span class="emoji-icon" style="background:linear-gradient(135deg,#ffe8ec,#ffd0d6)">✨</span>
+            <span class="nav-label">情绪救援</span>
+            <span class="nav-desc">给心情一个出口</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-badge-3d">花园</span>
+            <span class="emoji-icon" style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9)">🌱</span>
+            <span class="nav-label">兔兔花园</span>
+            <span class="nav-desc">种下情绪，长出花</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-badge-3d">记忆</span>
+            <span class="emoji-icon" style="background:linear-gradient(135deg,#e3f2fd,#bbdefb)">📖</span>
+            <span class="nav-label">过往日记</span>
+            <span class="nav-desc">翻翻以前的自己</span>
+          </div>
+        </div>
+
+        <!-- 最近记录 -->
+        <div style="margin-top:16px">
+          <div class="section-title">📌 最近写下的</div>
+          <div class="glass-card" style="padding:4px 14px">
+            <div class="entry-row">
+              <span class="entry-dot" style="background:linear-gradient(135deg,#faca2e,#f5b342)"></span>
+              <span class="entry-text">今天的阳光很好，在阳台晒了会太阳</span>
+              <span class="entry-time">6月28</span>
+            </div>
+            <div class="entry-row">
+              <span class="entry-dot" style="background:linear-gradient(135deg,#ff7b89,#ff5b6a)"></span>
+              <span class="entry-text">有点焦虑明天的工作汇报</span>
+              <span class="entry-time">6月27</span>
+            </div>
+            <div class="entry-row">
+              <span class="entry-dot" style="background:linear-gradient(135deg,#6bc47f,#4caf50)"></span>
+              <span class="entry-text">朋友送了一本书，很开心</span>
+              <span class="entry-time">6月26</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="indicator-dots">
+          <span class="indicator-dot active"></span>
+          <span class="indicator-dot"></span>
+          <span class="indicator-dot"></span>
+        </div>
+
+        <!-- 底部兔兔话 -->
+        <div class="foot-note">慢慢来，兔兔哪儿也不去 🐰✨</div>
+      </div>
+    </div>
+
+    <!-- ===== 写日记 ===== -->
+    <div class="panel" data-view="diary">
+      <div class="panel-header">
+        写日记
+        <span class="style-badge" style="background:rgba(255,123,137,.12);color:#ff5b6a">毛玻璃 + 3D 表情兔</span>
+      </div>
+      <div class="scene">
+        <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+
+        <div class="header-row" style="margin-top:2px">
+          <div class="big-bunny-3d" style="font-size:26px">🤗</div>
+          <div class="header-text">
+            <h2>今天发生了什么？</h2>
+            <p>兔兔竖起耳朵认真听呢 🐰💕</p>
+          </div>
+        </div>
+
+        <!-- 情绪选择标签 -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+          <span class="mood-pill">😊 开心</span>
+          <span class="mood-pill">😢 难过</span>
+          <span class="mood-pill">😤 生气</span>
+          <span class="mood-pill">😌 平静</span>
+          <span class="mood-pill">🤔 纠结</span>
+        </div>
+
+        <!-- 日记输入区 -->
+        <div class="diary-area">
+          <textarea placeholder="写下你的心情、烦恼、或者一件小事……&#10;不用想太多，随便写写就好 ✨"></textarea>
+        </div>
+
+        <button class="btn-save">🐰 交给兔兔保存</button>
+
+        <div class="foot-note" style="margin-top:14px">写什么都可以，兔兔不会评判你 🌷</div>
+      </div>
+    </div>
+
+    <!-- ===== 情绪救援 ===== -->
+    <div class="panel" data-view="emotion">
+      <div class="panel-header">
+        情绪救援
+        <span class="style-badge" style="background:rgba(255,123,137,.12);color:#ff5b6a">毛玻璃 + 3D 表情兔</span>
+      </div>
+      <div class="scene">
+        <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+
+        <div class="header-row" style="margin-top:2px">
+          <div class="big-bunny-3d" style="font-size:24px">🥺</div>
+          <div class="header-text">
+            <h2>现在感觉怎么样？</h2>
+            <p>选一个情绪，兔兔陪你聊聊 🌸</p>
+          </div>
+        </div>
+
+        <!-- 情绪大卡片 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="nav-item" style="text-align:center;padding:16px 8px">
+            <span style="font-size:28px;display:block;margin-bottom:6px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.06))">😊</span>
+            <span class="nav-label" style="font-size:11px">开心</span>
+            <span class="nav-desc" style="font-size:9px">分享快乐</span>
+          </div>
+          <div class="nav-item" style="text-align:center;padding:16px 8px">
+            <span style="font-size:28px;display:block;margin-bottom:6px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.06))">😢</span>
+            <span class="nav-label" style="font-size:11px">难过</span>
+            <span class="nav-desc" style="font-size:9px">需要安慰</span>
+          </div>
+          <div class="nav-item" style="text-align:center;padding:16px 8px">
+            <span style="font-size:28px;display:block;margin-bottom:6px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.06))">😤</span>
+            <span class="nav-label" style="font-size:11px">生气</span>
+            <span class="nav-desc" style="font-size:9px">需要出口</span>
+          </div>
+          <div class="nav-item" style="text-align:center;padding:16px 8px">
+            <span style="font-size:28px;display:block;margin-bottom:6px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.06))">😌</span>
+            <span class="nav-label" style="font-size:11px">平静</span>
+            <span class="nav-desc" style="font-size:9px">享受当下</span>
+          </div>
+          <div class="nav-item" style="text-align:center;padding:16px 8px">
+            <span style="font-size:28px;display:block;margin-bottom:6px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.06))">🤔</span>
+            <span class="nav-label" style="font-size:11px">纠结</span>
+            <span class="nav-desc" style="font-size:9px">需要建议</span>
+          </div>
+          <div class="nav-item" style="text-align:center;padding:16px 8px">
+            <span style="font-size:28px;display:block;margin-bottom:6px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.06))">😰</span>
+            <span class="nav-label" style="font-size:11px">焦虑</span>
+            <span class="nav-desc" style="font-size:9px">需要放松</span>
+          </div>
+        </div>
+
+        <!-- 快速写写 -->
+        <div style="margin-top:14px">
+          <div class="diary-area" style="padding:14px">
+            <textarea placeholder="说说让你有这种感觉的事…" style="min-height:60px;font-size:13px"></textarea>
+          </div>
+          <button class="btn-save" style="background:linear-gradient(135deg,#b47bd5,#9c6bc0);box-shadow:0 4px 16px rgba(180,123,213,.3)">🌸 让兔兔听听</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /panel-grid -->
+</div>
+
+<script>
+document.querySelectorAll('.view-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const view = tab.dataset.view;
+    document.querySelectorAll('.panel').forEach(p => {
+      p.classList.toggle('active', p.dataset.view === view);
+    });
+  });
+});
+</script>
+</body>
+</html>

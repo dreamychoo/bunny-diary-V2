@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>小兔日记 — 设计探索</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Noto+Sans+SC:wght@300..700&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --font-sans:'Inter','Noto Sans SC',system-ui,sans-serif;
+  --font-label:'Inter','Noto Sans SC',system-ui,sans-serif;
+}
+body{font-family:var(--font-sans);background:#f2f0ed;color:#1a1a1a;-webkit-font-smoothing:antialiased}
+
+/* ── 导航条 ── */
+.nav-bar{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;gap:6px;
+  padding:14px 24px;
+  background:rgba(242,240,237,.75);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(0,0,0,.05);
+}
+.nav-bar h1{font-size:15px;font-weight:600;letter-spacing:-.01em;color:#2d2a27;flex:1}
+.nav-bar > span{font-size:11px;font-weight:500;color:#88827c;background:rgba(0,0,0,.04);padding:4px 10px;border-radius:6px;cursor:default}
+
+/* ── 主题选择器 ── */
+.theme-tabs{
+  display:flex;gap:4px;padding:14px 24px 0;
+}
+.theme-tab{
+  font-family:var(--font-label);font-size:12px;font-weight:600;
+  padding:7px 16px;border-radius:8px 8px 0 0;
+  border:none;cursor:pointer;transition:all .2s;
+  background:rgba(0,0,0,.03);color:#7a7570;
+}
+.theme-tab:hover{background:rgba(0,0,0,.06);color:#2d2a27}
+.theme-tab.active{background:#fff;color:#1a1a1a;box-shadow:0 -1px 3px rgba(0,0,0,.04)}
+
+/* ── 内容区 ── */
+.content{padding:24px;max-width:1320px;margin:0 auto}
+.panel-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+}
+.panel{
+  background:#fff;border-radius:16px;overflow:hidden;
+  box-shadow:0 2px 12px rgba(0,0,0,.04);
+}
+
+/* panel 隐藏 */
+.panel{display:none}
+.panel.active{display:block}
+
+.panel-header{
+  padding:12px 16px;font-size:11px;font-weight:600;color:#8c8680;
+  border-bottom:1px solid #f0eeeb;
+  letter-spacing:.04em;text-transform:uppercase;
+}
+
+/* ── 风格标 ── */
+.style-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 8px;border-radius:5px;font-size:9px;font-weight:700;
+  letter-spacing:.03em;margin-left:auto;
+}
+
+/* ===========================
+   风格 A — 毛玻璃
+   =========================== */
+.theme-glass .scene{
+  position:relative;min-height:100%;padding:20px 18px 24px;
+  background:linear-gradient(135deg,#f8f3ee 0%,#ede8e3 40%,#f0ece7 100%);
+}
+.theme-glass .scene::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 20% 30%,rgba(255,215,175,.12) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 70%,rgba(200,220,255,.1) 0%,transparent 50%);
+  pointer-events:none;
+}
+.theme-glass .card{
+  position:relative;
+  background:rgba(255,255,255,.55);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-radius:16px;padding:16px;
+  border:1px solid rgba(255,255,255,.7);
+  box-shadow:0 4px 24px rgba(90,70,64,.06),inset 0 1px 0 rgba(255,255,255,.8);
+}
+.theme-glass .card + .card{margin-top:12px}
+.theme-glass .grid-2x2{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+}
+.theme-glass .nav-item{
+  background:rgba(255,255,255,.45);backdrop-filter:blur(12px);
+  border-radius:14px;padding:14px 12px 12px;
+  border:1px solid rgba(255,255,255,.6);
+  box-shadow:0 2px 12px rgba(90,70,64,.03);
+  transition:all .2s;cursor:default;
+}
+.theme-glass .nav-item:hover{background:rgba(255,255,255,.7);transform:translateY(-2px)}
+.theme-glass .nav-icon{
+  display:inline-flex;width:28px;height:28px;border-radius:9px;
+  align-items:center;justify-content:center;
+  background:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.5);
+  font-size:13px;
+}
+.theme-glass .nav-label{
+  display:block;margin-top:6px;
+  font-size:12px;font-weight:700;color:#4a3b34;
+}
+.theme-glass .nav-desc{
+  display:block;margin-top:2px;
+  font-size:9.5px;color:#7f746e;line-height:1.3;
+}
+.theme-glass .entry-row{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 0;border-bottom:1px solid rgba(0,0,0,.04);
+}
+.theme-glass .entry-row:last-child{border:none}
+.theme-glass .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.theme-glass .entry-text{font-size:11px;color:#5f5149;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.theme-glass .entry-time{font-size:9px;color:#9a908a;flex-shrink:0}
+.theme-glass .section-title{font-size:10px;font-weight:800;color:#4a3b34;margin-bottom:8px;letter-spacing:.02em}
+.theme-glass .diary-card{
+  background:rgba(255,255,255,.5);backdrop-filter:blur(16px);
+  border-radius:16px;padding:18px 16px 14px;
+  border:1px solid rgba(255,255,255,.65);
+  box-shadow:0 4px 24px rgba(90,70,64,.05);
+}
+.theme-glass .diary-card textarea{
+  width:100%;min-height:90px;border:none;background:transparent;resize:none;
+  font-family:var(--font-sans);font-size:13px;line-height:1.7;color:#3d322c;
+  outline:none;
+}
+.theme-glass .diary-card textarea::placeholder{color:#b5aba5}
+.theme-glass .btn-submit{
+  display:block;width:100%;padding:11px;margin-top:14px;
+  border:none;border-radius:12px;
+  background:rgba(200,180,200,.35);backdrop-filter:blur(8px);
+  font-family:var(--font-sans);font-size:13px;font-weight:600;
+  color:#6b5a6b;cursor:default;transition:all .2s;
+}
+.theme-glass .btn-submit:hover{background:rgba(200,180,200,.55)}
+.theme-glass .bunny-avatar{
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.6);backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;border:1px solid rgba(255,255,255,.5);
+}
+.theme-glass .header-row{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.theme-glass .header-text{flex:1}
+.theme-glass .header-text h2{font-size:16px;font-weight:700;color:#4a3b34}
+.theme-glass .header-text p{font-size:10px;color:#8a7e76}
+
+/* ===========================
+   风格 B — 可爱治愈系
+   =========================== */
+.theme-cute .scene{
+  min-height:100%;padding:20px 18px 24px;
+  background:linear-gradient(160deg,#fef6f5 0%,#fdf2f7 50%,#f8f0f5 100%);
+}
+.theme-cute .card{
+  background:#fffdfd;border-radius:24px;padding:18px 16px;
+  border:1.5px solid #fce4e8;
+  box-shadow:0 6px 24px rgba(238,141,153,.12),0 2px 6px rgba(238,141,153,.06);
+}
+.theme-cute .card+.card{margin-top:14px}
+.theme-cute .grid-2x2{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+}
+.theme-cute .nav-item{
+  background:#fffdfd;border-radius:20px;padding:16px 14px 12px;
+  border:1.5px solid #fce4e8;
+  box-shadow:0 4px 16px rgba(238,141,153,.08);
+  transition:all .2s;cursor:default;
+}
+.theme-cute .nav-item:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 8px 28px rgba(238,141,153,.15)}
+.theme-cute .nav-icon{
+  display:inline-flex;width:32px;height:32px;border-radius:12px;
+  align-items:center;justify-content:center;
+  background:#fef0f0;border:1.5px solid #fad7db;
+  font-size:14px;
+}
+.theme-cute .nav-label{
+  display:block;margin-top:8px;
+  font-size:13px;font-weight:700;color:#6b4f46;
+}
+.theme-cute .nav-desc{
+  display:block;margin-top:2px;
+  font-size:10px;color:#a08a84;line-height:1.4;
+}
+.theme-cute .entry-row{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 0;border-bottom:1px solid #fce8ea;
+}
+.theme-cute .entry-row:last-child{border:none}
+.theme-cute .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.theme-cute .entry-text{font-size:12px;color:#5f5149;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.theme-cute .entry-time{font-size:9px;color:#b39d97;flex-shrink:0}
+.theme-cute .section-title{
+  font-size:11px;font-weight:800;color:#6b4f46;margin-bottom:10px;
+  letter-spacing:-.01em;
+}
+.theme-cute .diary-card{
+  background:#fffdfd;border-radius:24px;padding:22px 18px 18px;
+  border:1.5px solid #fce4e8;
+  box-shadow:0 6px 24px rgba(238,141,153,.1);
+}
+.theme-cute .diary-card textarea{
+  width:100%;min-height:100px;border:none;background:transparent;resize:none;
+  font-family:var(--font-sans);font-size:14px;line-height:1.8;color:#3d322c;
+  outline:none;
+}
+.theme-cute .diary-card textarea::placeholder{color:#d4bfb9}
+.theme-cute .btn-submit{
+  display:block;width:100%;padding:12px;margin-top:16px;
+  border:none;border-radius:16px;
+  background:linear-gradient(135deg,#ee8d99,#e47a8a);
+  font-family:var(--font-sans);font-size:14px;font-weight:600;
+  color:#fff;cursor:default;transition:all .2s;
+  box-shadow:0 4px 14px rgba(238,141,153,.3);
+}
+.theme-cute .btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(238,141,153,.4)}
+.theme-cute .bunny-avatar{
+  width:48px;height:48px;border-radius:50%;
+  background:linear-gradient(135deg,#fef0f0,#fde4e6);
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;border:2px solid #fad7db;
+  box-shadow:0 4px 12px rgba(238,141,153,.15);
+}
+.theme-cute .header-row{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.theme-cute .header-text{flex:1}
+.theme-cute .header-text h2{font-size:18px;font-weight:700;color:#6b4f46}
+.theme-cute .header-text p{font-size:11px;color:#a08a84}
+.theme-cute .nav-badge{
+  display:inline-flex;height:20px;padding:0 10px;align-items:center;
+  background:#fef0f0;border-radius:30px;
+  font-size:8px;font-weight:800;color:#d47888;letter-spacing:.02em;
+  border:1px solid #fad7db;position:absolute;top:-9px;left:10px;
+}
+
+/* ===========================
+   风格 D — APP质感 (iOS风格)
+   =========================== */
+.theme-app .scene{
+  min-height:100%;padding:0;
+  background:#f2f2f6;
+}
+.theme-app .status-bar{
+  display:flex;justify-content:space-between;padding:10px 20px 4px;
+  font-size:11px;font-weight:600;color:#1a1a1a;
+}
+.theme-app .app-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:4px 20px 14px;
+}
+.theme-app .app-header h1{font-size:28px;font-weight:700;letter-spacing:-.03em;color:#1a1a1a}
+.theme-app .app-header .avatar{cursor:default}
+.theme-app .card{
+  margin:0 16px;background:#fff;border-radius:12px;padding:14px 16px;
+  box-shadow:none;
+}
+.theme-app .card+.card{margin-top:10px}
+.theme-app .grid-2x2{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 16px;
+}
+.theme-app .nav-item{
+  background:#fff;border-radius:12px;padding:16px 14px 14px;
+  box-shadow:0 1px 3px rgba(0,0,0,.03);
+  transition:all .1s;cursor:default;
+}
+.theme-app .nav-item:hover{background:#f8f8fc}
+.theme-app .nav-icon{
+  display:inline-flex;width:36px;height:36px;border-radius:10px;
+  align-items:center;justify-content:center;
+  background:#f2f2f6;font-size:17px;
+}
+.theme-app .nav-label{
+  display:block;margin-top:8px;
+  font-size:14px;font-weight:590;color:#1a1a1a;
+}
+.theme-app .nav-desc{
+  display:block;margin-top:1px;
+  font-size:12px;color:#8a8a8e;line-height:1.3;
+}
+.theme-app .section-wrap{
+  margin:24px 16px 0;
+}
+.theme-app .section-title{
+  font-size:12px;font-weight:600;color:#8a8a8e;text-transform:uppercase;
+  letter-spacing:.03em;margin-bottom:8px;padding:0 4px;
+}
+.theme-app .entry-row{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;background:#fff;
+  cursor:default;
+}
+.theme-app .entry-row:first-child{border-radius:12px 12px 0 0}
+.theme-app .entry-row:last-child{border-radius:0 0 12px 12px}
+.theme-app .entry-row+.entry-row{border-top:1px solid #f0f0f0}
+.theme-app .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.theme-app .entry-text{font-size:14px;color:#1a1a1a;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.theme-app .entry-time{font-size:12px;color:#8a8a8e;flex-shrink:0}
+.theme-app .diary-card{
+  margin:0 16px;background:#fff;border-radius:12px;padding:20px 18px;
+}
+.theme-app .diary-card textarea{
+  width:100%;min-height:120px;border:none;background:transparent;resize:none;
+  font-family:var(--font-sans);font-size:16px;line-height:1.6;color:#1a1a1a;
+  outline:none;
+}
+.theme-app .diary-card textarea::placeholder{color:#c7c7cc}
+.theme-app .btn-submit{
+  display:block;margin:14px 16px 0;padding:14px;
+  border:none;border-radius:12px;
+  background:#007aff;
+  font-family:var(--font-sans);font-size:16px;font-weight:600;
+  color:#fff;cursor:default;transition:all .15s;
+}
+.theme-app .btn-submit:hover{background:#0066d6}
+.theme-app .bunny-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:#f2f2f6;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+}
+.theme-app .header-row{display:flex;align-items:center;gap:10px;margin-bottom:4px;padding:0 20px}
+.theme-app .header-text{flex:1}
+.theme-app .header-text h2{font-size:17px;font-weight:600;color:#1a1a1a}
+.theme-app .tab-bar{
+  position:sticky;bottom:0;
+  display:flex;background:rgba(242,242,246,.85);backdrop-filter:blur(20px);
+  border-top:1px solid rgba(0,0,0,.1);padding:6px 0 18px;
+  margin-top:24px;
+}
+.theme-app .tab-item{flex:1;text-align:center;font-size:10px;color:#8a8a8e;cursor:default}
+.theme-app .tab-item.active{color:#007aff}
+.theme-app .tab-item .tab-icon{font-size:20px;display:block;margin-bottom:2px}
+
+/* ── 页面标签（主页/日记页切换）─ */
+.page-tabs{display:flex;gap:0;margin-bottom:16px}
+.page-tab{
+  font-family:var(--font-label);font-size:10px;font-weight:600;
+  padding:5px 12px;border-radius:6px;border:none;cursor:pointer;
+  background:rgba(0,0,0,.03);color:#7a7570;transition:all .2s;
+}
+.page-tab.active{background:rgba(0,0,0,.08);color:#2d2a27}
+
+/* ── 图例 ── */
+.legend{display:flex;gap:16px;margin-bottom:14px;padding:0 4px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:10px;color:#8a857f}
+.legend-swatch{width:10px;height:10px;border-radius:3px}
+
+@media(max-width:900px){
+  .panel-grid{grid-template-columns:1fr;gap:18px}
+  .content{padding:14px}
+  .theme-tabs{padding:10px 14px 0;overflow-x:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="nav-bar">
+  <h1>🐇 小兔日记 · 设计探索</h1>
+  <span>3 种风格 × 2 个页面</span>
+</div>
+
+<div class="theme-tabs">
+  <button class="theme-tab active" data-theme="glass">🫧 毛玻璃质感</button>
+  <button class="theme-tab" data-theme="cute">🎀 可爱治愈</button>
+  <button class="theme-tab" data-theme="app">📱 APP 质感</button>
+</div>
+
+<div class="content">
+  <div class="legend">
+    <span class="legend-item"><span class="legend-swatch" style="background:#4a3b34"></span> 导航色调</span>
+    <span class="legend-item"><span class="legend-swatch" style="background:rgba(255,255,255,.55)"></span> 卡片质感</span>
+    <span class="legend-item"><span class="legend-swatch" style="background:linear-gradient(135deg,#ee8d99,#e47a8a)"></span> 主按钮</span>
+  </div>
+
+  <div class="page-tabs">
+    <button class="page-tab active" data-page="home">🏠 首页</button>
+    <button class="page-tab" data-page="diary">📝 写日记</button>
+  </div>
+
+  <!-- ─── panel grid ─── -->
+  <div class="panel-grid">
+
+    <!-- ===== 毛玻璃 首页 ===== -->
+    <div class="panel active theme-glass" data-theme="glass" data-page="home">
+      <div class="panel-header">
+        首页
+        <span class="style-badge" style="background:#f0ebe5;color:#7a6b62">A · 毛玻璃</span>
+      </div>
+      <div class="scene">
+        <!-- header -->
+        <div class="header-row">
+          <div class="bunny-avatar">🐇</div>
+          <div class="header-text">
+            <h2>小兔日记</h2>
+            <p>今天想写点什么？</p>
+          </div>
+        </div>
+        <!-- 导航四格 -->
+        <div class="grid-2x2">
+          <div class="nav-item">
+            <span class="nav-icon" style="background:rgba(251,243,220,.5)">✍️</span>
+            <span class="nav-label">每日暖意</span>
+            <span class="nav-desc">记录一件温暖的小事</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-icon" style="background:rgba(248,239,238,.5)">✨</span>
+            <span class="nav-label">情绪救援</span>
+            <span class="nav-desc">给心情一个出口</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-icon" style="background:rgba(240,246,236,.5)">🌱</span>
+            <span class="nav-label">兔兔花园</span>
+            <span class="nav-desc">种下你的情绪种子</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-icon" style="background:rgba(238,245,251,.5)">📖</span>
+            <span class="nav-label">过往日记</span>
+            <span class="nav-desc">翻翻以前的自己</span>
+          </div>
+        </div>
+        <!-- 最近条目 -->
+        <div style="margin-top:16px">
+          <div class="section-title">最近写下的</div>
+          <div class="card">
+            <div class="entry-row">
+              <span class="dot" style="background:#e6c779"></span>
+              <span class="entry-text">今天的阳光很好，在阳台晒了会太阳</span>
+              <span class="entry-time">6月28</span>
+            </div>
+            <div class="entry-row">
+              <span class="dot" style="background:#e5c8c4"></span>
+              <span class="entry-text">有点焦虑明天的工作汇报</span>
+              <span class="entry-time">6月27</span>
+            </div>
+            <div class="entry-row">
+              <span class="dot" style="background:#e6c779"></span>
+              <span class="entry-text">朋友送了一本书，很开心</span>
+              <span class="entry-time">6月26</span>
+            </div>
+          </div>
+        </div>
+        <!-- 底部提示 -->
+        <p style="margin-top:14px;text-align:center;font-size:10px;color:#8f9f7d;font-weight:600">慢慢来，我哪儿也不去 🐇</p>
+      </div>
+    </div>
+
+    <!-- ===== 毛玻璃 写日记 ===== -->
+    <div class="panel theme-glass" data-theme="glass" data-page="diary">
+      <div class="panel-header">
+        写日记
+        <span class="style-badge" style="background:#f0ebe5;color:#7a6b62">A · 毛玻璃</span>
+      </div>
+      <div class="scene">
+        <div class="header-row">
+          <div class="bunny-avatar">🤗</div>
+          <div class="header-text">
+            <h2>今天发生了什么？</h2>
+            <p>兔兔在认真听哦</p>
+          </div>
+        </div>
+        <div class="diary-card">
+          <textarea placeholder="写下你的心情、烦恼、或者一件小事……"></textarea>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+            <span style="padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.6);font-size:10px;color:#7a6b62;cursor:default">😊 开心</span>
+            <span style="padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.6);font-size:10px;color:#7a6b62;cursor:default">😢 难过</span>
+            <span style="padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.6);font-size:10px;color:#7a6b62;cursor:default">😤 生气</span>
+            <span style="padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.6);font-size:10px;color:#7a6b62;cursor:default">😌 平静</span>
+          </div>
+        </div>
+        <button class="btn-submit">🐇 交给兔兔</button>
+      </div>
+    </div>
+
+    <!-- ===== 可爱治愈 首页 ===== -->
+    <div class="panel theme-cute" data-theme="cute" data-page="home">
+      <div class="panel-header">
+        首页
+        <span class="style-badge" style="background:#fef0f0;color:#d47888">B · 可爱治愈</span>
+      </div>
+      <div class="scene">
+        <div class="header-row">
+          <div class="bunny-avatar">🐰</div>
+          <div class="header-text">
+            <h2>小兔日记</h2>
+            <p>今天也想陪着你 💕</p>
+          </div>
+        </div>
+        <div class="grid-2x2">
+          <div class="nav-item" style="position:relative">
+            <span class="nav-badge">写写</span>
+            <span class="nav-icon" style="background:#fef6e8;border-color:#f5e1b4">✍️</span>
+            <span class="nav-label">每日暖意</span>
+            <span class="nav-desc">记录一件温暖的小事</span>
+          </div>
+          <div class="nav-item" style="position:relative">
+            <span class="nav-badge">心事</span>
+            <span class="nav-icon" style="background:#fef0f0;border-color:#fad7db">✨</span>
+            <span class="nav-label">情绪救援</span>
+            <span class="nav-desc">给心情一个出口</span>
+          </div>
+          <div class="nav-item" style="position:relative">
+            <span class="nav-badge">花园</span>
+            <span class="nav-icon" style="background:#f0f6ec;border-color:#d4e5cc">🌱</span>
+            <span class="nav-label">兔兔花园</span>
+            <span class="nav-desc">种下你的情绪种子</span>
+          </div>
+          <div class="nav-item" style="position:relative">
+            <span class="nav-badge">记忆</span>
+            <span class="nav-icon" style="background:#eef5fb;border-color:#c8d9ed">📖</span>
+            <span class="nav-label">过往日记</span>
+            <span class="nav-desc">翻翻以前的自己</span>
+          </div>
+        </div>
+        <div style="margin-top:16px">
+          <div class="section-title">📌 最近写下的</div>
+          <div class="card">
+            <div class="entry-row">
+              <span class="dot" style="background:#f1bd75"></span>
+              <span class="entry-text">今天的阳光很好，在阳台晒了会太阳</span>
+              <span class="entry-time">6月28</span>
+            </div>
+            <div class="entry-row">
+              <span class="dot" style="background:#ee8d99"></span>
+              <span class="entry-text">有点焦虑明天的工作汇报</span>
+              <span class="entry-time">6月27</span>
+            </div>
+            <div class="entry-row">
+              <span class="dot" style="background:#f1bd75"></span>
+              <span class="entry-text">朋友送了一本书，很开心</span>
+              <span class="entry-time">6月26</span>
+            </div>
+          </div>
+        </div>
+        <p style="margin-top:14px;text-align:center;font-size:11px;color:#9ab59f;font-weight:700;letter-spacing:.02em">你不必急着变好，慢慢来就好 🌸</p>
+      </div>
+    </div>
+
+    <!-- ===== 可爱治愈 写日记 ===== -->
+    <div class="panel theme-cute" data-theme="cute" data-page="diary">
+      <div class="panel-header">
+        写日记
+        <span class="style-badge" style="background:#fef0f0;color:#d47888">B · 可爱治愈</span>
+      </div>
+      <div class="scene">
+        <div class="header-row">
+          <div class="bunny-avatar">🐇</div>
+          <div class="header-text">
+            <h2>今天发生了什么呀？</h2>
+            <p>兔兔竖起耳朵在认真听呢 🐰✨</p>
+          </div>
+        </div>
+        <div class="diary-card">
+          <textarea placeholder="今天有什么想跟我说的吗？&#10;开心的、难过的、烦恼的……都可以☺️"></textarea>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+            <span style="padding:5px 12px;border-radius:30px;background:#fef6e8;border:1.5px solid #f5e1b4;font-size:10px;color:#9b7d32;cursor:default;font-weight:600">😊 开心</span>
+            <span style="padding:5px 12px;border-radius:30px;background:#fef0f0;border:1.5px solid #fad7db;font-size:10px;color:#d47888;cursor:default;font-weight:600">😢 难过</span>
+            <span style="padding:5px 12px;border-radius:30px;background:#fef0f0;border:1.5px solid #fad7db;font-size:10px;color:#d47888;cursor:default;font-weight:600">😤 生气</span>
+            <span style="padding:5px 12px;border-radius:30px;background:#eef5fb;border:1.5px solid #c8d9ed;font-size:10px;color:#6d88a1;cursor:default;font-weight:600">😌 平静</span>
+          </div>
+        </div>
+        <button class="btn-submit">💌 交给兔兔</button>
+      </div>
+    </div>
+
+    <!-- ===== APP质感 首页 ===== -->
+    <div class="panel theme-app" data-theme="app" data-page="home">
+      <div class="panel-header">
+        首页
+        <span class="style-badge" style="background:#e8e8ed;color:#555">D · APP 质感</span>
+      </div>
+      <div class="scene">
+        <div class="status-bar">
+          <span>9:41</span>
+          <span>📶 🔋</span>
+        </div>
+        <div class="app-header">
+          <h1>小兔日记</h1>
+          <div class="avatar bunny-avatar">🐇</div>
+        </div>
+        <div class="section-wrap" style="margin-top:0">
+          <div class="section-title">功能</div>
+        </div>
+        <div class="grid-2x2">
+          <div class="nav-item">
+            <span class="nav-icon" style="background:#fff2e0">✍️</span>
+            <span class="nav-label">每日暖意</span>
+            <span class="nav-desc">记录温暖小事</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-icon" style="background:#fde8ec">✨</span>
+            <span class="nav-label">情绪救援</span>
+            <span class="nav-desc">心情出口</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-icon" style="background:#e8f5e8">🌱</span>
+            <span class="nav-label">兔兔花园</span>
+            <span class="nav-desc">情绪种植</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-icon" style="background:#e8edf5">📖</span>
+            <span class="nav-label">过往日记</span>
+            <span class="nav-desc">回顾自己</span>
+          </div>
+        </div>
+        <div class="section-wrap">
+          <div class="section-title">最近记录</div>
+          <div style="border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.03)">
+            <div class="entry-row">
+              <span class="dot" style="background:#f1bd75"></span>
+              <span class="entry-text">今天的阳光很好</span>
+              <span class="entry-time">6/28</span>
+            </div>
+            <div class="entry-row">
+              <span class="dot" style="background:#ee8d99"></span>
+              <span class="entry-text">有点焦虑明天的工作汇报</span>
+              <span class="entry-time">6/27</span>
+            </div>
+            <div class="entry-row">
+              <span class="dot" style="background:#f1bd75"></span>
+              <span class="entry-text">朋友送了一本书，很开心</span>
+              <span class="entry-time">6/26</span>
+            </div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab-item active"><span class="tab-icon">🏠</span>首页</div>
+          <div class="tab-item"><span class="tab-icon">📝</span>记录</div>
+          <div class="tab-item"><span class="tab-icon">🌿</span>花园</div>
+          <div class="tab-item"><span class="tab-icon">👤</span>我的</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== APP质感 写日记 ===== -->
+    <div class="panel theme-app" data-theme="app" data-page="diary">
+      <div class="panel-header">
+        写日记
+        <span class="style-badge" style="background:#e8e8ed;color:#555">D · APP 质感</span>
+      </div>
+      <div class="scene">
+        <div class="status-bar">
+          <span>9:41</span>
+          <span>📶 🔋</span>
+        </div>
+        <div class="app-header" style="padding-bottom:6px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:24px;cursor:default">‹</span>
+            <h1 style="font-size:22px">新记录</h1>
+          </div>
+          <span style="font-size:15px;color:#007aff;cursor:default;font-weight:500">保存</span>
+        </div>
+        <div class="diary-card" style="margin-top:8px">
+          <div style="margin-bottom:12px">
+            <span style="display:inline-flex;gap:8px;flex-wrap:wrap">
+              <span style="padding:5px 12px;border-radius:20px;background:#f2f2f6;font-size:11px;color:#1a1a1a;cursor:default;font-weight:500">😊 开心</span>
+              <span style="padding:5px 12px;border-radius:20px;background:#f2f2f6;font-size:11px;color:#1a1a1a;cursor:default;font-weight:500">😢 难过</span>
+              <span style="padding:5px 12px;border-radius:20px;background:#f2f2f6;font-size:11px;color:#1a1a1a;cursor:default;font-weight:500">😤 生气</span>
+              <span style="padding:5px 12px;border-radius:20px;background:#f2f2f6;font-size:11px;color:#1a1a1a;cursor:default;font-weight:500">😌 平静</span>
+            </span>
+          </div>
+          <textarea placeholder="写下你的心情……"></textarea>
+        </div>
+        <button class="btn-submit">保存到日记本</button>
+        <div class="tab-bar" style="margin-top:30px">
+          <div class="tab-item"><span class="tab-icon">🏠</span>首页</div>
+          <div class="tab-item active"><span class="tab-icon">📝</span>记录</div>
+          <div class="tab-item"><span class="tab-icon">🌿</span>花园</div>
+          <div class="tab-item"><span class="tab-icon">👤</span>我的</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /panel-grid -->
+</div>
+
+<script>
+// 主题切换
+document.querySelectorAll('.theme-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.theme-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const theme = tab.dataset.theme;
+    updatePanels();
+  });
+});
+
+// 页面切换
+document.querySelectorAll('.page-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    updatePanels();
+  });
+});
+
+function updatePanels() {
+  const activeTheme = document.querySelector('.theme-tab.active').dataset.theme;
+  const activePage = document.querySelector('.page-tab.active').dataset.page;
+  document.querySelectorAll('.panel').forEach(p => {
+    p.classList.toggle('active', p.dataset.theme === activeTheme && p.dataset.page === activePage);
+  });
+}
+</script>
+</body>
+</html>
