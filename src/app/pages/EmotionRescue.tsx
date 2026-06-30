@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronDown, RefreshCw, Sparkles, Sprout } from "lucide-react";
+import { ChevronDown, Pencil, RefreshCw, Sparkles, Sprout } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { PlantingAnimationOverlay } from "../components/PlantingAnimationOverlay";
@@ -255,7 +255,7 @@ export default function EmotionRescue() {
                 <RefreshCw className="h-3.5 w-3.5" />
               </button>
               <button type="button" onClick={handleWritePrompt} className="grid h-7 w-7 place-items-center rounded-full text-[var(--muted)] hover:bg-[rgba(255,255,255,0.5)]" aria-label={t("daily.writePrompt")}>
-                <ChevronDown className="h-3.5 w-3.5 -rotate-45" />
+                <Pencil className="h-3.5 w-3.5" />
               </button>
             </div>
           </div>
@@ -268,7 +268,7 @@ export default function EmotionRescue() {
                 setEmptyNoteError(false);
               }}
               placeholder={t("emotion.whatHappenedPlaceholder")}
-              className="mt-2 min-h-[6.5rem] overflow-hidden border-[rgba(217,205,197,0.3)] bg-transparent text-[16px] leading-8 shadow-none focus:border-[var(--pink)] focus:ring-0"
+              className="mt-2 min-h-[11rem] overflow-hidden border-[rgba(217,205,197,0.3)] bg-transparent text-[16px] leading-8 shadow-none focus:border-[var(--pink)] focus:ring-0"
             />
           </div>
         </Card>
@@ -279,7 +279,7 @@ export default function EmotionRescue() {
             value={childhood}
             onChange={(event) => setChildhood(event.target.value)}
             placeholder={t("emotion.childhoodPlaceholder")}
-            className="mt-3 min-h-[8.5rem]"
+            className="mt-3 min-h-[4rem]"
           />
         </Card>
 
