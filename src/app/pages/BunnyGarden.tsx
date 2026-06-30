@@ -300,6 +300,18 @@ export default function BunnyGarden() {
         {/* Garden */}
         <section className="relative h-[250px] overflow-visible -mt-3 -mx-5">
           <img src="/garden-assets/prepped/grass-board.png" alt="" className="absolute left-1/2 top-[58%] w-[440px] -translate-x-1/2 -translate-y-1/2 object-contain drop-shadow-[0_18px_28px_rgba(83,132,70,0.18)]" />
+          {garden.seedInventory.length === 0 && garden.waitingSeedCount === 0 && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+              <button
+                type="button"
+                onClick={() => navigate(routes.dailyWarmth)}
+                className="pointer-events-auto relative -top-3 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/88 px-4 py-2 text-[12px] font-bold text-[#6f6158] shadow-[0_4px_16px_rgba(0,0,0,0.06)] backdrop-blur-sm transition hover:bg-white active:scale-[0.97]"
+              >
+                <img src="/assets/v2/plants/warmth-seed.png" alt="" className="h-4 w-4 object-contain" />
+                {t("garden.getFirstSeed")}
+              </button>
+            </div>
+          )}
           {garden.plots.slice(0, 10).map((plot, index) => (
             <Plot
               key={plot.id}
