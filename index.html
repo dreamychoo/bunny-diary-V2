@@ -10,7 +10,26 @@
     <link rel="icon" type="image/png" sizes="64x64" href="/favicon-bunny-v2.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-bunny-v2.png" />
     <link rel="manifest" href="/site-bunny-v2.webmanifest" />
+    <link rel="preload" href="/assets/v2/rabbits/reading.png" as="image" />
+    <link rel="preload" href="/assets/v2/rabbits/cheering.png" as="image" />
+    <link rel="preload" href="/assets/v2/items/heart-mug.png" as="image" />
     <title>小兔日记 — 你的情绪觉察伙伴</title>
+    <script>
+      window.addEventListener("load", function() {
+        var assets = [
+          "/assets/v2/rabbits/writing.png","/assets/v2/rabbits/worried.png","/assets/v2/rabbits/watering.png","/assets/v2/rabbits/sitting.png","/assets/v2/rabbits/sleeping.png","/assets/v2/rabbits/holding-lantern.png","/assets/v2/rabbits/holding-mug.png","/assets/v2/rabbits/holding-heart.png",
+          "/assets/v2/items/heart-envelope.png","/assets/v2/items/photo-album.png","/assets/v2/items/pink-heart.png","/assets/v2/items/mailbox.png","/assets/v2/items/white-flower.png",
+          "/assets/v2/plants/daisy.png","/assets/v2/plants/tulip.png","/assets/v2/plants/sunflower.png","/assets/v2/plants/clover.png","/assets/v2/plants/lavender.png","/assets/v2/plants/mushroom.png","/assets/v2/plants/sprout.png","/assets/v2/plants/cactus.png","/assets/v2/plants/cherry-tree.png","/assets/v2/plants/green-tree.png","/assets/v2/plants/lotus-leaves.png","/assets/v2/plants/pink-rose.png","/assets/v2/plants/red-rose.png","/assets/v2/plants/grass.png","/assets/v2/plants/germinating-seed.png","/assets/v2/plants/warmth-seed.png","/assets/v2/plants/worry-seed.png"
+        ];
+        for (var i = 0; i < assets.length; i++) {
+          var link = document.createElement("link");
+          link.rel = "prefetch";
+          link.href = assets[i];
+          link.as = "image";
+          document.head.appendChild(link);
+        }
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>

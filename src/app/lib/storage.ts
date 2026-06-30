@@ -278,6 +278,7 @@ const KEEPSAKES_KEY = "bunnyDiary_gardenKeepsakes";
 const LETTERS_KEY = "bunnyDiary_bunnyLetters";
 const LEGACY_ENTRY_KEY = "currentEntry";
 const LEGACY_WARMTH_KEY = "currentWarmth";
+const ONBOARDING_KEY = "bunnyDiary_onboardingDone";
 
 const defaultSettings: BunnyDiarySettings = {
   bunnyName: "Bunny",
@@ -1086,6 +1087,17 @@ export function clearAllDiaryData() {
   window.localStorage.removeItem(LETTERS_KEY);
   window.localStorage.removeItem(LEGACY_ENTRY_KEY);
   window.localStorage.removeItem(LEGACY_WARMTH_KEY);
+  window.localStorage.removeItem(ONBOARDING_KEY);
+}
+
+export function isOnboardingDone(): boolean {
+  if (!hasStorage()) return true;
+  return window.localStorage.getItem(ONBOARDING_KEY) === "true";
+}
+
+export function markOnboardingDone() {
+  if (!hasStorage()) return;
+  window.localStorage.setItem(ONBOARDING_KEY, "true");
 }
 
 export function migrateLegacyEntries() {

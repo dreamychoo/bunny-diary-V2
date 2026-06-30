@@ -1,9 +1,10 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { I18nProvider } from "./i18n";
-import { migrateLegacyEntries } from "./lib/storage";
+import { isOnboardingDone, markOnboardingDone, migrateLegacyEntries } from "./lib/storage";
 import { routes } from "./routes";
 import Home from "./pages/Home";
+import { OnboardingOverlay } from "./components/OnboardingOverlay";
 
 const BunnyGarden = lazy(() => import("./pages/BunnyGarden"));
 const CollectionRoom = lazy(() => import("./pages/CollectionRoom"));
@@ -24,12 +25,25 @@ function Lazy({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [checkingOnboarding, setCheckingOnboarding] = useState(true);
+
   useEffect(() => {
     migrateLegacyEntries();
+    setShowOnboarding(!isOnboardingDone());
+    setCheckingOnboarding(false);
   }, []);
+
+  function handleOnboardingComplete() {
+    markOnboardingDone();
+    setShowOnboarding(false);
+  }
 
   return (
     <I18nProvider>
+      {!checkingOnboarding && showOnboarding && (
+        <OnboardingOverlay open={showOnboarding} onComplete={handleOnboardingComplete} />
+      )}
       <Routes>
         <Route path={routes.home} element={<Home />} />
         <Route path={routes.bunnyGarden} element={<Lazy><BunnyGarden /></Lazy>} />

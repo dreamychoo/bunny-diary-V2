@@ -55,19 +55,19 @@ export function AppShell({ children, title, subtitle, headerMascotVariant = "rea
   };
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-clip px-4 pb-[92px] pt-3 text-[var(--ink)] sm:px-6 sm:pb-[100px] sm:pt-5">
+    <main className={cn("relative min-h-[100dvh] overflow-x-clip px-4 pb-[92px] text-[var(--ink)] sm:px-6 sm:pb-[100px]", isSettings && "pt-0 sm:pt-0", !isSettings && "pt-1 sm:pt-2")}>
       {isSettings && (
-        <Link to={routes.home} className="absolute left-4 top-4 z-20 grid h-11 w-11 place-items-center rounded-full border border-[#d9cdc5]/50 bg-white/82 text-[#6f6158] shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition hover:bg-white active:scale-[0.98] sm:left-5 sm:top-6 sm:h-12 sm:w-12" aria-label={t("common.home")}>
+        <Link to={routes.home} className="absolute left-4 top-3 z-20 grid h-10 w-10 place-items-center rounded-full border border-[#d9cdc5]/50 bg-white/82 text-[#6f6158] shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition hover:bg-white active:scale-[0.98] sm:left-5 sm:top-4 sm:h-11 sm:w-11" aria-label={t("common.home")}>
           <HomeIcon className="h-5 w-5" />
         </Link>
       )}
       {!isSettings && (
-        <Link to={routes.settings} className="absolute right-4 top-4 z-20 grid h-11 w-11 place-items-center rounded-full border border-[#d9cdc5]/50 bg-white/82 text-[#6f6158] shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition hover:bg-white active:scale-[0.98] sm:right-5 sm:top-6 sm:h-12 sm:w-12" aria-label={t("nav.settings")}>
+        <Link to={routes.settings} className="absolute right-4 top-3 z-20 grid h-10 w-10 place-items-center rounded-full border border-[#d9cdc5]/50 bg-white/82 text-[#6f6158] shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition hover:bg-white active:scale-[0.98] sm:right-5 sm:top-4 sm:h-11 sm:w-11" aria-label={t("nav.settings")}>
           <Settings className="h-5 w-5" />
         </Link>
       )}
 
-      <div className={cn("mx-auto flex w-full flex-col", wide ? "max-w-[1040px]" : "max-w-[520px]", showBrand ? "min-h-[calc(100dvh-52px)] justify-center py-6 sm:justify-start sm:py-0" : "min-h-[calc(100dvh-52px)] pt-3 sm:pt-4")}>
+      <div className={cn("mx-auto flex w-full flex-col", wide ? "max-w-[1040px]" : "max-w-[520px]", isSettings ? "min-h-[calc(100dvh-52px)] pt-0.5" : showBrand ? "min-h-[calc(100dvh-52px)] justify-center py-6 sm:justify-start sm:py-0" : "min-h-[calc(100dvh-52px)] pt-3 sm:pt-4")}>
         {showBrand && (
           <div className="sticky top-0 z-10 -mx-4 flex flex-col items-center gap-3 bg-[#faf9f7]/95 px-4 pb-4 pt-3 text-center backdrop-blur-sm sm:static sm:mx-0 sm:bg-transparent sm:px-4 sm:pb-5 sm:pt-0 sm:backdrop-blur-none">
             <button type="button" onClick={handleBunnyTap} className="relative grid h-[6.25rem] w-[8.75rem] place-items-center outline-none transition-transform duration-200 ease-out hover:-translate-y-0.5 sm:h-[10.5rem] sm:w-[13.5rem]" aria-label={t("app.title")}>
@@ -87,10 +87,10 @@ export function AppShell({ children, title, subtitle, headerMascotVariant = "rea
         )}
 
         {(title || subtitle) && (
-          <section className="relative mb-2 px-1 sm:mb-3">
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center">
-                <Mascot variant={headerMascotVariant} className="h-20 w-20 object-contain" />
+          <section className={cn("relative px-1", isSettings ? "mb-0 mt-0" : "mb-2 sm:mb-3")}>
+            <div className={cn("flex items-center gap-3 sm:gap-4", isSettings && "gap-2 sm:gap-2")}>
+              <div className={cn("shrink-0", isSettings ? "flex h-14 w-14 items-center justify-center" : "flex h-20 w-20 items-center justify-center")}>
+                <Mascot variant={headerMascotVariant} className={cn("object-contain", isSettings ? "h-14 w-14" : "h-20 w-20")} />
               </div>
               <div className="min-w-0 flex-1 text-left">
                 {title && <h1 className="text-[22px] font-extrabold tracking-tight leading-[1.1] text-[var(--ink)]">{title}</h1>}
