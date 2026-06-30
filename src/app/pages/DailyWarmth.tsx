@@ -202,14 +202,14 @@ export default function DailyWarmth() {
               </p>
             )}
 
-            <div className="mt-4 grid grid-cols-3 gap-2">
+            <div className="mt-3 grid grid-cols-3 gap-2">
               {innerWeatherOptions.map((opt) => (
                 <button
                   key={opt.key}
                   type="button"
                   onClick={() => setWeather(weather === opt.key ? "" : opt.key)}
                   className={cn(
-                    "inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-[14px] font-semibold transition active:scale-[0.98]",
+                    "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[12px] font-semibold transition active:scale-[0.98]",
                     weather === opt.key
                       ? "border-[var(--pink)] bg-[var(--pink-soft)] text-[var(--pink)]"
                       : "border-[rgba(255,111,134,0.3)] bg-[rgba(255,255,255,0.6)] text-[var(--muted)] hover:bg-[var(--pink-soft)]"
