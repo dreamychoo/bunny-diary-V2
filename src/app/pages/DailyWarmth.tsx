@@ -185,7 +185,7 @@ export default function DailyWarmth() {
 
           <Card className="p-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-[var(--ink)]">{t("daily.mood")}</h2>
+              <h2 className="text-sm font-bold text-[var(--ink)]">{t("daily.mood")}</h2>
               <button
                 type="button"
                 onClick={() => setShowHelp((v) => !v)}
