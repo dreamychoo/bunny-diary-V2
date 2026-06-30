@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, RefreshCw, Save } from "lucide-react";
+import { ArrowLeft, Pencil, RefreshCw, Save } from "lucide-react";
 import { AppShell } from "../components/AppShell";
 import { PlantingAnimationOverlay } from "../components/PlantingAnimationOverlay";
 import { Button } from "../components/ui/button";
@@ -170,7 +170,7 @@ export default function DailyWarmth() {
                 <RefreshCw className="h-3.5 w-3.5" />
               </button>
               <button type="button" onClick={handleWritePrompt} className="grid h-7 w-7 place-items-center rounded-full text-[var(--muted)] hover:bg-[rgba(255,255,255,0.5)]" aria-label={t("daily.writePrompt")}>
-                <ChevronDown className="h-3.5 w-3.5 -rotate-45" />
+                <Pencil className="h-3.5 w-3.5" />
               </button>
             </div>
 
