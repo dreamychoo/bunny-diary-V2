@@ -209,7 +209,7 @@ export default function BunnyGarden() {
 
   useEffect(() => {
     if (!toast) return;
-    const timer = window.setTimeout(() => setToast(null), 2200);
+    const timer = window.setTimeout(() => setToast(null), 1200);
     return () => window.clearTimeout(timer);
   }, [toast]);
 
