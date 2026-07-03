@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 import { cn } from "./ui/utils";
 
 type Slide = {
-  mascotVariant?: "happy" | "writing" | "listening" | "garden";
+  mascotVariant?: "happy" | "writing" | "listening" | "garden" | "warmth" | "reading";
   mascotLarge?: boolean;
   titleKey: string;
   subtitleKey: string;
@@ -17,7 +17,8 @@ const SLIDES: Slide[] = [
   { mascotVariant: "writing", titleKey: "onboarding.slide2.title", subtitleKey: "onboarding.slide2.subtitle" },
   { mascotVariant: "listening", titleKey: "onboarding.slide3.title", subtitleKey: "onboarding.slide3.subtitle" },
   { mascotVariant: "garden", titleKey: "onboarding.slide4.title", subtitleKey: "onboarding.slide4.subtitle" },
-  { titleKey: "onboarding.slide5.title", subtitleKey: "onboarding.slide5.subtitle" },
+  { mascotVariant: "warmth", titleKey: "onboarding.slide5.title", subtitleKey: "onboarding.slide5.subtitle" },
+  { titleKey: "onboarding.slide6.title", subtitleKey: "onboarding.slide6.subtitle" },
 ];
 
 type Props = {

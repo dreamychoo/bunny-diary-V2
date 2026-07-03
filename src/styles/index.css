@@ -461,6 +461,18 @@ a { color: inherit; text-decoration: none; }
 .collection-mail-card h3 { font-size:.82rem; font-weight:700; }
 .collection-mail-card p { margin-top:.12rem; overflow:hidden; color:var(--muted); font-size:.75rem; text-overflow:ellipsis; white-space:nowrap; }
 .collection-mail-card time { display:block; font-size:.68rem; color:var(--muted); }
+.collection-daily-letter { display:flex; align-items:center; gap:.75rem; padding:.85rem 1rem; border:1px solid rgba(217,205,197,0.3); border-radius:20px; background:linear-gradient(135deg,rgba(255,237,213,0.6),rgba(255,253,249,0.9)); transition:120ms ease; cursor:pointer; margin:.75rem .75rem 0; }
+.collection-daily-letter:active { transform:scale(.98); }
+.collection-daily-letter .daily-icon { display:grid; width:40px; height:40px; flex:0 0 auto; place-items:center; border-radius:14px; background:rgba(255,200,150,0.3); color:#c97a4a; }
+.collection-daily-letter .daily-icon svg { width:18px; height:18px; }
+.collection-daily-letter h3 { font-size:.82rem; font-weight:700; }
+.collection-daily-letter p { margin-top:.12rem; color:var(--muted); font-size:.75rem; }
+.collection-daily-letter .daily-claim-btn { margin-left:auto; padding:.45rem .85rem; border-radius:999px; border:none; background:var(--pink); color:#fff; font-size:.72rem; font-weight:700; white-space:nowrap; cursor:pointer; }
+.collection-daily-letter .daily-claim-btn:active { transform:scale(.97); }
+.collection-daily-letter .daily-claim-btn:disabled { background:#ddd; color:#aaa; cursor:default; }
+.collection-daily-letter-body { margin:.65rem .75rem .75rem; padding:.85rem 1rem; border-radius:16px; background:rgba(255,253,249,0.85); }
+.collection-daily-letter-body .letter-rule { margin:.6rem 0; border:none; height:1px; background:linear-gradient(90deg,transparent,rgba(217,205,197,0.4),transparent); }
+.collection-daily-letter-body p { font-size:.78rem; line-height:1.65; color:var(--ink); white-space:pre-wrap; }
 .collection-empty { display:grid; min-height:180px; place-items:center; align-content:center; gap:.6rem; padding:2rem; color:var(--muted); text-align:center; }
 .collection-empty svg { width:30px; height:30px; opacity:.55; }
 .collection-garden-link { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.9rem 1.2rem; border-top:1px solid rgba(217,205,197,0.35); background:rgba(255,253,249,0.9); color:var(--muted); font-size:.78rem; }

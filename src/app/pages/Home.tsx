@@ -3,7 +3,7 @@ import { ChevronRight, RefreshCw } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { useI18n } from "../i18n";
-import { createEntryId, getBunnyNotebookLine } from "../lib/storage";
+import { canClaimDailyLetter, createEntryId, getBunnyNotebookLine } from "../lib/storage";
 import { routes } from "../routes";
 
 export default function Home() {
@@ -19,6 +19,7 @@ export default function Home() {
 
   const [notebookIndex, setNotebookIndex] = useState(() => Math.floor(Math.random() * 1000));
   const notebookLine = getBunnyNotebookLine(notebookIndex);
+  const [hasDailyLetter] = useState(() => canClaimDailyLetter());
 
   return (
     <AppShell>
@@ -56,7 +57,7 @@ export default function Home() {
             {
               to: routes.collection,
               title: language === "zh" ? "小兔信箱" : "Mailbox",
-              desc: language === "zh" ? "兔兔来信" : "Bunny's letters",
+              desc: language === "zh" ? (hasDailyLetter ? "今日来信待领取" : "兔兔来信") : (hasDailyLetter ? "Today's letter" : "Bunny's letters"),
               img: "/assets/v2/items/heart-envelope.png"
             },
             {

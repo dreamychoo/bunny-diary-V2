@@ -1,9 +1,9 @@
-import { Archive, ChevronRight, Mail } from "lucide-react";
+import { Archive, ChevronRight, Mail, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { useI18n } from "../i18n";
-import { GardenPlantVariant, GardenSeed, getGardenState } from "../lib/storage";
+import { canClaimDailyLetter, claimDailyLetter, getDailyLetterProgress, getTodayLetter, GardenPlantVariant, GardenSeed, getGardenState } from "../lib/storage";
 import { routes } from "../routes";
 
 const assets: Record<GardenPlantVariant, string> = {
@@ -38,12 +38,36 @@ function formatDate(timestamp: string, language: string) {
 
 export default function CollectionRoom() {
   const { language, t } = useI18n();
+  const location = useLocation();
   const [garden, setGarden] = useState(() => getGardenState());
   const groups = groupPlants(garden.collectedSeeds);
+  const [todayLetter, setTodayLetter] = useState(() => getTodayLetter());
+  const [canClaim, setCanClaim] = useState(() => canClaimDailyLetter());
+  const [progress, setProgress] = useState(() => getDailyLetterProgress());
+  const [showLetter, setShowLetter] = useState(() => !!todayLetter);
+  const [justClaimed, setJustClaimed] = useState(false);
 
   useEffect(() => {
     setGarden(getGardenState());
-  }, []);
+    const tl = getTodayLetter();
+    setTodayLetter(tl);
+    setCanClaim(canClaimDailyLetter());
+    setProgress(getDailyLetterProgress());
+    if (tl) setShowLetter(true);
+  }, [location]);
+
+  const handleClaim = () => {
+    const letter = claimDailyLetter();
+    if (letter) {
+      setTodayLetter({ letter, index: progress.claimed });
+      setCanClaim(false);
+      setShowLetter(true);
+      setJustClaimed(true);
+      setProgress(getDailyLetterProgress());
+    }
+  };
+
+  const allDone = progress.claimed >= progress.total;
 
   return (
     <AppShell title={t("collection.title")} subtitle={t("collection.subtitle")} headerMascotVariant="reading" wide>
@@ -51,6 +75,35 @@ export default function CollectionRoom() {
         {/* Mailbox — primary, left column */}
         <section className="collection-panel">
           <header className="collection-section-heading"><img src="/assets/v2/items/mailbox.png" alt="" className="h-6 w-6 object-contain" /><h2>{t("collection.mailbox")}</h2></header>
+
+          {/* Daily letter section */}
+          <div className="collection-daily-letter" onClick={() => { if (!showLetter && !canClaim) setShowLetter(true); }}>
+            <div className="daily-icon"><Sparkles /></div>
+            <div>
+              <h3>{t("collection.dailyLetter")}</h3>
+              <p>{allDone ? t("collection.claimLetterAllDone") : canClaim ? t("collection.dailyLetterDesc") : t("collection.claimLetterDone")}</p>
+            </div>
+            {canClaim ? (
+              <button className="daily-claim-btn" onClick={(e) => { e.stopPropagation(); handleClaim(); }}>
+                {t("collection.claimLetter")}
+              </button>
+            ) : allDone ? (
+              <span className="text-[.68rem] font-bold text-[#aaa] whitespace-nowrap">✓</span>
+            ) : (
+              <span className="text-[.68rem] font-bold text-[#c97a4a] whitespace-nowrap">✓</span>
+            )}
+          </div>
+
+          {/* Show today's letter content when claimed */}
+          {showLetter && todayLetter && (
+            <div className="collection-daily-letter-body">
+              <h4 className="font-bold text-[.82rem] text-[#c97a4a]">{todayLetter.letter[language === "zh" ? "titleZh" : "titleEn"]}</h4>
+              <div className="letter-rule" />
+              <p>{todayLetter.letter[language === "zh" ? "bodyZh" : "bodyEn"]}</p>
+            </div>
+          )}
+
+          {/* All letters */}
           {garden.letters.length ? (
             <div className="collection-mail-cards">
               {garden.letters.map((letter) => (
