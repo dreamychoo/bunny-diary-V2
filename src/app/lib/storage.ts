@@ -908,7 +908,7 @@ export function createBunnyLetter(seedIds: string[]) {
     for (let i = 0; i < id.length; i++) acc = ((acc << 5) - acc + id.charCodeAt(i)) | 0;
     return acc;
   }, 0);
-  const bodyCount = 15; // each type has 15 body variants
+  const bodyCount = 30; // each type has 30 body variants
   const templateIndex = Math.abs(seedHash) % bodyCount;
 
   const letter: BunnyLetter = {
