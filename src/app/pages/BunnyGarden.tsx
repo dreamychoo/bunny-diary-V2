@@ -300,7 +300,7 @@ export default function BunnyGarden() {
         {/* Garden */}
         <section className="relative h-[250px] overflow-visible -mt-3 -mx-5">
           <img src="/garden-assets/prepped/grass-board.png" alt="" className="absolute left-1/2 top-[58%] w-[440px] -translate-x-1/2 -translate-y-1/2 object-contain drop-shadow-[0_18px_28px_rgba(83,132,70,0.18)]" />
-          {garden.seedInventory.length === 0 && garden.waitingSeedCount === 0 && (
+          {garden.totalEntries === 0 && (
             <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
               <button
                 type="button"
