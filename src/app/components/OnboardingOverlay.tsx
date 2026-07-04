@@ -18,8 +18,8 @@ const SLIDES: Slide[] = [
   { mascotVariant: "listening", titleKey: "onboarding.slide3.title", subtitleKey: "onboarding.slide3.subtitle" },
   { mascotVariant: "garden", titleKey: "onboarding.slide4.title", subtitleKey: "onboarding.slide4.subtitle" },
   { mascotVariant: "warmth", titleKey: "onboarding.slide5.title", subtitleKey: "onboarding.slide5.subtitle" },
-  { titleKey: "onboarding.slide6.title", subtitleKey: "onboarding.slide6.subtitle" },
   { mascotVariant: "reading", titleKey: "onboarding.slide7.title", subtitleKey: "onboarding.slide7.subtitle" },
+  { titleKey: "onboarding.slide6.title", subtitleKey: "onboarding.slide6.subtitle" },
 ];
 
 type Props = {
