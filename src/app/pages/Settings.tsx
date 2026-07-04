@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { Download, Save, Trash2 } from "lucide-react";
 import { AppShell } from "../components/AppShell";
 import { Button } from "../components/ui/button";
@@ -7,13 +7,14 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { useI18n } from "../i18n";
 import { languageNames, Language } from "../i18n/translations";
-import { clearAllDiaryData, exportDiaryData, getSettings, saveSettings } from "../lib/storage";
+import { clearAllDiaryData, exportDiaryData, getSettings, importDiaryData, saveSettings } from "../lib/storage";
 
 export default function Settings() {
   const { language, setLanguage, t } = useI18n();
   const [bunnyName, setBunnyName] = useState(() => getSettings().bunnyName);
   const [message, setMessage] = useState("");
   const [confirmingClear, setConfirmingClear] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   function handleSave(event: FormEvent) {
     event.preventDefault();
@@ -22,17 +23,35 @@ export default function Settings() {
   }
 
   function handleExport() {
-    const data = exportDiaryData();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `bunny-diary-export-${new Date().toISOString().slice(0, 10)}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
+    const { md, json } = exportDiaryData();
+    const date = new Date().toISOString().slice(0, 10);
+    // Download Markdown (readable)
+    const mdBlob = new Blob([`# 小兔日记 · 数据导出\n\n导出时间：${date}\n\n---\n\n${md}`], { type: "text/markdown;charset=utf-8" });
+    const mdLink = document.createElement("a");
+    mdLink.href = URL.createObjectURL(mdBlob);
+    mdLink.download = `bunny-diary-${date}.md`;
+    mdLink.click();
+    // Also offer JSON (for re-import)
+    const jsonBlob = new Blob([JSON.stringify(json, null, 2)], { type: "application/json" });
+    const jsonLink = document.createElement("a");
+    jsonLink.href = URL.createObjectURL(jsonBlob);
+    jsonLink.download = `bunny-diary-${date}.json`;
+    jsonLink.click();
   }
 
   function handleClear() {
+    // Auto-export backup before clearing
+    try {
+      const { md } = exportDiaryData();
+      if (md.trim()) {
+        const date = new Date().toISOString().slice(0, 10);
+        const backup = new Blob([`# 小兔日记 · 数据备份（清除前自动导出）\n\n导出时间：${date}\n\n---\n\n${md}`], { type: "text/markdown;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(backup);
+        link.download = `bunny-diary-backup-${date}.md`;
+        link.click();
+      }
+    } catch { /* backup best-effort */ }
     clearAllDiaryData();
     setBunnyName("Bunny");
     setLanguage("en");
@@ -77,10 +96,31 @@ export default function Settings() {
         <Card className="grid gap-4 p-6 sm:grid-cols-2">
           <div className="rounded-[20px] bg-[var(--pink-soft)] p-4">
             <h2 className="text-xl font-bold text-[var(--ink)]">{t("settings.exportTitle")}</h2>
-            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{t("settings.exportBody")}</p>
+            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{t("settings.exportBodyV2")}</p>
             <Button className="mt-4" variant="secondary" onClick={handleExport}>
               <Download className="h-4 w-4" />
               {t("settings.exportButton")}
+            </Button>
+          </div>
+
+          <div className="rounded-[20px] bg-[#f4f0fb]/70 p-4">
+            <h2 className="text-xl font-bold text-[var(--ink)]">{t("settings.importTitle")}</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{t("settings.importBody")}</p>
+            <input type="file" accept=".json" ref={fileRef} className="hidden" onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              const reader = new FileReader();
+              reader.onload = () => {
+                const ok = importDiaryData(reader.result as string);
+                setMessage(t(ok ? "settings.importSuccess" : "settings.importFailed"));
+                if (ok) setBunnyName(getSettings().bunnyName);
+              };
+              reader.readAsText(file);
+              e.target.value = "";
+            }} />
+            <Button className="mt-4" variant="secondary" onClick={() => fileRef.current?.click()}>
+              <Download className="h-4 w-4 rotate-180" />
+              {t("settings.importButton")}
             </Button>
           </div>
 

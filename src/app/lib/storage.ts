@@ -449,15 +449,29 @@ function safeParse<T>(value: string | null, fallback: T): T {
   }
 }
 
+// Simple in-memory cache to avoid re-parsing localStorage on every read
+const _cache = new Map<string, { data: unknown; ts: number }>();
+function _cachedRead<T>(key: string, fallback: T): T {
+  const cached = _cache.get(key);
+  if (cached) return cached.data as T;
+  const data = safeParse<unknown>(hasStorage() ? window.localStorage.getItem(key) : null, fallback);
+  _cache.set(key, { data, ts: Date.now() });
+  return data as T;
+}
+function _cachedWrite(key: string, data: unknown) {
+  _cache.set(key, { data, ts: Date.now() });
+  if (hasStorage()) window.localStorage.setItem(key, JSON.stringify(data));
+}
+function _cacheClear() { _cache.clear(); }
+function _cacheBust(...keys: string[]) { keys.forEach((k) => _cache.delete(k)); }
+
 function readArray<T>(key: string): T[] {
-  if (!hasStorage()) return [];
-  const parsed = safeParse<unknown>(window.localStorage.getItem(key), []);
+  const parsed = _cachedRead<unknown>(key, []);
   return Array.isArray(parsed) ? (parsed as T[]) : [];
 }
 
 function writeArray<T>(key: string, entries: T[]) {
-  if (!hasStorage()) return;
-  window.localStorage.setItem(key, JSON.stringify(entries));
+  _cachedWrite(key, entries);
 }
 
 export function createEntryId(type: EntryType) {
@@ -688,6 +702,8 @@ function syncGardenStorage() {
   writeKeepsakes(state.keepsakes);
   writeLetters(state.letters);
 
+  _cacheBust(SEEDS_KEY, PLOTS_KEY, KEEPSAKES_KEY, LETTERS_KEY);
+
   return state;
 }
 
@@ -697,6 +713,7 @@ export function getEmotionEntries() {
 
 export function setEmotionEntries(entries: EmotionEntry[]) {
   writeArray(EMOTION_KEY, entries);
+  _cacheBust(EMOTION_KEY);
 }
 
 export function appendEmotionEntry(entry: EmotionEntry) {
@@ -719,6 +736,7 @@ export function getWarmthEntries() {
 
 export function setWarmthEntries(entries: WarmthEntry[]) {
   writeArray(WARMTH_KEY, entries);
+  _cacheBust(WARMTH_KEY);
 }
 
 export function appendWarmthEntry(entry: WarmthEntry) {
@@ -995,6 +1013,7 @@ export function getSettings(): BunnyDiarySettings {
 
 export function saveSettings(settings: Partial<BunnyDiarySettings>) {
   if (!hasStorage()) return;
+  _cacheBust(SETTINGS_KEY);
   window.localStorage.setItem(SETTINGS_KEY, JSON.stringify({ ...getSettings(), ...settings }));
 }
 
@@ -1064,14 +1083,15 @@ const DAILY_LETTER_COUNT = dailyLetters.length;
 
 function getDailyLetterState(): DailyLetterState {
   try {
-    const raw = window.localStorage.getItem(DAILY_LETTER_STATE_KEY);
+    const raw = hasStorage() ? window.localStorage.getItem(DAILY_LETTER_STATE_KEY) : null;
     if (raw) return JSON.parse(raw) as DailyLetterState;
   } catch { /* ignore */ }
   return { lastClaimDate: null, lastClaimedIndex: -1, shuffledOrder: [] };
 }
 
 function saveDailyLetterState(state: DailyLetterState) {
-  window.localStorage.setItem(DAILY_LETTER_STATE_KEY, JSON.stringify(state));
+  _cacheBust(DAILY_LETTER_STATE_KEY);
+  if (hasStorage()) window.localStorage.setItem(DAILY_LETTER_STATE_KEY, JSON.stringify(state));
 }
 
 function initShuffledOrder(): number[] {
@@ -1130,13 +1150,13 @@ export function getDailyLetterProgress(): { claimed: number; total: number } {
 }
 
 export function isDailyLetterSaved(index: number): boolean {
-  try { return JSON.parse(localStorage.getItem(DAILY_LETTER_SAVED_KEY) || '[]').includes(index); } catch { return false; }
+  try { return (_cachedRead<number[]>(DAILY_LETTER_SAVED_KEY, [])).includes(index); } catch { return false; }
 }
 
 export function markDailyLetterSaved(index: number): void {
   try {
-    const saved = JSON.parse(localStorage.getItem(DAILY_LETTER_SAVED_KEY) || '[]');
-    if (!saved.includes(index)) { saved.push(index); localStorage.setItem(DAILY_LETTER_SAVED_KEY, JSON.stringify(saved)); }
+    const saved = _cachedRead<number[]>(DAILY_LETTER_SAVED_KEY, []);
+    if (!saved.includes(index)) { saved.push(index); _cachedWrite(DAILY_LETTER_SAVED_KEY, saved); }
   } catch {}
 }
 
@@ -1495,7 +1515,20 @@ const coffeeTimeLines: Record<"en" | "zh", string[]> = {
 
 export function exportDiaryData() {
   const { seeds, plots, keepsakes, letters } = readGardenStorage();
-  return {
+  const entries = [...getEmotionEntries(), ...getWarmthEntries()].sort(
+    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+  );
+  const md = entries.map((e) => {
+    const date = new Date(e.timestamp);
+    const day = date.toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric", weekday: "long" });
+    if (e.type === "emotion") {
+      const emoji = emotionIcons[e.emotions[0]] || "💧";
+      return `## ${day} ${emoji}\n\n${e.whatHappened || ""}${e.childhood ? `\n\n> ${e.childhood}` : ""}`;
+    }
+    return `## ${day} ☀️\n\n${e.gratitude || e.success || ""}`;
+  }).join("\n\n---\n\n");
+
+  const json = {
     exportedAt: new Date().toISOString(),
     settings: getSettings(),
     emotionEntries: getEmotionEntries(),
@@ -1505,9 +1538,28 @@ export function exportDiaryData() {
     gardenKeepsakes: keepsakes,
     bunnyLetters: letters
   };
+  return { md, json };
+}
+
+export function importDiaryData(raw: string): boolean {
+  try {
+    const data = JSON.parse(raw);
+    if (!data || typeof data !== "object") return false;
+    if (Array.isArray(data.emotionEntries)) setEmotionEntries(data.emotionEntries);
+    if (Array.isArray(data.warmthEntries)) setWarmthEntries(data.warmthEntries);
+    // garden data: write directly (skip sync to avoid infinite loop)
+    if (Array.isArray(data.gardenSeeds)) writeArray(SEEDS_KEY, data.gardenSeeds);
+    if (Array.isArray(data.gardenPlots)) writeArray(PLOTS_KEY, data.gardenPlots);
+    if (Array.isArray(data.gardenKeepsakes)) writeArray(KEEPSAKES_KEY, data.gardenKeepsakes);
+    if (Array.isArray(data.bunnyLetters)) writeArray(LETTERS_KEY, data.bunnyLetters);
+    if (data.settings) saveSettings(data.settings);
+    _cacheClear();
+    return true;
+  } catch { return false; }
 }
 
 export function clearAllDiaryData() {
+  _cacheClear();
   if (!hasStorage()) return;
   window.localStorage.removeItem(EMOTION_KEY);
   window.localStorage.removeItem(WARMTH_KEY);
@@ -1519,6 +1571,8 @@ export function clearAllDiaryData() {
   window.localStorage.removeItem(LEGACY_ENTRY_KEY);
   window.localStorage.removeItem(LEGACY_WARMTH_KEY);
   window.localStorage.removeItem(ONBOARDING_KEY);
+  window.localStorage.removeItem(DAILY_LETTER_STATE_KEY);
+  window.localStorage.removeItem(DAILY_LETTER_SAVED_KEY);
 }
 
 export function isOnboardingDone(): boolean {
