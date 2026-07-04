@@ -19,6 +19,7 @@ const SLIDES: Slide[] = [
   { mascotVariant: "garden", titleKey: "onboarding.slide4.title", subtitleKey: "onboarding.slide4.subtitle" },
   { mascotVariant: "warmth", titleKey: "onboarding.slide5.title", subtitleKey: "onboarding.slide5.subtitle" },
   { titleKey: "onboarding.slide6.title", subtitleKey: "onboarding.slide6.subtitle" },
+  { mascotVariant: "reading", titleKey: "onboarding.slide7.title", subtitleKey: "onboarding.slide7.subtitle" },
 ];
 
 type Props = {
@@ -60,7 +61,7 @@ export function OnboardingOverlay({ open, onComplete }: Props) {
       className="fixed inset-0 z-[100] flex flex-col bg-[var(--bg)] px-4 sm:px-6"
       role="dialog"
       aria-modal="true"
-      aria-label={t("onboarding.slide1.title")}
+      aria-label={t(SLIDES[slideIndex]?.titleKey || "onboarding.slide1.title")}
       onTouchStart={(e) => {
         touchStartX.current = e.touches[0].clientX;
         touchStartY.current = e.touches[0].clientY;

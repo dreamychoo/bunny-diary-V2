@@ -503,6 +503,8 @@ export const translations = {
     "onboarding.slide5.subtitle": "Bunny Diary has no server. Everything you write stays on this device. No data is uploaded anywhere — no one else can read your words but you.",
     "onboarding.slide6.title": "Ready to begin?",
     "onboarding.slide6.subtitle": "Everything you write stays between you and Bunny. No pressure, no rush.",
+    "onboarding.slide7.title": "One more thing",
+    "onboarding.slide7.subtitle": "This app also has an English version. Switch anytime in Settings → Language.",
 
     "emotionKey.sadness": "Sad",
     "emotionKey.anger": "Angry",
@@ -1075,6 +1077,8 @@ export const translations = {
     "onboarding.slide5.subtitle": "「小兔日记」没有服务器，你写的一切都只存在这个设备上。数据不会上传到任何地方，没有人能看到你的文字，除了你自己。",
     "onboarding.slide6.title": "准备好了吗？",
     "onboarding.slide6.subtitle": "你写的东西，只留在你和兔兔之间。不用着急，不用完美。",
+    "onboarding.slide7.title": "还有一件事",
+    "onboarding.slide7.subtitle": "本应用还有英语版，可以在设置 → 语言中随时切换。",
 
     "emotionKey.sadness": "难过",
     "emotionKey.anger": "生气",
