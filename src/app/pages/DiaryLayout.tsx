@@ -49,7 +49,7 @@ export default function DiaryLayout() {
   const retroLen = entry
     ? (entry.type === "emotion" ? (entry.whatHappened?.length || 0) : (entry.type === "warmth" ? (entry.gratitude?.length || 0) : 0))
     : (notebookQuote?.length || 0);
-  const autoFontSize = retroLen > 100 ? 10 : retroLen > 70 ? 11 : retroLen > 35 ? 13.5 : 16;
+  const autoFontSize = retroLen > 50 ? 10 : retroLen > 35 ? 13.5 : 16;
 
   const savedCal = typeof window !== 'undefined' ? (() => { try { return JSON.parse(window.localStorage.getItem('bunnyDiary_retroCal') || '{}'); } catch { return {}; } })() : {};
   const [lcdTop, setLcdTop] = useState(savedCal.top ?? 20.4);
@@ -62,6 +62,8 @@ export default function DiaryLayout() {
   const [lcdFontSize, setLcdFontSize] = useState(autoFontSize);
   const [manualFont, setManualFont] = useState(false);
   const effectiveFontSize = manualFont ? lcdFontSize : autoFontSize;
+  // Re‑sync with auto size when entry changes (unless user manually adjusted)
+  useEffect(() => { if (!manualFont) setLcdFontSize(autoFontSize); }, [autoFontSize]);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [cardStyle, setCardStyle] = useState<CardStyle>((location.state as { cardStyle?: CardStyle } | null)?.cardStyle ?? "plain");
   const saveCal = (key: string, val: number) => {
@@ -244,6 +246,7 @@ export default function DiaryLayout() {
               <span>小兔日记 · 你的情绪觉察伙伴</span>
               <span>www.mybunnydiary.com</span>
             </div>
+            <div className="retro-calibrate-hint">如果文字位置不对，可以拖动下方滑块微调哦～</div>
             {/* Calibrate controls for retro mode */}
             <div className="retro-controls">
               <div className="retro-ctrl-row">

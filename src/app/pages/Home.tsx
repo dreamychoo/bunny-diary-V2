@@ -32,6 +32,7 @@ export default function Home() {
         <section className="app-hero-card">
           <div className="relative z-10 pr-[130px] pt-3">
             <h2 className="text-[20px] font-extrabold leading-tight tracking-tight text-[var(--ink)]">{t("home.v4.prompt")}</h2>
+            <p className="mt-1.5 text-[12px] font-medium leading-snug text-[var(--muted)]">{language === "zh" ? "随便写写，哪怕只是一句" : "Just write, even a single line"}</p>
             <Link to={routes.dailyWarmth} className="app-primary-pill mt-[14px] text-[13px] px-5 py-2.5">
               {language === "zh" ? "开始记录" : "Start Writing"}
             </Link>
