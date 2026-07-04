@@ -1,0 +1,1 @@
+# /Users/dream/.local/bin/ossutil sync /Users/dream/Documents/小兔日记/dist/ oss://mybunnydiary-prod/ -f --delete --update -c /var/folders/gc/x3sjpmzx3j5fp4wlpcn0hjs00000gn/T//ossutil.zaxIGX --endpoint https://oss-cn-hongkong.aliyuncs.com

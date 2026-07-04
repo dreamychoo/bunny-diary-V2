@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>小兔说 · 复古手机分享图</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --lcd:#283322;
+  --lcd-soft:#3c4a30;
+  --pixel:#203020;
+}
+body{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:28px;
+  padding:28px;
+  background:radial-gradient(circle at 20% 10%,#ffe1ea,transparent 34%),radial-gradient(circle at 80% 76%,#e3f0d2,transparent 34%),#f6f2ee;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",system-ui,sans-serif;
+  color:#30241f;
+}
+.preview{
+  position:relative;
+  width:420px;
+  height:817px;
+  filter:drop-shadow(0 28px 58px rgba(66,45,40,.24));
+}
+#capture{
+  position:absolute;
+  inset:0;
+}
+.phone-img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  pointer-events:none;
+  z-index:1;
+}
+/* 文字叠加屏幕区域：如果之后想精调，只改下面 left/top/width/height */
+.lcd-layer{
+  position:absolute;
+  left:74px;
+  top:203px;
+  width:270px;
+  height:268px;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:22px 22px 26px;
+  transform:rotate(-0.2deg);
+  color:var(--pixel);
+  font-family:"Courier New",ui-monospace,Menlo,monospace;
+  image-rendering:pixelated;
+}
+.lcd-layer::before{
+  content:"";
+  position:absolute;
+  inset:6px;
+  border-radius:12px;
+  background:rgba(198,221,171,.18);
+  box-shadow:inset 0 0 0 1px rgba(39,55,33,.08);
+  pointer-events:none;
+}
+.lcd-title{
+  position:absolute;
+  top:12px;
+  left:0;
+  right:0;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.08em;
+  opacity:.72;
+  outline:none;
+}
+.pixel-divider{
+  position:absolute;
+  top:38px;
+  left:0;
+  right:0;
+  font-size:10px;
+  opacity:.72;
+  outline:none;
+}
+.quote{
+  position:relative;
+  z-index:1;
+  width:100%;
+  min-height:132px;
+  border:none;
+  background:transparent;
+  resize:none;
+  outline:none;
+  text-align:center;
+  color:var(--pixel);
+  font-family:"Courier New",ui-monospace,Menlo,monospace;
+  font-size:17px;
+  font-weight:900;
+  line-height:1.65;
+  letter-spacing:.02em;
+  text-shadow:1px 0 rgba(32,48,32,.24);
+  overflow:hidden;
+}
+.footer{
+  position:absolute;
+  left:22px;
+  right:22px;
+  bottom:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-family:"Courier New",ui-monospace,Menlo,monospace;
+  font-size:10px;
+  font-weight:900;
+  opacity:.78;
+}
+.footer span{outline:none}
+.actions{
+  width:360px;
+  border-radius:28px;
+  background:rgba(255,255,255,.76);
+  backdrop-filter:blur(18px);
+  box-shadow:0 22px 64px rgba(91,68,60,.13);
+  padding:22px;
+}
+.actions h1{font-size:21px;margin-bottom:8px;letter-spacing:-.03em}.actions p{font-size:13px;line-height:1.7;color:#746862}.samples{display:grid;gap:10px;margin-top:16px}.sample{border:0;border-radius:16px;background:#fff8f3;text-align:left;padding:12px 13px;font-size:13px;line-height:1.55;color:#4b3a34;font-weight:750;cursor:pointer}.sample:hover{background:#ffeef4}.btn{width:100%;margin-top:12px;border:0;border-radius:15px;background:#f2aec3;color:white;font-size:14px;font-weight:850;padding:12px;cursor:pointer;box-shadow:0 8px 18px rgba(178,85,112,.18)}.btn.secondary{background:#ecdfd6;color:#6c5b53}.tune{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.tune button{border:0;border-radius:13px;background:#f7eee8;color:#6d5d55;padding:10px;font-weight:800;cursor:pointer}@media(max-width:860px){body{flex-direction:column;padding:16px}.preview{width:360px;height:700px}.lcd-layer{left:63px;top:174px;width:232px;height:230px}.quote{font-size:15px}.actions{width:360px;max-width:100%}}
+</style>
+</head>
+<body>
+  <div class="preview">
+    <div id="capture">
+      <div class="lcd-layer" id="lcd">
+        <div class="lcd-title" contenteditable="true">BUNNY DIARY</div>
+        <div class="pixel-divider" contenteditable="true">⋯⋯ ᕱ⑅ᕱ ⋯⋯</div>
+        <textarea class="quote" id="quote">情绪上来时，
+先停三秒，
+比立刻反应更有力量。</textarea>
+        <div class="footer"><span id="date">2026-07-04</span><span contenteditable="true">SAVE</span></div>
+      </div>
+      <img class="phone-img" src="preview-assets/share-phone/phone-shell-cutout@420.png" alt="手机壳">
+    </div>
+  </div>
+
+  <aside class="actions">
+    <h1>复古手机分享图</h1>
+    <p>使用你给的新手机图做壳，文字叠在屏幕区域，字体做成复古像素 / LCD 风。点击句子替换文字，标题和底部 SAVE 也可编辑。</p>
+    <div class="samples">
+      <button class="sample">情绪上来时，\n先停三秒，\n比立刻反应更有力量。</button>
+      <button class="sample">被理解很幸运。\n没被理解，\n也不代表自己说错了。</button>
+      <button class="sample">有些频道需要调很久，\n才会听见彼此的声音。</button>
+      <button class="sample">今天不用急着变好，\n愿意照顾自己，\n就已经很好。</button>
+    </div>
+    <button class="btn" onclick="exportImg()">生成分享图 PNG</button>
+    <button class="btn secondary" onclick="resetText()">恢复默认文案</button>
+    <div class="tune">
+      <button onclick="move(0,-4)">文字上移</button><button onclick="move(0,4)">文字下移</button>
+      <button onclick="move(-4,0)">文字左移</button><button onclick="move(4,0)">文字右移</button>
+    </div>
+  </aside>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+const quote = document.getElementById('quote');
+document.getElementById('date').innerText = new Date().toISOString().slice(0,10);
+document.querySelectorAll('.sample').forEach(btn=>btn.addEventListener('click',()=>{ quote.value = btn.textContent.replaceAll('\\n','\n'); }));
+function resetText(){ quote.value='情绪上来时，\n先停三秒，\n比立刻反应更有力量。'; }
+function exportImg(){ html2canvas(document.querySelector('#capture'),{scale:3,backgroundColor:null,useCORS:true}).then(canvas=>{ const a=document.createElement('a'); a.download='bunny-diary-retro-phone.png'; a.href=canvas.toDataURL('image/png'); a.click(); }); }
+function move(dx,dy){ const el=document.getElementById('lcd'); const st=getComputedStyle(el); el.style.left=(parseFloat(st.left)+dx)+'px'; el.style.top=(parseFloat(st.top)+dy)+'px'; }
+</script>
+</body>
+</html>
