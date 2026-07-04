@@ -243,8 +243,8 @@ a { color: inherit; text-decoration: none; }
   font-size: 11px;
   font-weight: 800;
 }
-.bunny-says-icon { display:none; }
-.bunny-says-badge .bunny-says-icon { display:inline; width:14px; height:14px; opacity:1; vertical-align:middle; }
+.bunny-says-icon { display:none !important; max-width:0; max-height:0; overflow:hidden; }
+.bunny-says-badge .bunny-says-icon { display:inline !important; width:14px !important; height:14px !important; max-width:none; max-height:none; opacity:1; vertical-align:middle; }
 
 .app-bunny-says p {
   margin-top: 12px;
