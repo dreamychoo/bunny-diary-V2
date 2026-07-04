@@ -232,34 +232,34 @@ export default function DiaryLayout() {
               </div>
             </div>
             <div className="retro-brand">
-              <span>小兔日记 · 你的情绪觉察伙伴</span>
+              <span>{t("detail.brand")}</span>
               <span>www.mybunnydiary.com</span>
             </div>
-            <div className="retro-calibrate-hint">如果文字位置不对，可以拖动下方滑块微调哦～</div>
+            <div className="retro-calibrate-hint">{t("detail.calibrateHint")}</div>
             {/* Calibrate controls for retro mode */}
             <div className="retro-controls">
               <div className="retro-ctrl-row">
-                <label>左</label>
+                <label>{t("detail.left")}</label>
                 <input type="range" min="0" max="60" step="0.1" value={lcdLeft} onChange={e => { saveCal('left', +e.target.value); setLcdLeft(+e.target.value); }} />
                 <span className="retro-val">{lcdLeft}</span>
               </div>
               <div className="retro-ctrl-row">
-                <label>上</label>
+                <label>{t("detail.top")}</label>
                 <input type="range" min="19" max="70" step="0.1" value={lcdTop} onChange={e => { saveCal('top', +e.target.value); setLcdTop(+e.target.value); }} />
                 <span className="retro-val">{lcdTop}</span>
               </div>
               <div className="retro-ctrl-row">
-                <label>宽</label>
+                <label>{t("detail.width")}</label>
                 <input type="range" min="20" max="48" step="0.1" value={lcdWidth} onChange={e => { saveCal('width', +e.target.value); setLcdWidth(+e.target.value); }} />
                 <span className="retro-val">{lcdWidth}</span>
               </div>
               <div className="retro-ctrl-row">
-                <label>高</label>
+                <label>{t("detail.height")}</label>
                 <input type="range" min="15" max="80" step="0.1" value={lcdHeight} onChange={e => { saveCal('height', +e.target.value); setLcdHeight(+e.target.value); }} />
                 <span className="retro-val">{lcdHeight}</span>
               </div>
               <div className="retro-ctrl-row">
-                <label>字号</label>
+                <label>{t("detail.fontSize")}</label>
                 <input type="range" min="8" max="22" step="0.5" value={lcdFontSize} onChange={e => { setManualFont(true); saveCal('fontSize', +e.target.value); setLcdFontSize(+e.target.value); }} />
                 <span className="retro-val">{lcdFontSize}</span>
               </div>
@@ -267,7 +267,7 @@ export default function DiaryLayout() {
                 <Download size={14} /> {t("detail.saveImage")}
               </button>
               <div className="retro-ctrl-flex">
-                <button className="retro-reset-btn" onClick={() => { const v = { left: 28.1, top: 20.4, width: 45.4, height: 40.9, padTop: 10, padBottom: 18, fontSize: 16 }; window.localStorage.setItem('bunnyDiary_retroCal', JSON.stringify(v)); setLcdLeft(v.left); setLcdTop(v.top); setLcdWidth(v.width); setLcdHeight(v.height); setLcdPadTop(v.padTop); setLcdPadBottom(v.padBottom); setManualFont(false); }}>重置</button>
+                <button className="retro-reset-btn" onClick={() => { const v = { left: 28.1, top: 20.4, width: 45.4, height: 40.9, padTop: 10, padBottom: 18, fontSize: 16 }; window.localStorage.setItem('bunnyDiary_retroCal', JSON.stringify(v)); setLcdLeft(v.left); setLcdTop(v.top); setLcdWidth(v.width); setLcdHeight(v.height); setLcdPadTop(v.padTop); setLcdPadBottom(v.padBottom); setManualFont(false); }}>{t("detail.reset")}</button>
               </div>
             </div>
           </>
