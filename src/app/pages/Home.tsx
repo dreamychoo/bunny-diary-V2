@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronRight, RefreshCw } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
@@ -18,8 +18,9 @@ export default function Home() {
     "home.greeting.night";
 
   const [notebookIndex, setNotebookIndex] = useState(() => Math.floor(Math.random() * 1000));
+  const [hasDailyLetter, setHasDailyLetter] = useState(() => canClaimDailyLetter());
+  useEffect(() => { setHasDailyLetter(canClaimDailyLetter()); }, []);
   const notebookLine = getBunnyNotebookLine(notebookIndex);
-  const [hasDailyLetter] = useState(() => canClaimDailyLetter());
 
   return (
     <AppShell>
@@ -32,9 +33,9 @@ export default function Home() {
         <section className="app-hero-card">
           <div className="relative z-10 pr-[130px] pt-3">
             <h2 className="text-[20px] font-extrabold leading-tight tracking-tight text-[var(--ink)]">{t("home.v4.prompt")}</h2>
-            <p className="mt-1.5 text-[12px] font-medium leading-snug text-[var(--muted)]">{language === "zh" ? "随便写写，哪怕只是一句" : "Just write, even a single line"}</p>
+            <p className="mt-1.5 text-[12px] font-medium leading-snug text-[var(--muted)]">{t("home.v4.subtitle")}</p>
             <Link to={routes.dailyWarmth} className="app-primary-pill mt-[14px] text-[13px] px-5 py-2.5">
-              {language === "zh" ? "开始记录" : "Start Writing"}
+              {t("home.v4.startWriting")}
             </Link>
           </div>
           <img className="hero-mug" src="/assets/v2/items/heart-mug.png" alt="" />
@@ -45,26 +46,26 @@ export default function Home() {
           {[
             {
               to: routes.emotionRescue,
-              title: language === "zh" ? "整理心事" : "Feelings",
-              desc: language === "zh" ? "慢慢说" : "Talk to Bunny",
+              title: t("home.card.feelingsTitle"),
+              desc: t("home.card.feelingsDesc"),
               img: "/assets/v2/rabbits/worried.png"
             },
             {
               to: routes.bunnyGarden,
-              title: language === "zh" ? "花园" : "Garden",
-              desc: language === "zh" ? "来花园看看" : "Visit the garden",
+              title: t("home.card.gardenTitle"),
+              desc: t("home.card.gardenDesc"),
               img: "/assets/v2/plants/sprout.png"
             },
             {
               to: routes.collection,
-              title: language === "zh" ? "小兔信箱" : "Mailbox",
-              desc: language === "zh" ? (hasDailyLetter ? "今日来信待领取" : "兔兔来信") : (hasDailyLetter ? "Today's letter" : "Bunny's letters"),
+              title: t("home.card.mailboxTitle"),
+              desc: hasDailyLetter ? t("home.card.mailboxDescHasLetter") : t("home.card.mailboxDesc"),
               img: "/assets/v2/items/heart-envelope.png"
             },
             {
               to: routes.pastJournals,
-              title: language === "zh" ? "回忆册" : "Memories",
-              desc: language === "zh" ? "最近记录" : "Recent entries",
+              title: t("home.card.memoriesTitle"),
+              desc: t("home.card.memoriesDesc"),
               img: "/assets/v2/items/photo-album.png"
             }
           ].map((card) => (
@@ -83,7 +84,7 @@ export default function Home() {
               navigate(routes.diaryLayout(tempId), { state: { notebookLine, cardStyle: "plain" } });
             }}>
             <div>
-              <span className="bunny-says-badge"><img src="/assets/v2/items/pink-heart.png" alt="" className="bunny-says-icon" />{language === "zh" ? "小兔说" : "Bunny Says"}</span>
+              <span className="bunny-says-badge"><img src="/assets/v2/items/pink-heart.png" alt="" className="bunny-says-icon" />{t("home.v4.bunnySays")}</span>
               <p>{notebookLine}</p>
             </div>
             <img src="/assets/v2/rabbits/sleeping.png" alt="" />
@@ -93,13 +94,13 @@ export default function Home() {
               const tempId = createEntryId("warmth");
               navigate(routes.diaryLayout(tempId), { state: { notebookLine, cardStyle: "plain" } });
             }}>
-              {language === "zh" ? "📝 小兔便条" : "📝 Bunny Note"}
+              {t("home.v4.bunnyNote")}
             </button>
             <button onClick={() => {
               const tempId = createEntryId("warmth");
               navigate(routes.diaryLayout(tempId), { state: { notebookLine, cardStyle: "retro" } });
             }}>
-              {language === "zh" ? "📱 小兔手机" : "📱 Bunny Phone"}
+              {t("home.v4.bunnyPhone")}
             </button>
           </div>
         </section>
