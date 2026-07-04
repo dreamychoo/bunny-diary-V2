@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { useI18n } from "../i18n";
-import { appendWarmthEntry, canClaimDailyLetter, claimDailyLetter, createEntryId, gardenPlantAssets, getDailyLetterProgress, getTodayLetter, GardenSeed, getGardenState, isDailyLetterSaved, markDailyLetterSaved } from "../lib/storage";
+import { appendWarmthEntry, canClaimDailyLetter, claimDailyLetter, createEntryId, gardenPlantAssets, getDailyLetterProgress, getTodayLetter, GardenPlantVariant, GardenSeed, getGardenState, isDailyLetterSaved, markDailyLetterSaved } from "../lib/storage";
 import { routes } from "../routes";
 
 function groupPlants(seeds: GardenSeed[]) {

@@ -76,7 +76,7 @@ export default function PastJournalList() {
   const emotionCount = entries.filter((e) => e.type === "emotion").length;
   const warmthCount = entries.filter((e) => e.type === "warmth").length;
   const letterCount = entries.filter((e) => e.type === "warmth" && e.gratitude.startsWith("📬")).length;
-  const filterLabels = [
+  const filterLabels: Array<{ key: "all" | "emotion" | "warmth" | "letter"; label: string }> = [
     { key: "all", label: t("common.all") + ` (${entries.length})` },
     { key: "emotion", label: `💧 ${emotionCount}` },
     { key: "warmth", label: `☀️ ${warmthCount}` },
