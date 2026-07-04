@@ -1,0 +1,17 @@
+{
+  "lcd": {
+    "left": 28.1,
+    "top": 20.3,
+    "width": 45.5,
+    "height": 40.9
+  },
+  "title": {
+    "top": 24.4
+  },
+  "divider": {
+    "top": 27.0
+  },
+  "footer": {
+    "top": 52.4
+  }
+}

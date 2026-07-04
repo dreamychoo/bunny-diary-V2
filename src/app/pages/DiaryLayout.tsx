@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowLeft, Download, Smartphone, FileText } from "lucide-react";
 import { toPng } from "html-to-image";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { Button } from "../components/ui/button";
 import { useI18n } from "../i18n";
+import { RETRO_PHONE } from "../lib/calibration";
 import { emotionIcons, emotionKeys, getEntryById, symptomKeys } from "../lib/storage";
 import { routes } from "../routes";
 
@@ -31,37 +32,48 @@ export default function DiaryLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const cardRef = useRef<HTMLDivElement>(null);
+  const quoteRef = useRef<HTMLDivElement>(null);
   const entry = id ? getEntryById(id) : null;
   const notebookQuote = (location.state as { notebookLine?: string } | null)?.notebookLine;
 
-  // Auto font size based on text length
+  // Auto-fit font: find size that fits LCD, then give 5px breathing room
+  const [autoFitPx, setAutoFitPx] = useState(16);
+  const [fontOverride, setFontOverride] = useState<number | null>(null);
   const retroLen = entry
     ? (entry.type === "emotion" ? (entry.whatHappened?.length || 0) : (entry.type === "warmth" ? (entry.gratitude?.length || 0) : 0))
     : (notebookQuote?.length || 0);
-  const autoFontSize = retroLen > 50 ? 10 : retroLen > 35 ? 13.5 : 16;
+  const aestheticCap = retroLen > 50 ? 10 : retroLen > 35 ? 13.5 : 16;
+  const effectiveFontSize = fontOverride ?? Math.min(aestheticCap, Math.max(6, autoFitPx - 5));
 
-  const savedCal = typeof window !== 'undefined' ? (() => { try { return JSON.parse(window.localStorage.getItem('bunnyDiary_retroCal') || '{}'); } catch { return {}; } })() : {};
-  const [lcdTop, setLcdTop] = useState(savedCal.top ?? 20.4);
-  const [lcdLeft, setLcdLeft] = useState(savedCal.left ?? 28.1);
-  const [lcdWidth, setLcdWidth] = useState(savedCal.width ?? 45.4);
-  const [lcdHeight, setLcdHeight] = useState(savedCal.height ?? 40.9);
-  const [lcdPadTop, setLcdPadTop] = useState(savedCal.padTop ?? 10);
-  const [lcdPadBottom, setLcdPadBottom] = useState(savedCal.padBottom ?? 18);
-  // Reset font size when text changes; user can override via the slider
-  const [lcdFontSize, setLcdFontSize] = useState(autoFontSize);
-  const [manualFont, setManualFont] = useState(false);
-  const effectiveFontSize = manualFont ? lcdFontSize : autoFontSize;
-  // Re‑sync with auto size when entry changes (unless user manually adjusted)
-  useEffect(() => { if (!manualFont) setLcdFontSize(autoFontSize); }, [autoFontSize]);
+  const [lcdFontSize, setLcdFontSize] = useState(16);
+  // Sync slider with effective size when no manual override
+  useEffect(() => { if (fontOverride === null) setLcdFontSize(effectiveFontSize); }, [autoFitPx, fontOverride]);
+
+  useLayoutEffect(() => {
+    if (cardStyle !== "retro") return;
+    if (fontOverride !== null) return; // user has manual override
+    const el = quoteRef.current;
+    if (!el) return;
+    const parent = el.parentElement;
+    if (!parent) return;
+
+    const orig = el.style.fontSize;
+    let lo = 6, hi = 22;
+    for (let i = 0; i < 8; i++) {
+      const mid = (lo + hi) / 2;
+      el.style.fontSize = `${mid}px`;
+      if (el.scrollHeight <= parent.clientHeight) {
+        lo = mid;
+      } else {
+        hi = mid;
+      }
+    }
+    el.style.fontSize = orig;
+    const fitted = Math.round(lo * 2) / 2;
+    if (fitted !== autoFitPx) setAutoFitPx(fitted);
+  });
   const [saveError, setSaveError] = useState<string | null>(null);
   const [cardStyle, setCardStyle] = useState<CardStyle>((location.state as { cardStyle?: CardStyle } | null)?.cardStyle ?? "plain");
-  const saveCal = (key: string, val: number) => {
-    try {
-      const cur = JSON.parse(window.localStorage.getItem('bunnyDiary_retroCal') || '{}');
-      cur[key] = val;
-      window.localStorage.setItem('bunnyDiary_retroCal', JSON.stringify(cur));
-    } catch {}
-  };
 
   if (!entry && !notebookQuote) {
     return (
@@ -219,10 +231,19 @@ export default function DiaryLayout() {
             <div
               ref={cardRef}
               className="card-retro-phone"
+              style={{
+                "--cal-lcd-left": `${RETRO_PHONE.lcd.left}%`,
+                "--cal-lcd-top": `${RETRO_PHONE.lcd.top}%`,
+                "--cal-lcd-width": `${RETRO_PHONE.lcd.width}%`,
+                "--cal-lcd-height": `${RETRO_PHONE.lcd.height}%`,
+                "--cal-title-top": `${RETRO_PHONE.title.top}%`,
+                "--cal-divider-top": `${RETRO_PHONE.divider.top}%`,
+                "--cal-footer-top": `${RETRO_PHONE.footer.top}%`,
+              } as React.CSSProperties}
             >
               <img className="retro-bg" src="/assets/v2/frames/retro-phone.png" alt="" />
-              <div className="retro-lcd" style={{"--retro-font-size": `${effectiveFontSize}px`, left: `${lcdLeft}%`, top: `${lcdTop}%`, width: `${lcdWidth}%`, height: `${lcdHeight}%`, paddingTop: `${lcdPadTop}px`, paddingBottom: `${lcdPadBottom}px`} as React.CSSProperties}>
-                <div className="retro-quote"><p>{retroText}</p></div>
+              <div className="retro-lcd" style={{"--retro-font-size": `${effectiveFontSize}px`} as React.CSSProperties}>
+                <div className="retro-quote" ref={quoteRef}><p>{retroText}</p></div>
               </div>
               <div className="retro-title">BUNNY DIARY</div>
               <div className="retro-divider">⋯⋯ ᕱ⑅ᕱ ⋯⋯</div>
@@ -235,39 +256,18 @@ export default function DiaryLayout() {
               <span>{t("detail.brand")}</span>
               <span>www.mybunnydiary.com</span>
             </div>
-            <div className="retro-calibrate-hint">{t("detail.calibrateHint")}</div>
-            {/* Calibrate controls for retro mode */}
+            {/* Font size only — position is auto-calibrated from retro-phone.png */}
             <div className="retro-controls">
               <div className="retro-ctrl-row">
-                <label>{t("detail.left")}</label>
-                <input type="range" min="0" max="60" step="0.1" value={lcdLeft} onChange={e => { saveCal('left', +e.target.value); setLcdLeft(+e.target.value); }} />
-                <span className="retro-val">{lcdLeft}</span>
-              </div>
-              <div className="retro-ctrl-row">
-                <label>{t("detail.top")}</label>
-                <input type="range" min="19" max="70" step="0.1" value={lcdTop} onChange={e => { saveCal('top', +e.target.value); setLcdTop(+e.target.value); }} />
-                <span className="retro-val">{lcdTop}</span>
-              </div>
-              <div className="retro-ctrl-row">
-                <label>{t("detail.width")}</label>
-                <input type="range" min="20" max="48" step="0.1" value={lcdWidth} onChange={e => { saveCal('width', +e.target.value); setLcdWidth(+e.target.value); }} />
-                <span className="retro-val">{lcdWidth}</span>
-              </div>
-              <div className="retro-ctrl-row">
-                <label>{t("detail.height")}</label>
-                <input type="range" min="15" max="80" step="0.1" value={lcdHeight} onChange={e => { saveCal('height', +e.target.value); setLcdHeight(+e.target.value); }} />
-                <span className="retro-val">{lcdHeight}</span>
-              </div>
-              <div className="retro-ctrl-row">
                 <label>{t("detail.fontSize")}</label>
-                <input type="range" min="8" max="22" step="0.5" value={lcdFontSize} onChange={e => { setManualFont(true); saveCal('fontSize', +e.target.value); setLcdFontSize(+e.target.value); }} />
+                <input type="range" min="6" max="22" step="0.5" value={lcdFontSize} onChange={e => { setFontOverride(+e.target.value); setLcdFontSize(+e.target.value); }} />
                 <span className="retro-val">{lcdFontSize}</span>
               </div>
               <button className="retro-save-inline" onClick={handleSave}>
                 <Download size={14} /> {t("detail.saveImage")}
               </button>
               <div className="retro-ctrl-flex">
-                <button className="retro-reset-btn" onClick={() => { const v = { left: 28.1, top: 20.4, width: 45.4, height: 40.9, padTop: 10, padBottom: 18, fontSize: 16 }; window.localStorage.setItem('bunnyDiary_retroCal', JSON.stringify(v)); setLcdLeft(v.left); setLcdTop(v.top); setLcdWidth(v.width); setLcdHeight(v.height); setLcdPadTop(v.padTop); setLcdPadBottom(v.padBottom); setManualFont(false); }}>{t("detail.reset")}</button>
+                <button className="retro-reset-btn" onClick={() => { setFontOverride(null); }}>{t("detail.reset")}</button>
               </div>
             </div>
           </>
