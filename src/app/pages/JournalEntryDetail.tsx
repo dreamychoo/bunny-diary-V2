@@ -33,10 +33,8 @@ function Field({ label, value }: { label: string; value?: string | number }) {
   );
 }
 
-function detailTone(type: "emotion" | "warmth") {
-  return type === "emotion"
-    ? "border-[var(--pink-soft)] bg-[var(--pink-soft)]"
-    : "border-[var(--pink-soft)] bg-[var(--pink-soft)]";
+function getDetailTone() {
+  return "border-[var(--pink-soft)] bg-[var(--pink-soft)]";
 }
 
 export default function JournalEntryDetail() {
@@ -122,7 +120,7 @@ export default function JournalEntryDetail() {
       title={emotionEntry ? t("detail.emotionTitle") : t("detail.warmthTitle")}
       headerMascotVariant={emotionEntry ? "listening" : "warmth"}
     >
-      <Card className={`p-6 ${detailTone(currentEntry.type)}`}>
+      <Card className={`p-6 ${getDetailTone()}`}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="inline-flex items-center gap-2 rounded-full border border-[var(--muted)]/40 bg-[rgba(255,255,255,0.6)] px-4 py-2 text-sm font-bold">

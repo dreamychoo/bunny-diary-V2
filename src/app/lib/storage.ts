@@ -55,7 +55,6 @@ export const extraEmotionKeys = [
   "unseen",
   "ignored",
   "lost",
-  "nothingness",
   "numbness"
 ] as const;
 

@@ -5,7 +5,7 @@ import { AppShell } from "../components/AppShell";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { useI18n } from "../i18n";
-import { deleteEntry, DiaryEntry, emotionIcons, emotionKeys, getAllEntries, weatherKeys, WeatherKey, EmotionKey } from "../lib/storage";
+import { DiaryEntry, emotionIcons, emotionKeys, getAllEntries, weatherKeys, WeatherKey } from "../lib/storage";
 import { routes } from "../routes";
 
 function formatDate(timestamp: string, language: string) {

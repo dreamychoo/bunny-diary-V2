@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ChevronRight, RefreshCw } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { useI18n } from "../i18n";
