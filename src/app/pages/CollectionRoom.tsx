@@ -1,9 +1,9 @@
-import { Archive, ChevronRight, Mail, Sparkles } from "lucide-react";
+import { Archive, Bookmark, ChevronRight, Mail, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { useI18n } from "../i18n";
-import { canClaimDailyLetter, claimDailyLetter, getDailyLetterProgress, getTodayLetter, GardenPlantVariant, GardenSeed, getGardenState } from "../lib/storage";
+import { appendWarmthEntry, canClaimDailyLetter, claimDailyLetter, createEntryId, getAllEntries, getDailyLetterProgress, getTodayLetter, GardenPlantVariant, GardenSeed, getGardenState } from "../lib/storage";
 import { routes } from "../routes";
 
 const assets: Record<GardenPlantVariant, string> = {
@@ -46,6 +46,11 @@ export default function CollectionRoom() {
   const [progress, setProgress] = useState(() => getDailyLetterProgress());
   const [showLetter, setShowLetter] = useState(() => !!todayLetter);
   const [justClaimed, setJustClaimed] = useState(false);
+  const [letterSaved, setLetterSaved] = useState(() => {
+    if (!todayLetter) return false;
+    const body = todayLetter.letter[language === "zh" ? "bodyZh" : "bodyEn"];
+    return getAllEntries().some((e) => e.type === "warmth" && e.gratitude.includes(body));
+  });
 
   useEffect(() => {
     setGarden(getGardenState());
@@ -68,6 +73,22 @@ export default function CollectionRoom() {
   };
 
   const allDone = progress.claimed >= progress.total;
+
+  const handleSaveLetter = () => {
+    if (!todayLetter || letterSaved) return;
+    const body = todayLetter.letter[language === "zh" ? "bodyZh" : "bodyEn"];
+    const title = todayLetter.letter[language === "zh" ? "titleZh" : "titleEn"];
+    appendWarmthEntry({
+      id: createEntryId("warmth"),
+      type: "warmth",
+      timestamp: new Date().toISOString(),
+      mood: "gentle",
+      weather: "sunny",
+      gratitude: `📬 ${title}\n\n${body}`,
+      success: "",
+    });
+    setLetterSaved(true);
+  };
 
   return (
     <AppShell title={t("collection.title")} subtitle={t("collection.subtitle")} headerMascotVariant="reading" wide>
@@ -100,6 +121,10 @@ export default function CollectionRoom() {
               <h4 className="font-bold text-[.82rem] text-[#c97a4a]">{todayLetter.letter[language === "zh" ? "titleZh" : "titleEn"]}</h4>
               <div className="letter-rule" />
               <p>{todayLetter.letter[language === "zh" ? "bodyZh" : "bodyEn"]}</p>
+              <button className="daily-save-btn" onClick={handleSaveLetter} disabled={letterSaved}>
+                <Bookmark size={11} />
+                {t(letterSaved ? "collection.savedLetter" : "collection.saveLetter")}
+              </button>
             </div>
           )}
 
