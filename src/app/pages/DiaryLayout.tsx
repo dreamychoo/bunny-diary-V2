@@ -42,19 +42,28 @@ export default function DiaryLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const cardRef = useRef<HTMLDivElement>(null);
-  const [saveError, setSaveError] = useState<string | null>(null);
-  const [cardStyle, setCardStyle] = useState<CardStyle>((location.state as { cardStyle?: CardStyle } | null)?.cardStyle ?? "plain");
+  const entry = id ? getEntryById(id) : null;
+  const notebookQuote = (location.state as { notebookLine?: string } | null)?.notebookLine;
+
+  // Auto font size based on text length
+  const retroLen = entry
+    ? (entry.type === "emotion" ? (entry.whatHappened?.length || 0) : (entry.type === "warmth" ? (entry.gratitude?.length || 0) : 0))
+    : (notebookQuote?.length || 0);
+  const autoFontSize = retroLen > 100 ? 10 : retroLen > 70 ? 11 : retroLen > 35 ? 13.5 : 16;
 
   const savedCal = typeof window !== 'undefined' ? (() => { try { return JSON.parse(window.localStorage.getItem('bunnyDiary_retroCal') || '{}'); } catch { return {}; } })() : {};
   const [lcdTop, setLcdTop] = useState(savedCal.top ?? 20.4);
-  const [lcdLeft, setLcdLeft] = useState(savedCal.left ?? 26.6);
-  const [lcdWidth, setLcdWidth] = useState(savedCal.width ?? 48);
+  const [lcdLeft, setLcdLeft] = useState(savedCal.left ?? 28.1);
+  const [lcdWidth, setLcdWidth] = useState(savedCal.width ?? 45.4);
   const [lcdHeight, setLcdHeight] = useState(savedCal.height ?? 40.9);
   const [lcdPadTop, setLcdPadTop] = useState(savedCal.padTop ?? 10);
   const [lcdPadBottom, setLcdPadBottom] = useState(savedCal.padBottom ?? 18);
-  const [lcdFontSize, setLcdFontSize] = useState(savedCal.fontSize ?? 16);
-  const [showCalibrate, setShowCalibrate] = useState(false);
-
+  // Reset font size when text changes; user can override via the slider
+  const [lcdFontSize, setLcdFontSize] = useState(autoFontSize);
+  const [manualFont, setManualFont] = useState(false);
+  const effectiveFontSize = manualFont ? lcdFontSize : autoFontSize;
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [cardStyle, setCardStyle] = useState<CardStyle>((location.state as { cardStyle?: CardStyle } | null)?.cardStyle ?? "plain");
   const saveCal = (key: string, val: number) => {
     try {
       const cur = JSON.parse(window.localStorage.getItem('bunnyDiary_retroCal') || '{}');
@@ -62,21 +71,6 @@ export default function DiaryLayout() {
       window.localStorage.setItem('bunnyDiary_retroCal', JSON.stringify(cur));
     } catch {}
   };
-
-  // fill defaults on first mount so switching pages doesn't lose calibration
-  useEffect(() => {
-    try {
-      const cur = JSON.parse(window.localStorage.getItem('bunnyDiary_retroCal') || '{}');
-      const defs: Record<string, number> = { left: 30, top: 21.3, width: 42.3, height: 38.4, padTop: 10, padBottom: 18, fontSize: 16 };
-      let changed = false;
-      for (const k of Object.keys(defs)) {
-        if (typeof cur[k] !== 'number') { cur[k] = defs[k]; changed = true; }
-      }
-      if (changed) window.localStorage.setItem('bunnyDiary_retroCal', JSON.stringify(cur));
-    } catch {}
-  }, []);
-  const entry = id ? getEntryById(id) : null;
-  const notebookQuote = (location.state as { notebookLine?: string } | null)?.notebookLine;
 
   if (!entry && !notebookQuote) {
     return (
@@ -116,12 +110,6 @@ export default function DiaryLayout() {
   const emotionEntry = notebookQuote || entry?.type !== "emotion" ? null : entry;
   const warmthEntry = notebookQuote || entry?.type !== "warmth" ? null : entry;
   const isEmotion = Boolean(emotionEntry);
-
-  const retroFontSize = entry
-    ? (entry.type === "emotion" ? (entry.whatHappened?.length || 0) : (entry.type === "warmth" ? (entry.gratitude?.length || 0) : 0))
-    : (notebookQuote?.length || 0);
-  const fontSize = retroFontSize > 100 ? 10 : retroFontSize > 70 ? 11 : retroFontSize > 45 ? 12 : retroFontSize > 30 ? 13.5 : 16;
-
   // Determine retro text content
   let retroText = "";
   if (notebookQuote) {
@@ -242,7 +230,7 @@ export default function DiaryLayout() {
               className="card-retro-phone"
             >
               <img className="retro-bg" src="/assets/v2/frames/retro-phone.png" alt="" />
-              <div className={`retro-lcd${showCalibrate ? " calibrate" : ""}`} style={{"--retro-font-size": `${lcdFontSize}px`, left: `${lcdLeft}%`, top: `${lcdTop}%`, width: `${lcdWidth}%`, height: `${lcdHeight}%`, paddingTop: `${lcdPadTop}px`, paddingBottom: `${lcdPadBottom}px`, justifyContent: showCalibrate ? "flex-start" : "center"} as React.CSSProperties}>
+              <div className="retro-lcd" style={{"--retro-font-size": `${effectiveFontSize}px`, left: `${lcdLeft}%`, top: `${lcdTop}%`, width: `${lcdWidth}%`, height: `${lcdHeight}%`, paddingTop: `${lcdPadTop}px`, paddingBottom: `${lcdPadBottom}px`} as React.CSSProperties}>
                 <div className="retro-quote"><p>{retroText}</p></div>
               </div>
               <div className="retro-title">BUNNY DIARY</div>
@@ -251,6 +239,10 @@ export default function DiaryLayout() {
                 <span>{new Date().toISOString().slice(0, 10)}</span>
                 <span className="retro-save-label">SAVE</span>
               </div>
+            </div>
+            <div className="retro-brand">
+              <span>小兔日记 · 你的情绪觉察伙伴</span>
+              <span>www.mybunnydiary.com</span>
             </div>
             {/* Calibrate controls for retro mode */}
             <div className="retro-controls">
@@ -261,7 +253,7 @@ export default function DiaryLayout() {
               </div>
               <div className="retro-ctrl-row">
                 <label>上</label>
-                <input type="range" min="0" max="70" step="0.1" value={lcdTop} onChange={e => { saveCal('top', +e.target.value); setLcdTop(+e.target.value); }} />
+                <input type="range" min="19" max="70" step="0.1" value={lcdTop} onChange={e => { saveCal('top', +e.target.value); setLcdTop(+e.target.value); }} />
                 <span className="retro-val">{lcdTop}</span>
               </div>
               <div className="retro-ctrl-row">
@@ -276,18 +268,14 @@ export default function DiaryLayout() {
               </div>
               <div className="retro-ctrl-row">
                 <label>字号</label>
-                <input type="range" min="8" max="22" step="0.5" value={lcdFontSize} onChange={e => { saveCal('fontSize', +e.target.value); setLcdFontSize(+e.target.value); }} />
+                <input type="range" min="8" max="22" step="0.5" value={lcdFontSize} onChange={e => { setManualFont(true); saveCal('fontSize', +e.target.value); setLcdFontSize(+e.target.value); }} />
                 <span className="retro-val">{lcdFontSize}</span>
               </div>
               <button className="retro-save-inline" onClick={handleSave}>
                 <Download size={14} /> {t("detail.saveImage")}
               </button>
               <div className="retro-ctrl-flex">
-                <label className="retro-ctrl-check">
-                  <input type="checkbox" checked={showCalibrate} onChange={e => setShowCalibrate(e.target.checked)} />
-                  校准框
-                </label>
-                <button className="retro-reset-btn" onClick={() => { const v = { left: 26.6, top: 20.4, width: 48, height: 40.9, padTop: 10, padBottom: 18, fontSize: 16 }; window.localStorage.setItem('bunnyDiary_retroCal', JSON.stringify(v)); setLcdLeft(v.left); setLcdTop(v.top); setLcdWidth(v.width); setLcdHeight(v.height); setLcdPadTop(v.padTop); setLcdPadBottom(v.padBottom); }}>重置</button>
+                <button className="retro-reset-btn" onClick={() => { const v = { left: 28.1, top: 20.4, width: 45.4, height: 40.9, padTop: 10, padBottom: 18, fontSize: 16 }; window.localStorage.setItem('bunnyDiary_retroCal', JSON.stringify(v)); setLcdLeft(v.left); setLcdTop(v.top); setLcdWidth(v.width); setLcdHeight(v.height); setLcdPadTop(v.padTop); setLcdPadBottom(v.padBottom); setManualFont(false); }}>重置</button>
               </div>
             </div>
           </>
