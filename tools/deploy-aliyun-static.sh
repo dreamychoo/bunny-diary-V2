@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 ENV_FILE="${ALIYUN_DEPLOY_ENV_FILE:-$ROOT_DIR/.deploy.aliyun.env}"
 DIST_DIR="${ALIYUN_DIST_DIR:-$ROOT_DIR/dist}"
+TMP_OSSUTIL_CONFIG=""
 
 CHECK_ONLY=0
 SKIP_BUILD=0
@@ -21,8 +22,7 @@ What it does:
 Setup:
   1. Copy `.deploy.aliyun.example.env` to `.deploy.aliyun.env`
   2. Fill in bucket + site URL
-  3. Configure `ossutil` locally
-  4. Configure `aliyun` CLI locally if you want CDN refresh
+  3. Run `aliyun configure` once
 EOF
 }
 
@@ -63,6 +63,14 @@ require_env() {
   fi
 }
 
+cleanup() {
+  if [[ -n "$TMP_OSSUTIL_CONFIG" && -f "$TMP_OSSUTIL_CONFIG" ]]; then
+    rm -f "$TMP_OSSUTIL_CONFIG"
+  fi
+}
+
+trap cleanup EXIT
+
 find_ossutil() {
   if [[ -n "${ALIYUN_OSSUTIL_BIN:-}" ]]; then
     echo "$ALIYUN_OSSUTIL_BIN"
@@ -86,6 +94,58 @@ find_ossutil() {
 
 tolower() {
   echo "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+make_ossutil_config_from_aliyun() {
+  local aliyun_config_file="${ALIYUN_CONFIG_FILE:-$HOME/.aliyun/config.json}"
+
+  if [[ ! -f "$aliyun_config_file" ]]; then
+    return 1
+  fi
+
+  if ! command -v python3 >/dev/null 2>&1; then
+    echo "[error] python3 is required to reuse aliyun CLI credentials." >&2
+    return 1
+  fi
+
+  TMP_OSSUTIL_CONFIG="$(mktemp "${TMPDIR:-/tmp}/ossutil.XXXXXX")"
+
+  if ! python3 - "$aliyun_config_file" "$TMP_OSSUTIL_CONFIG" <<'PY'
+import json
+import pathlib
+import sys
+
+config_path = pathlib.Path(sys.argv[1])
+output_path = pathlib.Path(sys.argv[2])
+profile_name = "default"
+
+config = json.loads(config_path.read_text())
+profiles = config.get("profiles", [])
+profile = next((item for item in profiles if item.get("name") == profile_name), None)
+
+if not profile:
+    raise SystemExit(1)
+
+access_key_id = profile.get("access_key_id")
+access_key_secret = profile.get("access_key_secret")
+
+if not access_key_id or not access_key_secret:
+    raise SystemExit(1)
+
+output_path.write_text(
+    "[Credentials]\n"
+    "language=CH\n"
+    f"accessKeyID={access_key_id}\n"
+    f"accessKeySecret={access_key_secret}\n"
+)
+PY
+  then
+    rm -f "$TMP_OSSUTIL_CONFIG"
+    TMP_OSSUTIL_CONFIG=""
+    return 1
+  fi
+
+  echo "$TMP_OSSUTIL_CONFIG"
 }
 
 require_env "ALIYUN_OSS_BUCKET"
@@ -119,6 +179,11 @@ if [[ -z "$CDN_REFRESH_DIRECTORY" && -n "$SITE_URL" ]]; then
 fi
 
 REFRESH_FORCE="$(tolower "${ALIYUN_REFRESH_FORCE:-true}")"
+OSSUTIL_CONFIG_FILE="${ALIYUN_OSSUTIL_CONFIG_FILE:-}"
+
+if [[ -z "$OSSUTIL_CONFIG_FILE" ]]; then
+  OSSUTIL_CONFIG_FILE="$(make_ossutil_config_from_aliyun || true)"
+fi
 
 echo "[config] env file: ${ENV_FILE}"
 echo "[config] oss target: ${OSS_DEST}"
@@ -132,6 +197,10 @@ else
 fi
 
 if [[ $CHECK_ONLY -eq 1 ]]; then
+  if [[ -z "$OSSUTIL_CONFIG_FILE" ]]; then
+    echo "[error] Missing ossutil auth. Run `aliyun configure` once or set ALIYUN_OSSUTIL_CONFIG_FILE." >&2
+    exit 1
+  fi
   if [[ -n "$CDN_REFRESH_DIRECTORY" && -z "$ALIYUN_CLI_BIN" ]]; then
     echo "[warn] aliyun CLI is not installed, so CDN refresh will be skipped." >&2
     echo "[hint] Install guide: https://www.alibabacloud.com/help/en/cli/install-alibaba-cloud-cli" >&2
@@ -151,6 +220,9 @@ if [[ ! -d "$DIST_DIR" ]]; then
 fi
 
 OSS_SYNC_CMD=("$OSSUTIL_BIN" sync "$DIST_DIR/" "$OSS_DEST" -f --delete --update)
+if [[ -n "$OSSUTIL_CONFIG_FILE" ]]; then
+  OSS_SYNC_CMD+=(-c "$OSSUTIL_CONFIG_FILE")
+fi
 if [[ -n "${ALIYUN_OSS_ENDPOINT:-}" ]]; then
   OSS_SYNC_CMD+=(--endpoint "${ALIYUN_OSS_ENDPOINT}")
 fi

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "LingXing-MCP": {
+      "type": "streamableHttp",
+      "url": "http://openmcp.lingxing.com/mcp-servers/lingxing-mcp",
+      "headers": {
+        "X-Mcp-Key": "dfcc4ce01fafc47e3a4875cbb916a261"
+      }
+    }
+  }
+}
