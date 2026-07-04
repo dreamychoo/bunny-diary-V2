@@ -7,6 +7,7 @@ import { cn } from "../components/ui/utils";
 import { useI18n } from "../i18n";
 import {
   createBunnyLetter,
+  gardenPlantAssets,
   GardenPlotView,
   GardenSeed,
   getGardenState,
@@ -44,26 +45,6 @@ const gardenPlotSizesSmall = [
 const PLANT_SLOT_COUNT = 7;
 const EMPTY_SLOT_START = 7;
 
-const matureAssets: Record<GardenSeed["plantVariant"], string> = {
-  daisy: "/assets/v2/plants/daisy.png",
-  tulip: "/assets/v2/plants/tulip.png",
-  sunflower: "/assets/v2/plants/sunflower.png",
-  cherry_blossom: "/assets/v2/plants/cherry-tree.png",
-  rose: "/assets/v2/plants/red-rose.png",
-  lavender: "/assets/v2/plants/lavender.png",
-  hibiscus: "/assets/v2/plants/pink-rose.png",
-  sprout: "/assets/v2/plants/clover.png",
-  leaf: "/assets/v2/plants/lotus-leaves.png",
-  clover: "/assets/v2/plants/clover.png",
-  small_tree: "/assets/v2/plants/green-tree.png",
-  pine: "/assets/v2/plants/green-tree.png",
-  four_leaf: "/assets/v2/plants/clover.png",
-  cactus: "/assets/v2/plants/cactus.png",
-  palm: "/assets/v2/plants/green-tree.png",
-  bamboo: "/assets/v2/plants/grass.png",
-  mushroom: "/assets/v2/plants/mushroom.png"
-};
-
 function growingAsset(seed: GardenSeed) {
   if (!seed.plantedAt || !seed.maturesAt) return "/assets/v2/plants/germinating-seed.png";
   const started = new Date(seed.plantedAt).getTime();
@@ -75,7 +56,7 @@ function growingAsset(seed: GardenSeed) {
 }
 
 function plantAsset(seed: GardenSeed) {
-  return seed.status === "planted" ? growingAsset(seed) : matureAssets[seed.plantVariant];
+  return seed.status === "planted" ? growingAsset(seed) : gardenPlantAssets[seed.plantVariant];
 }
 
 function nextGardenRefreshAt(plots: GardenPlotView[]) {
@@ -367,7 +348,7 @@ export default function BunnyGarden() {
       </Sheet>}
 
       {harvestTarget && <Sheet onClose={() => setHarvestTarget(null)}>
-        <div className="text-center"><img src={matureAssets[harvestTarget.plantVariant]} alt="" className="mx-auto h-40 w-32 object-contain" /><h2 className="font-display text-2xl font-bold text-[var(--ink)]">{t(`garden.variant.${harvestTarget.plantVariant}`)}</h2><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[var(--muted)]">{t("garden.v3.harvestHint")}</p><div className="mt-5 flex justify-center gap-3"><Button variant="ghost" onClick={() => { navigate(routes.diaryLayout(harvestTarget.entryId)); }}>{t("garden.reviewDay")}</Button><Button variant="primary" onClick={harvest}>{t("garden.v3.harvest")}</Button></div></div>
+        <div className="text-center"><img src={gardenPlantAssets[harvestTarget.plantVariant]} alt="" className="mx-auto h-40 w-32 object-contain" /><h2 className="font-display text-2xl font-bold text-[var(--ink)]">{t(`garden.variant.${harvestTarget.plantVariant}`)}</h2><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[var(--muted)]">{t("garden.v3.harvestHint")}</p><div className="mt-5 flex justify-center gap-3"><Button variant="ghost" onClick={() => { navigate(routes.diaryLayout(harvestTarget.entryId)); }}>{t("garden.reviewDay")}</Button><Button variant="primary" onClick={harvest}>{t("garden.v3.harvest")}</Button></div></div>
       </Sheet>}
 
 
@@ -378,7 +359,7 @@ export default function BunnyGarden() {
       {letterPickerOpen && <Sheet onClose={() => !writing && setLetterPickerOpen(false)} blockClose={!writing && selectedSeedIds.length > 0}>
         <div className="flex items-start justify-between gap-4"><div><h2 className="font-display text-2xl font-bold text-[var(--ink)]">{t("garden.v3.pickerTitle")}</h2><p className="mt-1 text-sm text-[var(--muted)]">{t("garden.v3.pickerSubtitle")}</p></div>{!writing && <button type="button" className="sheet-close" onClick={() => setLetterPickerOpen(false)} aria-label={t("garden.v3.later")}><X /></button>}</div>
         {writing ? <div className="grid min-h-64 place-items-center text-center"><div><img src="/assets/v2/rabbits/writing.png" alt="" className="mx-auto h-32 w-32 object-contain animate-pulse" /><p className="font-display text-xl font-bold">{t("garden.v3.writing")}</p></div></div> : <>
-          <div className="mt-5 grid gap-2 sm:grid-cols-2">{garden.availableLetterPlants.map((seed) => { const selected = selectedSeedIds.includes(seed.id); return <button type="button" key={seed.id} className={cn("letter-plant-row", selected && "letter-plant-row--selected")} onClick={() => toggleSelected(seed.id)}><img src={matureAssets[seed.plantVariant]} alt="" /><span className="min-w-0 flex-1 text-left"><strong className="block truncate text-[var(--ink)]">{t(`garden.variant.${seed.plantVariant}`)}</strong><small>{t(seed.seedType === "warmth" ? "garden.v3.warmPlant" : "garden.v3.worryPlant")}</small></span><span className="selection-check">{selected && <Check />}</span></button>; })}</div>
+          <div className="mt-5 grid gap-2 sm:grid-cols-2">{garden.availableLetterPlants.map((seed) => { const selected = selectedSeedIds.includes(seed.id); return <button type="button" key={seed.id} className={cn("letter-plant-row", selected && "letter-plant-row--selected")} onClick={() => toggleSelected(seed.id)}><img src={gardenPlantAssets[seed.plantVariant]} alt="" /><span className="min-w-0 flex-1 text-left"><strong className="block truncate text-[var(--ink)]">{t(`garden.variant.${seed.plantVariant}`)}</strong><small>{t(seed.seedType === "warmth" ? "garden.v3.warmPlant" : "garden.v3.worryPlant")}</small></span><span className="selection-check">{selected && <Check />}</span></button>; })}</div>
           <div className="mt-5 rounded-[20px] border border-[rgba(217,205,197,0.35)] bg-[rgba(255,253,249,0.9)] p-4"><p className="text-sm font-semibold text-[var(--ink)]">{selectedSeedIds.length === 3 ? t(`letter.preview.${previewType}.title`) : t("garden.v3.selectedCount", { count: selectedSeedIds.length })}</p><p className="mt-1 text-sm text-[var(--muted)]">{selectedSeedIds.length === 3 ? t(`letter.preview.${previewType}.body`) : t("garden.v3.pickExactly")}</p></div>
           <div className="mt-5 flex justify-end gap-3"><Button variant="ghost" onClick={() => setLetterPickerOpen(false)}>{t("garden.v3.later")}</Button><Button variant="primary" onClick={createLetter} disabled={selectedSeedIds.length !== 3}>{t("garden.v3.writeLetter")}</Button></div>
         </>}

@@ -48,7 +48,7 @@ export default function PastJournalList() {
   const { language, t } = useI18n();
   const [query, setQuery] = useState("");
   const [entries, setEntries] = useState(() => getAllEntries());
-  const [filterType, setFilterType] = useState<"all" | "emotion" | "warmth">("all");
+  const [filterType, setFilterType] = useState<"all" | "emotion" | "warmth" | "letter">("all");
 
   useEffect(() => {
     setEntries(getAllEntries());
@@ -58,6 +58,7 @@ export default function PastJournalList() {
     let result = entries;
     if (filterType === "emotion") result = result.filter((e) => e.type === "emotion");
     if (filterType === "warmth") result = result.filter((e) => e.type === "warmth");
+    if (filterType === "letter") result = result.filter((e) => e.type === "warmth" && e.gratitude.startsWith("📬"));
 
     const normalizedQuery = query.trim().toLowerCase();
     if (!normalizedQuery) return result;
@@ -74,11 +75,13 @@ export default function PastJournalList() {
 
   const emotionCount = entries.filter((e) => e.type === "emotion").length;
   const warmthCount = entries.filter((e) => e.type === "warmth").length;
+  const letterCount = entries.filter((e) => e.type === "warmth" && e.gratitude.startsWith("📬")).length;
   const filterLabels = [
     { key: "all", label: t("common.all") + ` (${entries.length})` },
     { key: "emotion", label: `💧 ${emotionCount}` },
-    { key: "warmth", label: `☀️ ${warmthCount}` }
-  ] as const;
+    { key: "warmth", label: `☀️ ${warmthCount}` },
+    ...(letterCount > 0 ? [{ key: "letter" as const, label: `📬 ${letterCount}` }] : []),
+  ];
 
   return (
     <AppShell title={t("past.title")} subtitle={t("past.subtitle")} headerMascotVariant="writing" wide>

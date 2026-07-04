@@ -305,6 +305,7 @@ const LEGACY_ENTRY_KEY = "currentEntry";
 const LEGACY_WARMTH_KEY = "currentWarmth";
 const ONBOARDING_KEY = "bunnyDiary_onboardingDone";
 const DAILY_LETTER_STATE_KEY = "bunnyDiary_dailyLetterState";
+const DAILY_LETTER_SAVED_KEY = "bunnyDiary_dailyLetterSaved";
 
 const defaultSettings: BunnyDiarySettings = {
   bunnyName: "Bunny",
@@ -331,6 +332,26 @@ const gardenFeelingVariants: GardenFeelingVariant[] = [
   "mushroom"
 ];
 const treeVariants = new Set<GardenPlantVariant>(["small_tree", "pine", "palm"]);
+
+export const gardenPlantAssets: Record<GardenPlantVariant, string> = {
+  daisy: "/assets/v2/plants/daisy.png",
+  tulip: "/assets/v2/plants/tulip.png",
+  sunflower: "/assets/v2/plants/sunflower.png",
+  cherry_blossom: "/assets/v2/plants/cherry-tree.png",
+  rose: "/assets/v2/plants/red-rose.png",
+  lavender: "/assets/v2/plants/lavender.png",
+  hibiscus: "/assets/v2/plants/pink-rose.png",
+  sprout: "/assets/v2/plants/clover.png",
+  leaf: "/assets/v2/plants/lotus-leaves.png",
+  clover: "/assets/v2/plants/clover.png",
+  small_tree: "/assets/v2/plants/green-tree.png",
+  pine: "/assets/v2/plants/green-tree.png",
+  four_leaf: "/assets/v2/plants/clover.png",
+  cactus: "/assets/v2/plants/cactus.png",
+  palm: "/assets/v2/plants/green-tree.png",
+  bamboo: "/assets/v2/plants/grass.png",
+  mushroom: "/assets/v2/plants/mushroom.png"
+};
 
 const legacyEmotionMap: Record<string, EmotionKey> = {
   Sad: "sadness",
@@ -1107,6 +1128,17 @@ export function getTodayLetter(): { letter: DailyLetterData; index: number } | n
 export function getDailyLetterProgress(): { claimed: number; total: number } {
   const state = getDailyLetterState();
   return { claimed: state.lastClaimedIndex + 1, total: DAILY_LETTER_COUNT };
+}
+
+export function isDailyLetterSaved(index: number): boolean {
+  try { return JSON.parse(localStorage.getItem(DAILY_LETTER_SAVED_KEY) || '[]').includes(index); } catch { return false; }
+}
+
+export function markDailyLetterSaved(index: number): void {
+  try {
+    const saved = JSON.parse(localStorage.getItem(DAILY_LETTER_SAVED_KEY) || '[]');
+    if (!saved.includes(index)) { saved.push(index); localStorage.setItem(DAILY_LETTER_SAVED_KEY, JSON.stringify(saved)); }
+  } catch {}
 }
 
 const notebookLines: Record<"en" | "zh", string[]> = {

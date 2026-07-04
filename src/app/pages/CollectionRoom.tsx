@@ -1,30 +1,10 @@
-import { Archive, Bookmark, ChevronRight, Mail, Sparkles } from "lucide-react";
+import { Bookmark, ChevronRight, Mail, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { useI18n } from "../i18n";
-import { appendWarmthEntry, canClaimDailyLetter, claimDailyLetter, createEntryId, getAllEntries, getDailyLetterProgress, getTodayLetter, GardenPlantVariant, GardenSeed, getGardenState } from "../lib/storage";
+import { appendWarmthEntry, canClaimDailyLetter, claimDailyLetter, createEntryId, gardenPlantAssets, getDailyLetterProgress, getTodayLetter, GardenSeed, getGardenState, isDailyLetterSaved, markDailyLetterSaved } from "../lib/storage";
 import { routes } from "../routes";
-
-const assets: Record<GardenPlantVariant, string> = {
-  daisy: "/assets/v2/plants/daisy.png",
-  tulip: "/assets/v2/plants/tulip.png",
-  sunflower: "/assets/v2/plants/sunflower.png",
-  cherry_blossom: "/assets/v2/plants/cherry-tree.png",
-  rose: "/assets/v2/plants/red-rose.png",
-  lavender: "/assets/v2/plants/lavender.png",
-  hibiscus: "/assets/v2/plants/pink-rose.png",
-  sprout: "/assets/v2/plants/clover.png",
-  leaf: "/assets/v2/plants/lotus-leaves.png",
-  clover: "/assets/v2/plants/clover.png",
-  small_tree: "/assets/v2/plants/green-tree.png",
-  pine: "/assets/v2/plants/green-tree.png",
-  four_leaf: "/assets/v2/plants/clover.png",
-  cactus: "/assets/v2/plants/cactus.png",
-  palm: "/assets/v2/plants/green-tree.png",
-  bamboo: "/assets/v2/plants/grass.png",
-  mushroom: "/assets/v2/plants/mushroom.png"
-};
 
 function groupPlants(seeds: GardenSeed[]) {
   const groups = new Map<GardenPlantVariant, GardenSeed[]>();
@@ -46,11 +26,7 @@ export default function CollectionRoom() {
   const [progress, setProgress] = useState(() => getDailyLetterProgress());
   const [showLetter, setShowLetter] = useState(() => !!todayLetter);
   const [justClaimed, setJustClaimed] = useState(false);
-  const [letterSaved, setLetterSaved] = useState(() => {
-    if (!todayLetter) return false;
-    const body = todayLetter.letter[language === "zh" ? "bodyZh" : "bodyEn"];
-    return getAllEntries().some((e) => e.type === "warmth" && e.gratitude.includes(body));
-  });
+  const [letterSaved, setLetterSaved] = useState(() => todayLetter ? isDailyLetterSaved(todayLetter.index) : false);
 
   useEffect(() => {
     setGarden(getGardenState());
@@ -87,6 +63,7 @@ export default function CollectionRoom() {
       gratitude: `📬 ${title}\n\n${body}`,
       success: "",
     });
+    markDailyLetterSaved(todayLetter.index);
     setLetterSaved(true);
   };
 
@@ -163,7 +140,7 @@ export default function CollectionRoom() {
                 const targetEntryId = seeds[0].entryId;
                 return (
                   <Link key={variant} to={routes.diaryLayout(targetEntryId)}>
-                    <img src={assets[variant]} alt="" />
+                    <img src={gardenPlantAssets[variant]} alt="" />
                     <h3>{t(`garden.variant.${variant}`)}</h3>
                     {seeds.length > 1 && <span className="plant-count">× {seeds.length}</span>}
                     <span className="plant-kind">{t(seedType === "warmth" ? "garden.v3.warmPlant" : "garden.v3.worryPlant")}</span>

@@ -5,19 +5,8 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { Button } from "../components/ui/button";
 import { useI18n } from "../i18n";
-import { emotionKeys, getEntryById, symptomKeys } from "../lib/storage";
+import { emotionIcons, emotionKeys, getEntryById, symptomKeys } from "../lib/storage";
 import { routes } from "../routes";
-
-const emotionIcons: Record<string, string> = {
-  sadness: "💧", anger: "🌶️", anxiety: "⚡", disappointed: "🌧️",
-  drained: "🌙", frustrated: "🐝", numbness: "◌", nothingness: "·", burnout: "🪫", emo: "🌑", loneliness: "🍂",
-  hurt: "🫧", overwhelm: "🪨", shame: "🌫️", confused: "❔",
-  rejected: "🚪", stressed: "📦", jealous: "🌵", hopeless: "🌑",
-  guilty: "🧵", fear: "🐾", empty: "☁️", sensitive: "🌼",
-  on_edge: "🌊", avoidant: "🍃", unseen: "📭", ignored: "👁️",
-  lost: "🧭", tenderness: "🫶", moved: "✨", calm: "🕊️",
-  grateful: "☀️", hopeful: "🌱"
-};
 
 const weatherEmojis: Record<string, string> = {
   sunny: "☀️", cloudy: "⛅", rainy: "🌧️", foggy: "🌫️",
@@ -285,9 +274,12 @@ export default function DiaryLayout() {
         )}
 
         {/* Action buttons */}
-        <div className="mt-6 flex justify-center">
-          <Button variant="ghost" onClick={() => navigate(routes.home)}>
+        <div className="mt-6 flex justify-center gap-3">
+          <Button variant="ghost" onClick={() => navigate(routes.pastJournals)}>
             <ArrowLeft className="h-4 w-4" />
+            {t("common.backToPastJournals")}
+          </Button>
+          <Button variant="ghost" onClick={() => navigate(routes.home)}>
             {t("common.home")}
           </Button>
         </div>
