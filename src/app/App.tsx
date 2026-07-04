@@ -4,6 +4,7 @@ import { I18nProvider } from "./i18n";
 import { isOnboardingDone, markOnboardingDone, migrateLegacyEntries } from "./lib/storage";
 import { routes } from "./routes";
 import Home from "./pages/Home";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { OnboardingOverlay } from "./components/OnboardingOverlay";
 
 const BunnyGarden = lazy(() => import("./pages/BunnyGarden"));
@@ -44,6 +45,7 @@ export default function App() {
       {!checkingOnboarding && showOnboarding && (
         <OnboardingOverlay open={showOnboarding} onComplete={handleOnboardingComplete} />
       )}
+      <ErrorBoundary>
       <Routes>
         <Route path={routes.home} element={<Home />} />
         <Route path={routes.bunnyGarden} element={<Lazy><BunnyGarden /></Lazy>} />
@@ -58,6 +60,7 @@ export default function App() {
         <Route path={routes.settings} element={<Lazy><Settings /></Lazy>} />
         <Route path="*" element={<Navigate to={routes.home} replace />} />
       </Routes>
+      </ErrorBoundary>
     </I18nProvider>
   );
 }
