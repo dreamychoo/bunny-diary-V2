@@ -1,6 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, Download, Smartphone, FileText } from "lucide-react";
 import { toPng } from "html-to-image";
-import { ArrowLeft, Download } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { Button } from "../components/ui/button";
@@ -24,6 +24,8 @@ const weatherEmojis: Record<string, string> = {
   thunder: "⛈️", starry: "✨", windy: "💨", moonlit: "🌙"
 };
 
+type CardStyle = "plain" | "retro";
+
 function formatDate(timestamp: string, language: string) {
   return new Intl.DateTimeFormat(language === "zh" ? "zh-CN" : "en", {
     year: "numeric", month: "long", day: "numeric", weekday: "long"
@@ -41,6 +43,38 @@ export default function DiaryLayout() {
   const location = useLocation();
   const cardRef = useRef<HTMLDivElement>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [cardStyle, setCardStyle] = useState<CardStyle>((location.state as { cardStyle?: CardStyle } | null)?.cardStyle ?? "plain");
+
+  const savedCal = typeof window !== 'undefined' ? (() => { try { return JSON.parse(window.localStorage.getItem('bunnyDiary_retroCal') || '{}'); } catch { return {}; } })() : {};
+  const [lcdTop, setLcdTop] = useState(savedCal.top ?? 35.8);
+  const [lcdLeft, setLcdLeft] = useState(savedCal.left ?? 25.7);
+  const [lcdWidth, setLcdWidth] = useState(savedCal.width ?? 59.5);
+  const [lcdHeight, setLcdHeight] = useState(savedCal.height ?? 36);
+  const [lcdPadTop, setLcdPadTop] = useState(savedCal.padTop ?? 10);
+  const [lcdPadBottom, setLcdPadBottom] = useState(savedCal.padBottom ?? 18);
+  const [lcdFontSize, setLcdFontSize] = useState(savedCal.fontSize ?? 14);
+  const [showCalibrate, setShowCalibrate] = useState(false);
+
+  const saveCal = (key: string, val: number) => {
+    try {
+      const cur = JSON.parse(window.localStorage.getItem('bunnyDiary_retroCal') || '{}');
+      cur[key] = val;
+      window.localStorage.setItem('bunnyDiary_retroCal', JSON.stringify(cur));
+    } catch {}
+  };
+
+  // fill defaults on first mount so switching pages doesn't lose calibration
+  useEffect(() => {
+    try {
+      const cur = JSON.parse(window.localStorage.getItem('bunnyDiary_retroCal') || '{}');
+      const defs: Record<string, number> = { left: 30, top: 21.3, width: 42.3, height: 38.4, padTop: 10, padBottom: 18, fontSize: 16 };
+      let changed = false;
+      for (const k of Object.keys(defs)) {
+        if (typeof cur[k] !== 'number') { cur[k] = defs[k]; changed = true; }
+      }
+      if (changed) window.localStorage.setItem('bunnyDiary_retroCal', JSON.stringify(cur));
+    } catch {}
+  }, []);
   const entry = id ? getEntryById(id) : null;
   const notebookQuote = (location.state as { notebookLine?: string } | null)?.notebookLine;
 
@@ -75,114 +109,187 @@ export default function DiaryLayout() {
   const warmthEntry = notebookQuote || entry?.type !== "warmth" ? null : entry;
   const isEmotion = Boolean(emotionEntry);
 
+  const retroFontSize = entry
+    ? (entry.type === "emotion" ? (entry.whatHappened?.length || 0) : (entry.type === "warmth" ? (entry.gratitude?.length || 0) : 0))
+    : (notebookQuote?.length || 0);
+  const fontSize = retroFontSize > 100 ? 10 : retroFontSize > 70 ? 11 : retroFontSize > 45 ? 12 : retroFontSize > 30 ? 13.5 : 16;
+
+  // Determine retro text content
+  let retroText = "";
+  if (notebookQuote) {
+    retroText = notebookQuote;
+  } else if (isEmotion && emotionEntry?.whatHappened) {
+    retroText = emotionEntry.whatHappened;
+  } else if (warmthEntry?.gratitude) {
+    retroText = warmthEntry.gratitude;
+  } else {
+    retroText = "⋯";
+  }
+
   return (
     <AppShell title={t("detail.diaryCard")}>
       <div className="mx-auto max-w-[420px]">
         {saveError && <p className="mb-4 rounded-[16px] border border-[#e7c7c2] bg-[#fff5f3] px-4 py-3 text-sm leading-6 text-[#8a615a]">{saveError}</p>}
-        <div
-          ref={cardRef}
-          className="overflow-hidden rounded-[12px] bg-[var(--bg)] p-14 pb-12 shadow-[0_8px_40px_rgba(75,58,52,0.08)]"
-          style={{ fontFamily: "Inter, Nunito, system-ui, sans-serif" }}
-        >
-          {/* Decorative top */}
-          <div className="flex justify-center">
-            <img src="/assets/v2/rabbits/holding-heart.png" alt="" className="h-20 w-20 object-contain" />
-          </div>
 
-          {/* Date + Weather or Notebook Line */}
-          {notebookQuote ? (
-            <p className="mt-4 text-center text-[13px] font-semibold tracking-wide text-[var(--muted)]">{new Date().toLocaleDateString(language === "zh" ? "zh-CN" : "en", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
-          ) : (
-            <div className="mt-4 flex items-center justify-center gap-2">
-              <p className="text-[13px] font-semibold tracking-wide text-[var(--muted)]">
-                {formatDate(entry!.timestamp, language)}
-              </p>
-              {warmthEntry?.weather && (
-                <span className="text-xl">{weatherEmojis[warmthEntry.weather] || "☀️"}</span>
-              )}
-            </div>
-          )}
-
-          {/* Divider */}
-          <div className="mx-auto my-4 h-px w-12 bg-[var(--muted)]/40" />
-
-          {notebookQuote ? (
-            <div className="mt-6 border-l-2 border-[rgba(255,111,134,0.25)] pl-5">
-              <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>{notebookQuote}</p>
-            </div>
-          ) : isEmotion ? (
-            <>
-              {/* Emotion row: icon + name + intensity inline */}
-              {emotionEntry && emotionEntry.emotions.length > 0 && (
-                <div className="mt-2 flex items-center justify-center gap-2">
-                  <span className="text-lg">{emotionIcons[emotionEntry.emotions[0]] || "💧"}</span>
-                  <span className="rounded-full bg-[var(--pink-soft)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--pink)]">
-                    {optionLabel(emotionEntry.emotions[0], "emotionKey", emotionKeys, t)}
-                  </span>
-                  {/* Symptoms inline */}
-                  {emotionEntry && emotionEntry.symptoms.length > 0 && (
-                    <span className="rounded-full bg-[#f4f0fb] px-2.5 py-0.5 text-[10px] font-medium text-[#6f6486]">
-                      {emotionEntry.symptoms.map((s) => optionLabel(s, "symptomKey", symptomKeys, t)).join(" · ")}
-                    </span>
-                  )}
-                  {emotionEntry.intensity > 0 && (
-                    <div className="flex gap-0.5">
-                      {Array.from({ length: 10 }, (_, i) => (
-                        <span key={i} className={`block h-2 w-2 rounded-full ${i < emotionEntry.intensity ? "bg-[var(--pink)]" : "bg-[var(--muted)]/30"}`} />
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* What happened */}
-              {emotionEntry?.whatHappened && (
-                <div className="mt-6 border-l-2 border-[rgba(255,111,134,0.25)] pl-5">
-                  <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                    {emotionEntry.whatHappened}
-                  </p>
-                </div>
-              )}
-
-              {/* Childhood */}
-              {emotionEntry?.childhood && (
-                <div className="mt-4 rounded-[14px] bg-[#f3f0fb]/70 px-4 py-3">
-                  <p className="text-[11px] font-semibold text-[#8177a4]">
-                    {t("detail.whatNeeded")}
-                  </p>
-                  <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#5f5149]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>{emotionEntry.childhood}</p>
-                </div>
-              )}
-            </>
-          ) : (
-            <>
-              {/* Gratitude */}
-              {warmthEntry?.gratitude && (
-                <div className="mt-6 border-l-2 border-[rgba(255,111,134,0.25)] pl-5">
-                  <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                    {warmthEntry.gratitude}
-                  </p>
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Brand footer */}
-          <div className="mx-auto my-4 h-px w-12 bg-[var(--muted)]/40" />
-          <p className="text-center font-hand text-[12px] text-[var(--muted)]">
-            {t("app.title")} · {t("app.tagline")}
-          </p>
+        {/* Card style toggle */}
+        <div className="card-style-toggle">
+          <button className={`card-style-btn${cardStyle === "plain" ? " active" : ""}`} onClick={() => setCardStyle("plain")}>
+            <FileText /> {t("detail.stylePlain")}
+          </button>
+          <button className={`card-style-btn${cardStyle === "retro" ? " active" : ""}`} onClick={() => setCardStyle("retro")}>
+            <Smartphone /> {t("detail.styleRetro")}
+          </button>
         </div>
 
+        {cardStyle === "plain" ? (
+          <>
+            {/* Plain card */}
+            <div
+              ref={cardRef}
+              className="overflow-hidden rounded-[12px] bg-[var(--bg)] p-14 pb-12 shadow-[0_8px_40px_rgba(75,58,52,0.08)]"
+              style={{ fontFamily: "Inter, Nunito, system-ui, sans-serif" }}
+            >
+              <div className="flex justify-center">
+                <img src="/assets/v2/rabbits/holding-heart.png" alt="" className="h-20 w-20 object-contain" />
+              </div>
+
+              {notebookQuote ? (
+                <p className="mt-4 text-center text-[13px] font-semibold tracking-wide text-[var(--muted)]">{new Date().toLocaleDateString(language === "zh" ? "zh-CN" : "en", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
+              ) : (
+                <div className="mt-4 flex items-center justify-center gap-2">
+                  <p className="text-[13px] font-semibold tracking-wide text-[var(--muted)]">
+                    {formatDate(entry!.timestamp, language)}
+                  </p>
+                  {warmthEntry?.weather && (
+                    <span className="text-xl">{weatherEmojis[warmthEntry.weather] || "☀️"}</span>
+                  )}
+                </div>
+              )}
+
+              <div className="mx-auto my-4 h-px w-12 bg-[var(--muted)]/40" />
+
+              {notebookQuote ? (
+                <div className="mt-6 border-l-2 border-[rgba(255,111,134,0.25)] pl-5">
+                  <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>{notebookQuote}</p>
+                </div>
+              ) : isEmotion ? (
+                <>
+                  {emotionEntry && emotionEntry.emotions.length > 0 && (
+                    <div className="mt-2 flex items-center justify-center gap-2">
+                      <span className="text-lg">{emotionIcons[emotionEntry.emotions[0]] || "💧"}</span>
+                      <span className="rounded-full bg-[var(--pink-soft)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--pink)]">
+                        {optionLabel(emotionEntry.emotions[0], "emotionKey", emotionKeys, t)}
+                      </span>
+                      {emotionEntry && emotionEntry.symptoms.length > 0 && (
+                        <span className="rounded-full bg-[#f4f0fb] px-2.5 py-0.5 text-[10px] font-medium text-[#6f6486]">
+                          {emotionEntry.symptoms.map((s) => optionLabel(s, "symptomKey", symptomKeys, t)).join(" · ")}
+                        </span>
+                      )}
+                      {emotionEntry.intensity > 0 && (
+                        <div className="flex gap-0.5">
+                          {Array.from({ length: 10 }, (_, i) => (
+                            <span key={i} className={`block h-2 w-2 rounded-full ${i < emotionEntry.intensity ? "bg-[var(--pink)]" : "bg-[var(--muted)]/30"}`} />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {emotionEntry?.whatHappened && (
+                    <div className="mt-6 border-l-2 border-[rgba(255,111,134,0.25)] pl-5">
+                      <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                        {emotionEntry.whatHappened}
+                      </p>
+                    </div>
+                  )}
+                  {emotionEntry?.childhood && (
+                    <div className="mt-4 rounded-[14px] bg-[#f3f0fb]/70 px-4 py-3">
+                      <p className="text-[11px] font-semibold text-[#8177a4]">{t("detail.whatNeeded")}</p>
+                      <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#5f5149]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>{emotionEntry.childhood}</p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  {warmthEntry?.gratitude && (
+                    <div className="mt-6 border-l-2 border-[rgba(255,111,134,0.25)] pl-5">
+                      <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                        {warmthEntry.gratitude}
+                      </p>
+                    </div>
+                  )}
+                </>
+              )}
+
+              <div className="mx-auto my-4 h-px w-12 bg-[var(--muted)]/40" />
+              <p className="text-center font-hand text-[12px] text-[var(--muted)]">
+                {t("app.title")} · {t("app.tagline")}
+              </p>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Retro phone card */}
+            <div
+              ref={cardRef}
+              className="card-retro-phone"
+            >
+              <img className="retro-bg" src="/assets/v2/frames/retro-phone.png" alt="" />
+              <div className={`retro-lcd${showCalibrate ? " calibrate" : ""}`} style={{"--retro-font-size": `${lcdFontSize}px`, left: `${lcdLeft}%`, top: `${lcdTop}%`, width: `${lcdWidth}%`, height: `${lcdHeight}%`, paddingTop: `${lcdPadTop}px`, paddingBottom: `${lcdPadBottom}px`, justifyContent: showCalibrate ? "flex-start" : "center"} as React.CSSProperties}>
+                <div className="retro-title">BUNNY DIARY</div>
+                <div className="retro-divider">⋯⋯ ᕱ⑅ᕱ ⋯⋯</div>
+                <div className="retro-quote"><p>{retroText}</p></div>
+                <div className="retro-footer">
+                  <span>{new Date().toISOString().slice(0, 10)}</span>
+                  <span className="retro-save-label">SAVE</span>
+                </div>
+              </div>
+            </div>
+            {/* Calibrate controls for retro mode */}
+            <div className="retro-controls">
+              <div className="retro-ctrl-row">
+                <label>左</label>
+                <input type="range" min="0" max="60" step="0.1" value={lcdLeft} onChange={e => { saveCal('left', +e.target.value); setLcdLeft(+e.target.value); }} />
+                <span className="retro-val">{lcdLeft}</span>
+              </div>
+              <div className="retro-ctrl-row">
+                <label>上</label>
+                <input type="range" min="0" max="70" step="0.1" value={lcdTop} onChange={e => { saveCal('top', +e.target.value); setLcdTop(+e.target.value); }} />
+                <span className="retro-val">{lcdTop}</span>
+              </div>
+              <div className="retro-ctrl-row">
+                <label>宽</label>
+                <input type="range" min="20" max="90" step="0.1" value={lcdWidth} onChange={e => { saveCal('width', +e.target.value); setLcdWidth(+e.target.value); }} />
+                <span className="retro-val">{lcdWidth}</span>
+              </div>
+              <div className="retro-ctrl-row">
+                <label>高</label>
+                <input type="range" min="15" max="80" step="0.1" value={lcdHeight} onChange={e => { saveCal('height', +e.target.value); setLcdHeight(+e.target.value); }} />
+                <span className="retro-val">{lcdHeight}</span>
+              </div>
+              <div className="retro-ctrl-row">
+                <label>字号</label>
+                <input type="range" min="8" max="22" step="0.5" value={lcdFontSize} onChange={e => { saveCal('fontSize', +e.target.value); setLcdFontSize(+e.target.value); }} />
+                <span className="retro-val">{lcdFontSize}</span>
+              </div>
+              <button className="retro-save-inline" onClick={handleSave}>
+                <Download size={14} /> {t("detail.saveImage")}
+              </button>
+              <div className="retro-ctrl-flex">
+                <label className="retro-ctrl-check">
+                  <input type="checkbox" checked={showCalibrate} onChange={e => setShowCalibrate(e.target.checked)} />
+                  校准框
+                </label>
+                <button className="retro-reset-btn" onClick={() => { const v = { left: 30, top: 21.3, width: 42.3, height: 38.4, padTop: 10, padBottom: 18, fontSize: 16 }; window.localStorage.setItem('bunnyDiary_retroCal', JSON.stringify(v)); setLcdLeft(v.left); setLcdTop(v.top); setLcdWidth(v.width); setLcdHeight(v.height); setLcdPadTop(v.padTop); setLcdPadBottom(v.padBottom); }}>重置</button>
+              </div>
+            </div>
+          </>
+        )}
+
         {/* Action buttons */}
-        <div className="mt-6 flex justify-between gap-3">
+        <div className="mt-6 flex justify-center">
           <Button variant="ghost" onClick={() => navigate(routes.home)}>
             <ArrowLeft className="h-4 w-4" />
             {t("common.home")}
-          </Button>
-          <Button variant="primary" onClick={handleSave}>
-            <Download className="h-4 w-4" />
-            {t("detail.saveImage")}
           </Button>
         </div>
       </div>

@@ -76,15 +76,31 @@ export default function Home() {
           ))}
         </section>
 
-        <section className="app-bunny-says cursor-pointer mt-3" onClick={() => {
-            const tempId = createEntryId("warmth");
-            navigate(routes.diaryLayout(tempId), { state: { notebookLine } });
-          }}>
-          <div>
-            <span>{language === "zh" ? "小兔说" : "Bunny Says"}</span>
-            <p>{notebookLine}</p>
+        <section className="app-bunny-says mt-3">
+          <div className="bunny-says-content" onClick={() => {
+              const tempId = createEntryId("warmth");
+              navigate(routes.diaryLayout(tempId), { state: { notebookLine, cardStyle: "plain" } });
+            }}>
+            <div>
+              <span className="bunny-says-badge"><img src="/assets/v2/items/pink-heart.png" alt="" className="bunny-says-icon" />{language === "zh" ? "小兔说" : "Bunny Says"}</span>
+              <p>{notebookLine}</p>
+            </div>
+            <img src="/assets/v2/rabbits/sleeping.png" alt="" />
           </div>
-          <img src="/assets/v2/rabbits/sleeping.png" alt="" />
+          <div className="bunny-says-actions">
+            <button onClick={() => {
+              const tempId = createEntryId("warmth");
+              navigate(routes.diaryLayout(tempId), { state: { notebookLine, cardStyle: "plain" } });
+            }}>
+              {language === "zh" ? "📝 小兔便条" : "📝 Bunny Note"}
+            </button>
+            <button onClick={() => {
+              const tempId = createEntryId("warmth");
+              navigate(routes.diaryLayout(tempId), { state: { notebookLine, cardStyle: "retro" } });
+            }}>
+              {language === "zh" ? "📱 小兔手机" : "📱 Bunny Phone"}
+            </button>
+          </div>
         </section>
       </div>
     </AppShell>

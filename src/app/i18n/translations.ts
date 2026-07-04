@@ -324,6 +324,9 @@ export const translations = {
     "detail.generating": "Saving…",
     "detail.whatNeeded": "What I needed",
     "detail.saveFailed": "Failed to save image. Please try again.",
+    "detail.cardStyle": "Card Style",
+    "detail.stylePlain": "小兔便条",
+    "detail.styleRetro": "Bunny Phone",
 
     "garden.title": "Bunny Garden",
     "garden.subtitle": "Some feelings bloom into flowers. Some grow into trees.",
@@ -873,6 +876,9 @@ export const translations = {
     "detail.generating": "生成中…",
     "detail.whatNeeded": "这一刻最需要的",
     "detail.saveFailed": "图片保存失败，请重试",
+    "detail.cardStyle": "卡片样式",
+    "detail.stylePlain": "小兔便条",
+    "detail.styleRetro": "小兔手机",
 
     "garden.title": "兔兔花园",
     "garden.subtitle": "有些心情开成花，有些慢慢长成树。",
