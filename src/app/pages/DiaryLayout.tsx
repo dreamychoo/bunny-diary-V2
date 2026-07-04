@@ -46,13 +46,13 @@ export default function DiaryLayout() {
   const [cardStyle, setCardStyle] = useState<CardStyle>((location.state as { cardStyle?: CardStyle } | null)?.cardStyle ?? "plain");
 
   const savedCal = typeof window !== 'undefined' ? (() => { try { return JSON.parse(window.localStorage.getItem('bunnyDiary_retroCal') || '{}'); } catch { return {}; } })() : {};
-  const [lcdTop, setLcdTop] = useState(savedCal.top ?? 35.8);
-  const [lcdLeft, setLcdLeft] = useState(savedCal.left ?? 25.7);
-  const [lcdWidth, setLcdWidth] = useState(savedCal.width ?? 59.5);
-  const [lcdHeight, setLcdHeight] = useState(savedCal.height ?? 36);
+  const [lcdTop, setLcdTop] = useState(savedCal.top ?? 20.4);
+  const [lcdLeft, setLcdLeft] = useState(savedCal.left ?? 26.6);
+  const [lcdWidth, setLcdWidth] = useState(savedCal.width ?? 48);
+  const [lcdHeight, setLcdHeight] = useState(savedCal.height ?? 40.9);
   const [lcdPadTop, setLcdPadTop] = useState(savedCal.padTop ?? 10);
   const [lcdPadBottom, setLcdPadBottom] = useState(savedCal.padBottom ?? 18);
-  const [lcdFontSize, setLcdFontSize] = useState(savedCal.fontSize ?? 14);
+  const [lcdFontSize, setLcdFontSize] = useState(savedCal.fontSize ?? 16);
   const [showCalibrate, setShowCalibrate] = useState(false);
 
   const saveCal = (key: string, val: number) => {
@@ -94,12 +94,20 @@ export default function DiaryLayout() {
     if (btn) { btn.disabled = true; btn.textContent = t("detail.generating"); }
     try {
       const dataUrl = await toPng(cardRef.current, { backgroundColor: "#fdf8f2", pixelRatio: 2 });
-      const link = document.createElement("a");
-      link.download = `diary-card-${Date.now()}.png`;
-      link.href = dataUrl;
-      link.click();
-    } catch {
-      setSaveError(t("detail.saveFailed"));
+      const blob = await (await fetch(dataUrl)).blob();
+      const file = new File([blob], `diary-card-${Date.now()}.png`, { type: "image/png" });
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: t("detail.saveImage") });
+      } else {
+        const link = document.createElement("a");
+        link.download = file.name;
+        link.href = dataUrl;
+        link.click();
+      }
+    } catch (e: any) {
+      if (e?.name !== "AbortError") {
+        setSaveError(t("detail.saveFailed"));
+      }
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = t("detail.saveImage"); }
     }
@@ -235,13 +243,13 @@ export default function DiaryLayout() {
             >
               <img className="retro-bg" src="/assets/v2/frames/retro-phone.png" alt="" />
               <div className={`retro-lcd${showCalibrate ? " calibrate" : ""}`} style={{"--retro-font-size": `${lcdFontSize}px`, left: `${lcdLeft}%`, top: `${lcdTop}%`, width: `${lcdWidth}%`, height: `${lcdHeight}%`, paddingTop: `${lcdPadTop}px`, paddingBottom: `${lcdPadBottom}px`, justifyContent: showCalibrate ? "flex-start" : "center"} as React.CSSProperties}>
-                <div className="retro-title">BUNNY DIARY</div>
-                <div className="retro-divider">⋯⋯ ᕱ⑅ᕱ ⋯⋯</div>
                 <div className="retro-quote"><p>{retroText}</p></div>
-                <div className="retro-footer">
-                  <span>{new Date().toISOString().slice(0, 10)}</span>
-                  <span className="retro-save-label">SAVE</span>
-                </div>
+              </div>
+              <div className="retro-title">BUNNY DIARY</div>
+              <div className="retro-divider">⋯⋯ ᕱ⑅ᕱ ⋯⋯</div>
+              <div className="retro-footer">
+                <span>{new Date().toISOString().slice(0, 10)}</span>
+                <span className="retro-save-label">SAVE</span>
               </div>
             </div>
             {/* Calibrate controls for retro mode */}
@@ -258,7 +266,7 @@ export default function DiaryLayout() {
               </div>
               <div className="retro-ctrl-row">
                 <label>宽</label>
-                <input type="range" min="20" max="90" step="0.1" value={lcdWidth} onChange={e => { saveCal('width', +e.target.value); setLcdWidth(+e.target.value); }} />
+                <input type="range" min="20" max="48" step="0.1" value={lcdWidth} onChange={e => { saveCal('width', +e.target.value); setLcdWidth(+e.target.value); }} />
                 <span className="retro-val">{lcdWidth}</span>
               </div>
               <div className="retro-ctrl-row">
@@ -279,7 +287,7 @@ export default function DiaryLayout() {
                   <input type="checkbox" checked={showCalibrate} onChange={e => setShowCalibrate(e.target.checked)} />
                   校准框
                 </label>
-                <button className="retro-reset-btn" onClick={() => { const v = { left: 30, top: 21.3, width: 42.3, height: 38.4, padTop: 10, padBottom: 18, fontSize: 16 }; window.localStorage.setItem('bunnyDiary_retroCal', JSON.stringify(v)); setLcdLeft(v.left); setLcdTop(v.top); setLcdWidth(v.width); setLcdHeight(v.height); setLcdPadTop(v.padTop); setLcdPadBottom(v.padBottom); }}>重置</button>
+                <button className="retro-reset-btn" onClick={() => { const v = { left: 26.6, top: 20.4, width: 48, height: 40.9, padTop: 10, padBottom: 18, fontSize: 16 }; window.localStorage.setItem('bunnyDiary_retroCal', JSON.stringify(v)); setLcdLeft(v.left); setLcdTop(v.top); setLcdWidth(v.width); setLcdHeight(v.height); setLcdPadTop(v.padTop); setLcdPadBottom(v.padBottom); }}>重置</button>
               </div>
             </div>
           </>
