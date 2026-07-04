@@ -19,7 +19,10 @@ const Settings = lazy(() => import("./pages/Settings"));
 
 function Lazy({ children }: { children: React.ReactNode }) {
   return (
-    <Suspense fallback={<div className="mx-auto mt-20 max-w-[200px] text-center font-display text-sm text-[#8d817a]">🐇</div>}>
+    <Suspense fallback={<div className="mx-auto mt-32 flex max-w-[220px] flex-col items-center gap-3 text-center">
+      <span className="text-4xl opacity-40">🐇</span>
+      <p className="font-display text-sm leading-relaxed text-[var(--muted)]">加载中，请耐心等待～</p>
+    </div>}>
       {children}
     </Suspense>
   );
@@ -46,7 +49,7 @@ export default function App() {
         <OnboardingOverlay open={showOnboarding} onComplete={handleOnboardingComplete} />
       )}
       <ErrorBoundary>
-      <Routes>
+        <Routes>
         <Route path={routes.home} element={<Home />} />
         <Route path={routes.bunnyGarden} element={<Lazy><BunnyGarden /></Lazy>} />
         <Route path={routes.collection} element={<Lazy><CollectionRoom /></Lazy>} />
