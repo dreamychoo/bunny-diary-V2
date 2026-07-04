@@ -786,7 +786,7 @@ export const translations = {
     "home.title": "今天心里最需要什么？",
     "home.subtitle": "先把感受放下来，也把一点点暖意留下来。日记会替你记住。",
     "home.feelingDownTitle": "今天有点难受？",
-    "home.feelingDownSubtitle": "想聊聊吗？兔兔会认真听你说。",
+    "home.feelingDownSubtitle": "有心事吗？兔兔会认真听你说。",
     "home.emotionBunnyNote": "今天有点重吗？我在听。",
     "home.smallJoysTitle": "今日小暖光",
     "home.smallJoysSubtitle": "把一点点好的时刻收起来。",
@@ -827,7 +827,7 @@ export const translations = {
     "home.greeting.evening": "晚上好",
     "home.greeting.night": "夜深了",
 
-    "emotion.title": "想聊聊吗？",
+    "emotion.title": "有心事吗？",
     "emotion.subtitle": "不用急着改变它。先看见它。",
     "emotion.emotionsLabel": "今天更接近哪种感觉？",
     "emotion.symptomsLabel": "身体在告诉你什么？",
@@ -852,7 +852,7 @@ export const translations = {
     "emotion.feedback.saved_4": "今天辛苦了。",
 
     "daily.title": "随便写写",
-    "daily.subtitle": "不用想太多，把今天放下来就好。",
+    "daily.subtitle": "留下今天的瞬间吧。",
     "daily.mood": "今天心里天气怎么样？",
     "daily.weather": "心里天气",
     "daily.note": "心里有什么想写的？",

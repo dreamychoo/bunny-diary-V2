@@ -39,11 +39,7 @@ export default function DiaryLayout() {
   // Auto-fit font: find size that fits LCD, then give 5px breathing room
   const [autoFitPx, setAutoFitPx] = useState(16);
   const [fontOverride, setFontOverride] = useState<number | null>(null);
-  const retroLen = entry
-    ? (entry.type === "emotion" ? (entry.whatHappened?.length || 0) : (entry.type === "warmth" ? (entry.gratitude?.length || 0) : 0))
-    : (notebookQuote?.length || 0);
-  const aestheticCap = retroLen > 50 ? 10 : retroLen > 35 ? 13.5 : 16;
-  const effectiveFontSize = fontOverride ?? Math.min(aestheticCap, Math.max(6, autoFitPx - 5));
+  const [retroEdit, setRetroEdit] = useState<string | null>(null);
 
   const [lcdFontSize, setLcdFontSize] = useState(16);
   // Sync slider with effective size when no manual override
@@ -113,9 +109,12 @@ export default function DiaryLayout() {
   const emotionEntry = notebookQuote || entry?.type !== "emotion" ? null : entry;
   const warmthEntry = notebookQuote || entry?.type !== "warmth" ? null : entry;
   const isEmotion = Boolean(emotionEntry);
-  // Determine retro text content
+
+  // Retro text content (editable overrides original)
   let retroText = "";
-  if (notebookQuote) {
+  if (retroEdit !== null) {
+    retroText = retroEdit;
+  } else if (notebookQuote) {
     retroText = notebookQuote;
   } else if (isEmotion && emotionEntry?.whatHappened) {
     retroText = emotionEntry.whatHappened;
@@ -124,6 +123,9 @@ export default function DiaryLayout() {
   } else {
     retroText = "⋯";
   }
+  const retroLen = retroText.length;
+  const aestheticCap = retroLen > 50 ? 10 : retroLen > 35 ? 13.5 : 16;
+  const effectiveFontSize = fontOverride ?? Math.min(aestheticCap, Math.max(6, autoFitPx - 5));
 
   return (
     <AppShell title={t("detail.diaryCard")}>
@@ -169,7 +171,7 @@ export default function DiaryLayout() {
 
               {notebookQuote ? (
                 <div className="mt-6 border-l-2 border-[rgba(255,111,134,0.25)] pl-5">
-                  <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>{notebookQuote}</p>
+                  <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }} contentEditable suppressContentEditableWarning>{notebookQuote}</p>
                 </div>
               ) : isEmotion ? (
                 <>
@@ -195,7 +197,7 @@ export default function DiaryLayout() {
                   )}
                   {emotionEntry?.whatHappened && (
                     <div className="mt-6 border-l-2 border-[rgba(255,111,134,0.25)] pl-5">
-                      <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                      <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }} contentEditable suppressContentEditableWarning>
                         {emotionEntry.whatHappened}
                       </p>
                     </div>
@@ -211,7 +213,7 @@ export default function DiaryLayout() {
                 <>
                   {warmthEntry?.gratitude && (
                     <div className="mt-6 border-l-2 border-[rgba(255,111,134,0.25)] pl-5">
-                      <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                      <p className="whitespace-pre-wrap text-[15px] leading-8 text-[#4a3b34]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }} contentEditable suppressContentEditableWarning>
                         {warmthEntry.gratitude}
                       </p>
                     </div>
@@ -223,6 +225,11 @@ export default function DiaryLayout() {
               <p className="text-center font-hand text-[12px] text-[var(--muted)]">
                 {t("app.title")} · {t("app.tagline")}
               </p>
+            </div>
+            <div className="mt-4 flex justify-center">
+              <button className="retro-save-inline" onClick={handleSave}>
+                <Download size={14} /> {t("detail.saveImage")}
+              </button>
             </div>
           </>
         ) : (
@@ -243,7 +250,7 @@ export default function DiaryLayout() {
             >
               <img className="retro-bg" src="/assets/v2/frames/retro-phone.png" alt="" />
               <div className="retro-lcd" style={{"--retro-font-size": `${effectiveFontSize}px`} as React.CSSProperties}>
-                <div className="retro-quote" ref={quoteRef}><p>{retroText}</p></div>
+                <div className="retro-quote" ref={quoteRef}><p contentEditable suppressContentEditableWarning onBlur={e => setRetroEdit(e.currentTarget.textContent)}>{retroText}</p></div>
               </div>
               <div className="retro-title">BUNNY DIARY</div>
               <div className="retro-divider">⋯⋯ ᕱ⑅ᕱ ⋯⋯</div>
@@ -267,7 +274,7 @@ export default function DiaryLayout() {
                 <Download size={14} /> {t("detail.saveImage")}
               </button>
               <div className="retro-ctrl-flex">
-                <button className="retro-reset-btn" onClick={() => { setFontOverride(null); }}>{t("detail.reset")}</button>
+                <button className="retro-reset-btn" onClick={() => { setFontOverride(null); setRetroEdit(null); }}>{t("detail.reset")}</button>
               </div>
             </div>
           </>
