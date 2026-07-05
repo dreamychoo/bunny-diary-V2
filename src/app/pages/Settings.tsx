@@ -1,5 +1,6 @@
 import { FormEvent, useRef, useState } from "react";
-import { Download, Save, Trash2 } from "lucide-react";
+import { ArrowLeft, Download, Save, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
@@ -8,8 +9,10 @@ import { Label } from "../components/ui/label";
 import { useI18n } from "../i18n";
 import { languageNames, Language } from "../i18n/translations";
 import { clearAllDiaryData, exportDiaryData, getSettings, importDiaryData, saveSettings } from "../lib/storage";
+import { routes } from "../routes";
 
 export default function Settings() {
+  const navigate = useNavigate();
   const { language, setLanguage, t } = useI18n();
   const [bunnyName, setBunnyName] = useState(() => getSettings().bunnyName);
   const [message, setMessage] = useState("");
@@ -27,16 +30,20 @@ export default function Settings() {
     const date = new Date().toISOString().slice(0, 10);
     // Download Markdown (readable)
     const mdBlob = new Blob([`# 小兔日记 · 数据导出\n\n导出时间：${date}\n\n---\n\n${md}`], { type: "text/markdown;charset=utf-8" });
+    const mdUrl = URL.createObjectURL(mdBlob);
     const mdLink = document.createElement("a");
-    mdLink.href = URL.createObjectURL(mdBlob);
+    mdLink.href = mdUrl;
     mdLink.download = `bunny-diary-${date}.md`;
     mdLink.click();
+    URL.revokeObjectURL(mdUrl);
     // Also offer JSON (for re-import)
     const jsonBlob = new Blob([JSON.stringify(json, null, 2)], { type: "application/json" });
+    const jsonUrl = URL.createObjectURL(jsonBlob);
     const jsonLink = document.createElement("a");
-    jsonLink.href = URL.createObjectURL(jsonBlob);
+    jsonLink.href = jsonUrl;
     jsonLink.download = `bunny-diary-${date}.json`;
     jsonLink.click();
+    URL.revokeObjectURL(jsonUrl);
   }
 
   function handleClear() {
@@ -46,10 +53,12 @@ export default function Settings() {
       if (md.trim()) {
         const date = new Date().toISOString().slice(0, 10);
         const backup = new Blob([`# 小兔日记 · 数据备份（清除前自动导出）\n\n导出时间：${date}\n\n---\n\n${md}`], { type: "text/markdown;charset=utf-8" });
+        const url = URL.createObjectURL(backup);
         const link = document.createElement("a");
-        link.href = URL.createObjectURL(backup);
+        link.href = url;
         link.download = `bunny-diary-backup-${date}.md`;
         link.click();
+        URL.revokeObjectURL(url);
       }
     } catch { /* backup best-effort */ }
     clearAllDiaryData();
@@ -145,6 +154,12 @@ export default function Settings() {
             )}
           </div>
         </Card>
+      </div>
+      <div className="mt-8 flex justify-center">
+        <Button variant="ghost" onClick={() => navigate(routes.home)}>
+          <ArrowLeft className="h-4 w-4" />
+          {t("common.home")}
+        </Button>
       </div>
     </AppShell>
   );

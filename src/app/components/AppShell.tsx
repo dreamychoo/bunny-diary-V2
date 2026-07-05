@@ -57,7 +57,7 @@ export function AppShell({ children, title, subtitle, headerMascotVariant = "rea
   return (
     <main className={cn("relative min-h-[100dvh] overflow-x-clip px-4 pb-[92px] text-[var(--ink)] sm:px-6 sm:pb-[100px]", isSettings && "pt-0 sm:pt-0", !isSettings && "pt-1 sm:pt-2")}>
       {isSettings && (
-        <Link to={routes.home} className="absolute left-4 top-3 z-20 grid h-10 w-10 place-items-center rounded-full border border-[#d9cdc5]/50 bg-white/82 text-[#6f6158] shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition hover:bg-white active:scale-[0.98] sm:left-5 sm:top-4 sm:h-11 sm:w-11" aria-label={t("common.home")}>
+        <Link to={routes.home} className="absolute right-4 top-3 z-20 grid h-10 w-10 place-items-center rounded-full border border-[#d9cdc5]/50 bg-white/82 text-[#6f6158] shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition hover:bg-white active:scale-[0.98] sm:right-5 sm:top-4 sm:h-11 sm:w-11" aria-label={t("common.home")}>
           <HomeIcon className="h-5 w-5" />
         </Link>
       )}

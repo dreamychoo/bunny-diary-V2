@@ -33,6 +33,7 @@ export default function DiaryLayout() {
   const location = useLocation();
   const cardRef = useRef<HTMLDivElement>(null);
   const quoteRef = useRef<HTMLDivElement>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const entry = id ? getEntryById(id) : null;
   const notebookQuote = (location.state as { notebookLine?: string } | null)?.notebookLine;
 
@@ -82,27 +83,30 @@ export default function DiaryLayout() {
   }
 
   const handleSave = async () => {
-    if (!cardRef.current) return;
-    const btn = document.activeElement as HTMLButtonElement | null;
-    if (btn) { btn.disabled = true; btn.textContent = t("detail.generating"); }
+    if (isSaving) return;
+    setIsSaving(true);
+    setSaveError(null);
     try {
       const dataUrl = await toPng(cardRef.current, { backgroundColor: "#fdf8f2", pixelRatio: 2 });
       const blob = await (await fetch(dataUrl)).blob();
       const file = new File([blob], `diary-card-${Date.now()}.png`, { type: "image/png" });
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
         await navigator.share({ files: [file], title: t("detail.saveImage") });
-      } else {
+      } else if (!isIOS) {
         const link = document.createElement("a");
         link.download = file.name;
         link.href = dataUrl;
         link.click();
+      } else {
+        document.body.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:100dvh;background:#000;padding:16px;"><img src="${dataUrl}" style="max-width:100%;max-height:100%;object-fit:contain;" /></div>`;
       }
     } catch (e: any) {
       if (e?.name !== "AbortError") {
         setSaveError(t("detail.saveFailed"));
       }
     } finally {
-      if (btn) { btn.disabled = false; btn.textContent = t("detail.saveImage"); }
+      setIsSaving(false);
     }
   };
 
@@ -227,7 +231,7 @@ export default function DiaryLayout() {
               </p>
             </div>
             <div className="mt-4 flex justify-center">
-              <button className="retro-save-inline" onClick={handleSave}>
+              <button className="retro-save-inline" onClick={handleSave} disabled={isSaving}>
                 <Download size={14} /> {t("detail.saveImage")}
               </button>
             </div>
@@ -270,7 +274,7 @@ export default function DiaryLayout() {
                 <input type="range" min="6" max="22" step="0.5" value={lcdFontSize} onChange={e => { setFontOverride(+e.target.value); setLcdFontSize(+e.target.value); }} />
                 <span className="retro-val">{lcdFontSize}</span>
               </div>
-              <button className="retro-save-inline" onClick={handleSave}>
+              <button className="retro-save-inline" onClick={handleSave} disabled={isSaving}>
                 <Download size={14} /> {t("detail.saveImage")}
               </button>
               <div className="retro-ctrl-flex">

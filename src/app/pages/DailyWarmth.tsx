@@ -107,6 +107,11 @@ export default function DailyWarmth() {
       return;
     }
 
+    if (!note.trim()) {
+      setSaveError(language === "zh" ? "写点什么再保存吧～" : "Write something before saving ~");
+      return;
+    }
+
     setIsSaving(true);
 
     const entry: WarmthEntry = {
