@@ -41,6 +41,20 @@ export default function DiaryLayout() {
   const [autoFitPx, setAutoFitPx] = useState(16);
   const [fontOverride, setFontOverride] = useState<number | null>(null);
   const [retroEdit, setRetroEdit] = useState<string | null>(null);
+  const [cardImgLoaded, setCardImgLoaded] = useState(false);
+  const cardImgRef = useRef<HTMLImageElement | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [cardStyle, setCardStyle] = useState<CardStyle>((location.state as { cardStyle?: CardStyle } | null)?.cardStyle ?? "plain");
+
+  // When card style switches to retro, hide content until the background image loads
+  useLayoutEffect(() => {
+    if (cardStyle !== "retro") { setCardImgLoaded(false); return; }
+    const img = cardImgRef.current;
+    if (!img) return;
+    if (img.complete) { setCardImgLoaded(true); return; }
+    img.onload = () => setCardImgLoaded(true);
+    return () => { img.onload = null; };
+  }, [cardStyle]);
 
   const [lcdFontSize, setLcdFontSize] = useState(16);
   // Sync slider with effective size when no manual override
@@ -69,8 +83,6 @@ export default function DiaryLayout() {
     const fitted = Math.round(lo * 2) / 2;
     if (fitted !== autoFitPx) setAutoFitPx(fitted);
   });
-  const [saveError, setSaveError] = useState<string | null>(null);
-  const [cardStyle, setCardStyle] = useState<CardStyle>((location.state as { cardStyle?: CardStyle } | null)?.cardStyle ?? "plain");
 
   if (!entry && !notebookQuote) {
     return (
@@ -87,6 +99,11 @@ export default function DiaryLayout() {
     setIsSaving(true);
     setSaveError(null);
     try {
+      // Ensure all images inside the card are loaded before capturing
+      const imgs = cardRef.current.querySelectorAll("img");
+      await Promise.all(Array.from(imgs).map((img) =>
+        img.complete ? Promise.resolve() : new Promise((resolve) => { img.onload = resolve; img.onerror = resolve; })
+      ));
       const dataUrl = await toPng(cardRef.current, { backgroundColor: "#fdf8f2", pixelRatio: 2 });
       const blob = await (await fetch(dataUrl)).blob();
       const file = new File([blob], `diary-card-${Date.now()}.png`, { type: "image/png" });
@@ -262,10 +279,12 @@ export default function DiaryLayout() {
                 "--cal-footer-top": `${RETRO_PHONE.footer.top}%`,
               } as React.CSSProperties}
             >
-              <img className="retro-bg" src="/assets/v2/frames/retro-phone.png" alt="" />
-              <div className="retro-lcd" style={{"--retro-font-size": `${effectiveFontSize}px`} as React.CSSProperties}>
+              <img ref={cardImgRef} className="retro-bg" src="/assets/v2/frames/retro-phone.png" alt="" />
+              {cardImgLoaded && (
+                <div className="retro-lcd" style={{"--retro-font-size": `${effectiveFontSize}px`} as React.CSSProperties}>
                 <div className="retro-quote" ref={quoteRef}><p contentEditable suppressContentEditableWarning onBlur={e => setRetroEdit(e.currentTarget.textContent)}>{retroText}</p></div>
-              </div>
+                </div>
+              )}
               <div className="retro-title">BUNNY DIARY</div>
               <div className="retro-divider">⋯⋯ ᕱ⑅ᕱ ⋯⋯</div>
               <div className="retro-footer">
