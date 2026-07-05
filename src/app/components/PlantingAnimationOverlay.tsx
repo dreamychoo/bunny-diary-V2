@@ -13,6 +13,11 @@ const frameSources = [
 const frameChangeTimeline = [320, 680, 1100] as const;
 const contentRevealDelay = 1600;
 
+// Eagerly preload animation frames on module load
+if (typeof window !== "undefined") {
+  frameSources.forEach((src) => { const img = new Image(); img.src = src; });
+}
+
 type PlantingAnimationOverlayProps = {
   open: boolean;
   variant?: "save-success" | "planted-success";
@@ -140,18 +145,12 @@ export function PlantingAnimationOverlay({
       <div className="w-full max-w-[22rem] text-center">
         <div className="relative mx-auto h-[220px] w-[260px]">
           <div className="relative h-full w-full overflow-hidden rounded-[20px] bg-[var(--bg)]">
-            {frameSources.map((src, index) => (
-              <img
-                key={src}
-                src={src}
-                alt={index === frameIndex ? imageAlt : ""}
-                aria-hidden={index !== frameIndex}
-                className={cn(
-                  "absolute inset-0 h-full w-full object-contain transition-opacity duration-150 ease-out",
-                  index === frameIndex ? "opacity-100" : "opacity-0"
-                )}
-              />
-            ))}
+            <img
+              key={frameSources[frameIndex]}
+              src={frameSources[frameIndex]}
+              alt={imageAlt}
+              className="absolute inset-0 h-full w-full object-contain"
+            />
           </div>
           {/* Sparkle burst — start from lower-left of the image */}
           {sparkles.map((s) => (

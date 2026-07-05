@@ -83,7 +83,7 @@ export default function DiaryLayout() {
   }
 
   const handleSave = async () => {
-    if (isSaving) return;
+    if (!cardRef.current || isSaving) return;
     setIsSaving(true);
     setSaveError(null);
     try {
@@ -97,9 +97,19 @@ export default function DiaryLayout() {
         const link = document.createElement("a");
         link.download = file.name;
         link.href = dataUrl;
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
       } else {
-        document.body.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:100dvh;background:#000;padding:16px;"><img src="${dataUrl}" style="max-width:100%;max-height:100%;object-fit:contain;" /></div>`;
+        // iOS: long-press to save
+        const img = document.createElement("img");
+        img.src = dataUrl;
+        img.style.cssText = "max-width:100%;max-height:100%;object-fit:contain;";
+        const overlay = document.createElement("div");
+        overlay.style.cssText = "display:flex;align-items:center;justify-content:center;position:fixed;inset:0;z-index:9999;background:#000;padding:16px;";
+        overlay.appendChild(img);
+        overlay.onclick = () => overlay.remove();
+        document.body.appendChild(overlay);
       }
     } catch (e: any) {
       if (e?.name !== "AbortError") {
