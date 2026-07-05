@@ -944,9 +944,9 @@ export function createBunnyLetter(seedIds: string[]) {
     for (let i = 0; i < id.length; i++) acc = ((acc << 5) - acc + id.charCodeAt(i)) | 0;
     return acc;
   }, 0);
-  const bodyCount = 30; // each type has 30 body variants
+  const bodyCount = 30; // each type has 30 paired title/body variants
   const templateIndex = Math.abs(seedHash) % bodyCount;
-  const subjectIndex = templateIndex % 10;
+  const subjectIndex = templateIndex;
 
   const letter: BunnyLetter = {
     id: createLetterId(),
