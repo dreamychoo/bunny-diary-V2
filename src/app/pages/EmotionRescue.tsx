@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Pencil, RefreshCw, Sparkles, Sprout } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
@@ -138,6 +138,26 @@ export default function EmotionRescue() {
   const whatHappenedRef = useRef<HTMLTextAreaElement | null>(null);
   const intensityRatio = ((intensity - 1) / 9) * 100;
 
+  // Unsaved changes guard
+  const hasContent = emotions.length > 0 || symptoms.length > 0 || whatHappened.trim() || childhood.trim();
+  const [showExitDialog, setShowExitDialog] = useState(false);
+  const pendingNav = useRef<(() => void) | null>(null);
+  const guardNav = useCallback((fn: () => void) => {
+    if (hasContent) {
+      pendingNav.current = fn;
+      setShowExitDialog(true);
+    } else {
+      fn();
+    }
+  }, [hasContent]);
+
+  useEffect(() => {
+    if (!hasContent) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [hasContent]);
+
   const currentPrompts = language === "zh" ? prompts : promptsEn;
 
   useEffect(() => {
@@ -230,8 +250,8 @@ export default function EmotionRescue() {
         open={showPlanting}
         variant="save-success"
         tone="feeling"
-        onPrimary={() => navigate(routes.bunnyGarden, { state: { openSeedVault: true } })}
-        onSecondary={() => navigate(routes.home)}
+        onPrimary={() => guardNav(() => navigate(routes.bunnyGarden, { state: { openSeedVault: true } }))}
+        onSecondary={() => guardNav(() => { if (window.history.length > 1) navigate(-1); else navigate(routes.home); })}
       />
 
       <form
@@ -381,6 +401,20 @@ export default function EmotionRescue() {
           </Button>
         </div>
       </form>
+
+      {/* Unsaved changes blocker dialog */}
+      {showExitDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-5">
+          <div className="w-full max-w-[340px] rounded-[24px] bg-[#fdf8f2] p-6 text-center shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+            <h3 className="text-lg font-bold text-[var(--ink)]">{t("emotion.unsavedTitle")}</h3>
+            <p className="mt-1 text-sm leading-6 text-[var(--muted)]">{t("emotion.unsavedBody")}</p>
+            <div className="mt-5 flex flex-col gap-2">
+              <Button type="button" onClick={() => { setShowExitDialog(false); pendingNav.current?.(); }}>{t("emotion.unsavedConfirm")}</Button>
+              <Button type="button" variant="ghost" onClick={() => { setShowExitDialog(false); pendingNav.current = null; }}>{t("common.cancel")}</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </AppShell>
   );
 }

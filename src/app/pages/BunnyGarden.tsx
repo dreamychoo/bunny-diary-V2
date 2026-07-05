@@ -293,6 +293,18 @@ export default function BunnyGarden() {
               </button>
             </div>
           )}
+          {garden.totalEntries > 0 && garden.seedInventory.length === 0 && garden.plots.every(p => p.state === "empty") && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+              <button
+                type="button"
+                onClick={() => navigate(routes.dailyWarmth)}
+                className="pointer-events-auto relative -top-3 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/88 px-4 py-2 text-[12px] font-bold text-[#6f6158] shadow-[0_4px_16px_rgba(0,0,0,0.06)] backdrop-blur-sm transition hover:bg-white active:scale-[0.97]"
+              >
+                <img src="/assets/v2/plants/warmth-seed.png" alt="" className="h-4 w-4 object-contain" />
+                {t("garden.emptyAfterHarvest")}
+              </button>
+            </div>
+          )}
           {garden.plots.slice(0, 10).map((plot, index) => (
             <Plot
               key={plot.id}

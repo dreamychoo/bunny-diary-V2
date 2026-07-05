@@ -319,7 +319,7 @@ export default function DiaryLayout() {
             <ArrowLeft className="h-4 w-4" />
             {t("common.backToPastJournals")}
           </Button>
-          <Button variant="ghost" onClick={() => navigate(routes.home)}>
+          <Button variant="ghost" onClick={() => { if (window.history.length > 1) navigate(-1); else navigate(routes.home); }}>
             {t("common.home")}
           </Button>
         </div>

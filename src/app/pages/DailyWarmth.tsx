@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, Pencil, RefreshCw, Save } from "lucide-react";
 import { AppShell } from "../components/AppShell";
@@ -61,6 +61,26 @@ export default function DailyWarmth() {
   const [showPlanting, setShowPlanting] = useState(false);
   const [promptIndex, setPromptIndex] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  // Unsaved changes guard
+  const hasContent = note.trim() || weather;
+  const [showExitDialog, setShowExitDialog] = useState(false);
+  const pendingNav = useRef<(() => void) | null>(null);
+  const guardNav = useCallback((fn: () => void) => {
+    if (hasContent) {
+      pendingNav.current = fn;
+      setShowExitDialog(true);
+    } else {
+      fn();
+    }
+  }, [hasContent]);
+
+  useEffect(() => {
+    if (!hasContent) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [hasContent]);
 
   const currentPrompts = language === "zh" ? prompts : promptsEn;
 
@@ -228,7 +248,7 @@ export default function DailyWarmth() {
           </Card>
 
           <div className="flex items-center justify-between gap-3">
-            <Button type="button" variant="ghost" onClick={() => navigate(routes.home)}>
+            <Button type="button" variant="ghost" onClick={() => guardNav(() => { if (window.history.length > 1) navigate(-1); else navigate(routes.home); })}>
               <ArrowLeft className="h-4 w-4" />
               {t("common.home")}
             </Button>
@@ -247,6 +267,20 @@ export default function DailyWarmth() {
             </div>
           </div>
         </form>
+      )}
+
+      {/* Unsaved changes blocker dialog */}
+      {showExitDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-5">
+          <div className="w-full max-w-[340px] rounded-[24px] bg-[#fdf8f2] p-6 text-center shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+            <h3 className="text-lg font-bold text-[var(--ink)]">{t("emotion.unsavedTitle")}</h3>
+            <p className="mt-1 text-sm leading-6 text-[var(--muted)]">{t("emotion.unsavedBody")}</p>
+            <div className="mt-5 flex flex-col gap-2">
+              <Button type="button" onClick={() => { setShowExitDialog(false); pendingNav.current?.(); }}>{t("emotion.unsavedConfirm")}</Button>
+              <Button type="button" variant="ghost" onClick={() => { setShowExitDialog(false); pendingNav.current = null; }}>{t("common.cancel")}</Button>
+            </div>
+          </div>
+        </div>
       )}
     </AppShell>
   );

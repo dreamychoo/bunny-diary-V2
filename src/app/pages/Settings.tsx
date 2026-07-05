@@ -156,7 +156,7 @@ export default function Settings() {
         </Card>
       </div>
       <div className="mt-8 flex justify-center">
-        <Button variant="ghost" onClick={() => navigate(routes.home)}>
+        <Button variant="ghost" onClick={() => { if (window.history.length > 1) navigate(-1); else navigate(routes.home); }}>
           <ArrowLeft className="h-4 w-4" />
           {t("common.home")}
         </Button>
