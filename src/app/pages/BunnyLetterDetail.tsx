@@ -18,7 +18,7 @@ export default function BunnyLetterDetail() {
       <article className="letter-paper">
         <Mail className="mx-auto h-7 w-7 text-[#c99b52]" />
         <p className="letter-type">{t(`letter.type.${letter.letterType}`)}</p>
-        <h1>{t(`letter.subject.${letter.letterType}`)}</h1>
+        <h1>{t(`letter.subject.${letter.letterType}.${letter.subjectIndex}`)}</h1>
         <time>{date}</time>
         <div className="letter-rule"><span>{t("letter.from")}</span></div>
         <div className="letter-plants">{letter.seeds.map((seed) => <div key={seed.id}><img src={gardenPlantAssets[seed.plantVariant]} alt="" /><span>{t(`garden.variant.${seed.plantVariant}`)}</span></div>)}</div>

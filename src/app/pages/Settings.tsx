@@ -157,7 +157,7 @@ export default function Settings() {
         </Card>
       </div>
       <div className="mt-6 text-center">
-        <p className="text-[11px] text-[var(--muted)] opacity-50">v0.1.0 · {import.meta.env.DEV ? "dev" : "build"}</p>
+        <p className="text-[11px] text-[var(--muted)] opacity-50">v0.2.0 · {import.meta.env.DEV ? "dev" : "build"}</p>
       </div>
       <div className="mt-8 flex justify-center">
         <Button variant="ghost" onClick={() => { if (window.history.length > 1) navigate(-1); else navigate(routes.home); }}>

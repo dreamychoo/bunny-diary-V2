@@ -112,7 +112,7 @@ export default function CollectionRoom() {
                 <Link key={letter.id} to={routes.letter(letter.id)} className="collection-mail-card group">
                   <span className="mail-icon"><Mail /></span>
                   <div className="min-w-0 flex-1">
-                    <h3>{t(`letter.subject.${letter.letterType}`)}</h3>
+                    <h3>{t(`letter.subject.${letter.letterType}.${letter.subjectIndex}`)}</h3>
                     <time>{formatDate(letter.createdAt, language)} · {t(`letter.type.${letter.letterType}`)}</time>
                   </div>
                   <ChevronRight className="h-4 w-4 shrink-0 text-[#aaa09a] transition-transform group-hover:translate-x-0.5" />
