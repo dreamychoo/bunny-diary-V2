@@ -722,12 +722,9 @@ export function appendEmotionEntry(entry: EmotionEntry) {
   syncGardenStorage();
 }
 
-/** 检查今天是否还能写笔记（每天最多 2 篇） */
+/** 检查今天是否还能写笔记 */
 export function canWriteToday(): boolean {
-  const today = new Date().toDateString();
-  const all = getAllEntries();
-  const todayCount = all.filter((e) => new Date(e.timestamp).toDateString() === today).length;
-  return todayCount < 3;
+  return true;
 }
 
 export function getWarmthEntries() {

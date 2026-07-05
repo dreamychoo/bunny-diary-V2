@@ -15,13 +15,14 @@ export default function Settings() {
   const navigate = useNavigate();
   const { language, setLanguage, t } = useI18n();
   const [bunnyName, setBunnyName] = useState(() => getSettings().bunnyName);
+  const defaultName = language === "zh" ? "馒头兔" : "Mantu Bunny";
   const [message, setMessage] = useState("");
   const [confirmingClear, setConfirmingClear] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   function handleSave(event: FormEvent) {
     event.preventDefault();
-    saveSettings({ bunnyName: bunnyName.trim() || "Bunny", language });
+    saveSettings({ bunnyName: bunnyName.trim() || defaultName, language });
     setMessage(t("settings.saved"));
   }
 
@@ -62,7 +63,7 @@ export default function Settings() {
       }
     } catch { /* backup best-effort */ }
     clearAllDiaryData();
-    setBunnyName("Bunny");
+    setBunnyName(defaultName);
     setLanguage("en");
     setConfirmingClear(false);
     setMessage(t("settings.cleared"));
@@ -154,6 +155,9 @@ export default function Settings() {
             )}
           </div>
         </Card>
+      </div>
+      <div className="mt-6 text-center">
+        <p className="text-[11px] text-[var(--muted)] opacity-50">v0.1.0 · {import.meta.env.DEV ? "dev" : "build"}</p>
       </div>
       <div className="mt-8 flex justify-center">
         <Button variant="ghost" onClick={() => { if (window.history.length > 1) navigate(-1); else navigate(routes.home); }}>
